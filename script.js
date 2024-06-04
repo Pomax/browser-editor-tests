@@ -106,7 +106,9 @@ function buildDirTreeUI(tree) {
  */
 async function createFileEditTab(filename) {
   const entry = cmInstances[filename];
-  if (entry?.view) return;
+  if (entry?.view) {
+    return entry.tab?.click();
+  }
 
   const panel = setupEditorPanel(filename);
   editors.appendChild(panel);
