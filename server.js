@@ -17,7 +17,7 @@ import { DirTree } from "./prebaked/dirtree.js";
 
 const CONTENT_DIR = `./content`;
 
-// Set up the core server 
+// Set up the core server
 const app = express();
 app.set("etag", false);
 app.use(nocache());
@@ -40,7 +40,7 @@ app.use(
   })
 );
 
-// A route to trigger prettier, or any other code formatter based on file extension.
+// A route to trigger on-disk code formatting, based on file extension.
 app.post(`/format/:slug*`, (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   const ext = filename.substring(filename.lastIndexOf(`.`), filename.length);
@@ -55,17 +55,15 @@ app.post(`/new/:slug*`, (req, res) => {
   const slug = `${CONTENT_DIR}/${req.params.slug}`;
   mkdirSync(slug, { recursive: true });
   const filename = slug + req.params[0];
-  if (!existsSync(filename)) {
-    writeFileSync(filename, ``);
-  }
+  if (!existsSync(filename)) writeFileSync(filename, ``);
   return res.send(`ok`);
 });
 
-// Sync edits from the browser to the file on disk, by applying a diff patch 
+// Synchronize file changes from the browser to the on-disk file, by applying a diff patch
 app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
-  const patch = req.body;
   let data = readFileSync(filename).toString(`utf8`);
+  const patch = req.body;
   const patched = applyPatch(data, patch);
   if (patched) writeFileSync(filename, patched);
   res.send(`${getFileSum(filename, true)}`);
@@ -75,14 +73,12 @@ app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
 // that lets the receiver reconstitute it as a DirTree object.
 app.get(`/dir`, async (req, res) => {
   const dir = await readContentDir(CONTENT_DIR);
-  const dirTree = new DirTree(dir, (filename) => {
-    return getFileSum(filename);
-  });
+  const dirTree = new DirTree(dir, (filename) => getFileSum(filename));
   res.send(JSON.stringify(dirTree.tree));
 });
 
 // serve content from the "content" (user content) and "prebaked" (page itself)
-// directories, with a redirect to index.html for direct / requests.
+// directories, with a redirect to index.html (because obviously).
 app.get(`/`, (req, res) => res.redirect(`/index.html`));
 app.use(`/`, express.static(`content`));
 app.use(`/`, express.static(`prebaked`));
@@ -97,10 +93,10 @@ app.listen(8000, () => {
 // -----------------------------------------------------------
 
 /**
- * ...docs go here...
- * @param {*} filename 
- * @param {*} nofill 
- * @returns 
+ * Create a super simple hash digest by summing all bytes in the file.
+ * We don't need cryptographically secure, we're just need it to tell
+ * whether a file on-disk and the same file in the browser differ, and
+ * if they're not, the browser simply redownloads the file.
  */
 function getFileSum(filename, nofill = false) {
   const filepath = nofill ? filename : `${CONTENT_DIR}/${filename}`;
@@ -109,46 +105,42 @@ function getFileSum(filename, nofill = false) {
 }
 
 /**
- * ...docs go here...
- * @param {*} command 
- * @returns 
+ * A little wrapper that turns exec() into an async call
  */
 function execPromise(command) {
-  return new Promise(function (resolve, reject) {
-    exec(command, (error, stdout, stderr) => {
-      if (error) {
-        reject(error);
-        return;
-      }
-
+  return new Promise((resolve, reject) =>
+    exec(command, (err, stdout, stderr) => {
+      if (err) return reject(stderr);
       resolve(stdout.trim());
-    });
-  });
+    })
+  );
 }
 
 /**
- * ...docs go here...
- * @returns 
+ * Ask the OS for a flat dir listing.
  */
 async function readContentDir() {
-  const output = (await execPromise(`find ${CONTENT_DIR}`))
+  let listCommand =
+    process.platform === `win32`
+      ? `dir ${CONTENT_DIR} /b/o/s`
+      : `find ${CONTENT_DIR}`;
+  const output = await execPromise(listCommand);
+  const allFileListing = output
     .split(/\r?\n/)
     .map((v) => {
       let stats = statSync(v);
-      if (stats.isDirectory()) {
-        return ``;
-      }
+      if (stats.isDirectory()) return false;
       return v
         .split(sep)
         .join(posix.sep)
         .replace(`${CONTENT_DIR}${posix.sep}`, ``);
     })
     .filter((v) => !!v);
-  return output;
+  return allFileListing;
 }
 
 /**
- * ...docs go here...
+ * Trigger a rebuild by telling npm to run the `build` script from package.json.
  */
 function rebuild() {
   spawnSync(`npm`, [`run`, `build`], { stdio: `inherit` });

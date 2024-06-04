@@ -27634,8 +27634,11 @@
        if (filename) {
          await fetch(`/new/${filename}`, { method: `post` });
          createFileEditTab(filename);
+         // TODO: refresh the project dir listing
        }
      });
+
+     // TODO: add a "remove file" option, too
 
      document.getElementById(`format`).addEventListener(`click`, async () => {
        const tab = document.querySelector(`.active`);
@@ -27680,9 +27683,8 @@
    }
 
    /**
-    * ...docs go here...
-    * @param {*} filename
-    * @returns
+    * Create the collection of pqge UI elements and associated editor
+    * component for a given file.
     */
    async function createFileEditTab(filename) {
      const entry = cmInstances[filename];

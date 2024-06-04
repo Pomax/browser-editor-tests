@@ -58,8 +58,8 @@ html {
       }
 
       div.code {
-        width: 100%;
-        max-width: 48em;
+        width: 45em !important;
+        flex: 0 0 auto;
 
         #tabs {
           height: calc(2.5em + var(--tab-bar-height));
