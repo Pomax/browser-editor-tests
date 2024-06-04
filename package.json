@@ -1,0 +1,28 @@
+{
+  "name": "codemirror-test",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "",
+  "main": "",
+  "scripts": {
+    "build": "rollup script.js -f iife -o prebaked/editor.bundle.js -p @rollup/plugin-node-resolve",
+    "prettier": "npx prettier -w",
+    "start": "node server.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/state": "^6.4.1",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "body-parser": "^1.20.2",
+    "codemirror": "^6.0.1",
+    "diff": "^5.2.0",
+    "diff-match-patch": "^1.0.5",
+    "express": "^4.19.2",
+    "helmet": "^7.1.0",
+    "nocache": "^4.0.0",
+    "rollup": "^4.18.0"
+  }
+}

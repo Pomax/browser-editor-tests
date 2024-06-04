@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Test Editor</title>
+    <script src="./editor.bundle.js" async defer></script>
+    <script
+      src="./graphics-element/graphics-element.js"
+      type="module"
+      async
+      defer
+    ></script>
+    <link rel="stylesheet" href="./graphics-element/graphics-element.css" />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <ul id="filetree">
+        <button id="add">+</button>
+      </ul>
+      <div class="code">
+        <div id="tabs">
+          <button id="format">🤩</button>
+        </div>
+        <div id="editors"></div>
+      </div>
+      <div class="graphics" style="position: relative">
+        <graphics-element id="graphics" title="graphics"></graphics-element>
+      </div>
+    </main>
+  </body>
+</html>

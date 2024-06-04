@@ -1,0 +1,160 @@
+html {
+  height: 100%;
+  overflow: hidden;
+
+  body {
+    height: 100%;
+    overflow: hidden;
+
+    main {
+      height: 100%;
+      overflow: hidden;
+      display: flex;
+      flex-direction: row;
+
+      --tab-bar-height: 1em;
+
+      #add {
+        float: right;
+      }
+
+      ul {
+        padding: 0;
+        list-style: none;
+        height: auto;
+
+        &#filetree {
+          border: 1px solid #444;
+          padding: 0.5em;
+          margin: 0.5em;
+          margin-bottom: 1em;
+        }
+
+        > ul {
+          padding-left: 0.5em;
+        }
+
+        li {
+          white-space: nowrap;
+          &.dir {
+            color: #666;
+            font-weight: bold;
+            &:before {
+              content: "[";
+            }
+            &:after {
+              content: "]";
+            }
+          }
+          &:hover {
+            background: #eee;
+            color: #666;
+            cursor: pointer;
+            &.dir {
+              cursor: auto;
+            }
+          }
+        }
+      }
+
+      div.code {
+        width: 100%;
+        max-width: 48em;
+
+        #tabs {
+          height: calc(2.5em + var(--tab-bar-height));
+          white-space: nowrap;
+          overflow-y: hidden;
+          overflow-x: scroll;
+
+          .tab {
+            cursor: pointer;
+            border: 1px solid black;
+            border-radius: 0.5em 0.5em 0 0;
+            padding: 0.25em 0.75em;
+            border-bottom: none;
+            top: 0.35em;
+            position: relative;
+            display: inline-block;
+
+            & + div {
+              margin-left: 0.5em;
+            }
+
+            &.active {
+              background: #cceeff44;
+              color: #333;
+            }
+
+            .close {
+              position: relative;
+              top: -0.3em;
+              left: 1.1em;
+              background: inherit;
+              border: 1px solid gray;
+              border-radius: 25%;
+              background: #e2bc491f;
+
+              &:hover {
+                background: red;
+                color: white;
+                cursor: pointer;
+              }
+            }
+          }
+        }
+
+        #editors {
+          height: calc(100% - var(--tab-bar-height) - 2.5em);
+          box-sizing: border-box;
+
+          & div.editor {
+            max-height: calc(100% - 1em);
+            overflow: auto;
+            border: 1px solid grey;
+          }
+        }
+      }
+
+      graphics-element {
+        position: sticky;
+        top: 0;
+        width: 650px;
+        margin-left: 1em;
+
+        table.slider-wrapper {
+          background: #ececec;
+          margin-bottom: 0.25em;
+        }
+      }
+    }
+  }
+
+  button {
+    border-radius: 5px;
+    margin: 2px 5px;
+    &.clear {
+      background: none;
+      border: 1px solid #444;
+      color: #999;
+      position: absolute;
+      right: 1em;
+      top: 1em;
+      cursor: pointer;
+    }
+  }
+
+  button.active {
+    color: white;
+    background: darkgreen;
+    border: 2px solid green;
+    border-radius: 5px;
+    &:hover {
+      background: rgb(0, 50, 0);
+    }
+    &:active {
+      color: darkgreen;
+      background: white;
+    }
+  }
+}
