@@ -12,18 +12,17 @@ import express from "express";
 import helmet from "helmet";
 import nocache from "nocache";
 import bodyParser from "body-parser";
-// import { applyPatch } from "./prebaked/vendor/textdiff-patch.js";
 import { applyPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
 const CONTENT_DIR = `./content`;
 
+// Set up the core server 
 const app = express();
 app.set("etag", false);
 app.use(nocache());
 
-// app.use(bodyParser.json());
-
+// I hate CSP so much
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
@@ -41,6 +40,7 @@ app.use(
   })
 );
 
+// A route to trigger prettier, or any other code formatter based on file extension.
 app.post(`/format/:slug*`, (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   const ext = filename.substring(filename.lastIndexOf(`.`), filename.length);
@@ -50,6 +50,7 @@ app.post(`/format/:slug*`, (req, res) => {
   res.send(`ok`);
 });
 
+// Create a new file.
 app.post(`/new/:slug*`, (req, res) => {
   const slug = `${CONTENT_DIR}/${req.params.slug}`;
   mkdirSync(slug, { recursive: true });
@@ -60,6 +61,7 @@ app.post(`/new/:slug*`, (req, res) => {
   return res.send(`ok`);
 });
 
+// Sync edits from the browser to the file on disk, by applying a diff patch 
 app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   const patch = req.body;
@@ -69,12 +71,8 @@ app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
   res.send(`${getFileSum(filename, true)}`);
 });
 
-function getFileSum(filename, nofill = false) {
-  const filepath = nofill ? filename : `${CONTENT_DIR}/${filename}`;
-  const enc = new TextEncoder();
-  return enc.encode(readFileSync(filepath)).reduce((t, e) => t + e, 0);
-}
-
+// Get the current file tree from the server, and send it over in a way
+// that lets the receiver reconstitute it as a DirTree object.
 app.get(`/dir`, async (req, res) => {
   const dir = await readContentDir(CONTENT_DIR);
   const dirTree = new DirTree(dir, (filename) => {
@@ -83,12 +81,38 @@ app.get(`/dir`, async (req, res) => {
   res.send(JSON.stringify(dirTree.tree));
 });
 
+// serve content from the "content" (user content) and "prebaked" (page itself)
+// directories, with a redirect to index.html for direct / requests.
 app.get(`/`, (req, res) => res.redirect(`/index.html`));
 app.use(`/`, express.static(`content`));
 app.use(`/`, express.static(`prebaked`));
 
-app.listen(8000, () => console.log(`http://127.0.0.1:8000`));
+// Run the server, and trigger a client bundle rebuild every time script.js changes.
+app.listen(8000, () => {
+  console.log(`http://127.0.0.1:8000`);
+  rebuild();
+  watch(`./script.js`, () => rebuild());
+});
 
+// -----------------------------------------------------------
+
+/**
+ * ...docs go here...
+ * @param {*} filename 
+ * @param {*} nofill 
+ * @returns 
+ */
+function getFileSum(filename, nofill = false) {
+  const filepath = nofill ? filename : `${CONTENT_DIR}/${filename}`;
+  const enc = new TextEncoder();
+  return enc.encode(readFileSync(filepath)).reduce((t, e) => t + e, 0);
+}
+
+/**
+ * ...docs go here...
+ * @param {*} command 
+ * @returns 
+ */
 function execPromise(command) {
   return new Promise(function (resolve, reject) {
     exec(command, (error, stdout, stderr) => {
@@ -102,6 +126,10 @@ function execPromise(command) {
   });
 }
 
+/**
+ * ...docs go here...
+ * @returns 
+ */
 async function readContentDir() {
   const output = (await execPromise(`find ${CONTENT_DIR}`))
     .split(/\r?\n/)
@@ -119,12 +147,9 @@ async function readContentDir() {
   return output;
 }
 
-// file-watch to see if we need to rebuild
+/**
+ * ...docs go here...
+ */
 function rebuild() {
   spawnSync(`npm`, [`run`, `build`], { stdio: `inherit` });
 }
-
-rebuild();
-
-console.log(`watching...`);
-watch(`./script.js`, () => rebuild());

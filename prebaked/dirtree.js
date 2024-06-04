@@ -4,7 +4,6 @@ export class DirTree {
   tree = {};
 
   constructor(files = [], valuator = (filename) => filename) {
-    console.log(files);
     files.forEach((file) => this.addFile(file, valuator));
     this.sort(this.tree);
   }
@@ -21,7 +20,6 @@ export class DirTree {
   }
 
   flat(tree = this.tree, list = [], prefix = ``) {
-    console.log(tree);
     Object.entries(tree).forEach(([key, value]) => {
       if (typeof value === `object`) {
         return this.flat(value, list, prefix + (prefix ? `/` : ``) + key);
