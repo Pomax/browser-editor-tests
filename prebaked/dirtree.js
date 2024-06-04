@@ -45,23 +45,43 @@ export class DirTree {
     Object.entries(tree).forEach(([key, value]) => {
       const isDir = typeof value === `object`;
       const item = create(`li`);
+      item.title = key;
       item.textContent = key;
       item.classList.add(isDir ? `dir` : `file`);
       parent.appendChild(item);
+      const newPrefix = prefix + (prefix ? `/` : ``) + key;
       if (!isDir) {
-        item.addEventListener(`click`, () =>
-          clickHandler(prefix + (prefix ? `/` : ``) + key)
-        );
+        item.addEventListener(`click`, () => clickHandler(newPrefix));
       } else {
         const list = create(`ul`);
-        parent.appendChild(list);
-        this.addToPage(
-          clickHandler,
-          list,
-          value,
-          prefix + (prefix ? `/` : ``) + key
-        );
+        list.classList.add(key);
+        item.appendChild(list);
+        this.addToPage(clickHandler, list, value, newPrefix);
       }
     });
+  }
+
+  createNewFile(filename, clickHandler, parent) {
+    const parts = filename.split(`/`);
+    while (parts.length > 1) {
+      const dirname = parts.shift();
+      let ul = parent.querySelector(`& > li ul.${dirname}`);
+      if (!ul) {
+        const item = create(`li`);
+        item.title = dirname;
+        item.textContent = dirname;
+        item.classList.add(`dir`);
+        parent.appendChild(item);
+        ul = create(`ul`);
+        item.appendChild(ul);
+      }
+      parent = ul;
+    }
+    const item = create(`li`);
+    item.title = parts[0];
+    item.textContent = parts[0];
+    item.classList.add(`file`);
+    item.addEventListener(`click`, () => clickHandler(filename));
+    parent.appendChild(item);
   }
 }

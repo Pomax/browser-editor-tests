@@ -52,7 +52,10 @@ app.post(`/format/:slug*`, (req, res) => {
 
 // Create a new file.
 app.post(`/new/:slug*`, (req, res) => {
-  const slug = `${CONTENT_DIR}/${req.params.slug}`;
+  // TODO: fix this so that we get the correct path vs. filename
+  const full = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const slug = full.substring(full.lastIndexOf(`/`) + 1);
+  console.log(full, slug);
   mkdirSync(slug, { recursive: true });
   const filename = slug + req.params[0];
   if (!existsSync(filename)) writeFileSync(filename, ``);

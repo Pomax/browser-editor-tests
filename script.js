@@ -54,7 +54,8 @@ function addGlobalEventHandling() {
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
       createFileEditTab(filename);
-      // TODO: refresh the project dir listing
+      dirTree.createNewFile(filename, (filename) => createFileEditTab(filename), filetree);
+      // TODO: refresh the project dir listing?
     }
   });
 

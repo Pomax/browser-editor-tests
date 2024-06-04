@@ -28,25 +28,28 @@ html {
           padding: 0.5em;
           margin: 0.5em;
           margin-bottom: 1em;
+          font-family: Arial;
+
         }
 
-        > ul {
+        li ul {
           padding-left: 0.5em;
         }
 
         li {
           white-space: nowrap;
+
           &.dir {
             color: #666;
-            font-weight: bold;
-            &:before {
-              content: "[";
-            }
-            &:after {
-              content: "]";
-            }
+            font-weight: bolder;
           }
-          &:hover {
+
+          &.file {
+            color: #222;
+            font-weight: normal;
+          }
+
+          &:not(:has(*)):hover {
             background: #eee;
             color: #666;
             cursor: pointer;
