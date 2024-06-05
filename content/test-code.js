@@ -8,11 +8,19 @@ let oldheading = 0; // degrees
 
 function setup() {
   setSize(600, 400);
-  play();
 }
 
 function draw() {
   clear(`white`);
+
+  setColor(`black`);
+  if (playing) {
+    triangle(10, 10, 25, 20, 10, 30);
+  } else {
+    rect(10, 10, 5, 20);
+    rect(20, 10, 5, 20);
+  }
+
   translate(width / 2, height / 2);
 
   const [x, y, z] = localFrame.roll;
@@ -55,33 +63,6 @@ function draw() {
   text(`LATITUDE: ${lat.toFixed(4)}`, 0, 60);
   text(`LONGITUDE: ${long.toFixed(4)}`, 0, 80);
   text(`ELEVATION: ${elevation.toFixed(0)} '`, 0, 100);
-}
-
-// "update our local frame" function
-function update(a, name) {
-  const pv = localFrame[name];
-  const m = pv.reduce((t, e) => t + e ** 2, 0) ** 0.5;
-  pv.forEach((v, i, pv) => (pv[i] = v / m));
-
-  // rotation matrix for new pitch axis
-  const sa = sin(a);
-  const ca = cos(a);
-  const mc = 1 - ca;
-  const [x, y, z] = pv;
-  const Q = [
-    x * x * mc + ca,
-    y * x * mc - z * sa,
-    z * x * mc + y * sa,
-    x * y * mc + z * sa,
-    y * y * mc + ca,
-    z * y * mc - x * sa,
-    x * z * mc - y * sa,
-    y * z * mc + x * sa,
-    z * z * mc + ca,
-  ];
-
-  // apply local rotation
-  updateLocalFrame(Q);
 }
 
 function turn() {

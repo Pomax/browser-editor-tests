@@ -27654,7 +27654,11 @@
        if (filename) {
          await fetch(`/new/${filename}`, { method: `post` });
          createFileEditTab(filename);
-         dirTree.createNewFile(filename, (filename) => createFileEditTab(filename), filetree);
+         dirTree.createNewFile(
+           filename,
+           (filename) => createFileEditTab(filename),
+           filetree
+         );
          // TODO: refresh the project dir listing?
        }
      });
@@ -27831,6 +27835,7 @@
          .querySelectorAll(`.active`)
          .forEach((e) => e.classList.remove(`active`));
        tab.classList.add(`active`);
+       tab.scrollIntoView();
        currentView = view;
      });
 
@@ -27870,6 +27875,7 @@
      const responseHash = parseFloat(await response.text());
      if (responseHash === getFileSum(newContent)) {
        entry.content = newContent;
+       setGraphicsSource();
      } else {
        // This should, if I did everything right, never happen.
        console.error(`PRE:`, currentContent);
