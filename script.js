@@ -4,16 +4,15 @@ import { javascript } from "@codemirror/lang-javascript";
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
+const add = document.getElementById(`add`);
+const format = document.getElementById(`format`);
 const filetree = document.getElementById(`filetree`);
 const tabs = document.getElementById(`tabs`);
 const editors = document.getElementById(`editors`);
 
-const fileContent = {};
 const cmInstances = {};
-
 let dirTree = { tree: {} };
 let dirList = [];
-let currentView;
 let graphics;
 
 customElements.whenDefined(`graphics-element`).then(setupPage);
@@ -25,11 +24,7 @@ async function setupPage() {
   console.log(`graphics element is ready`);
   graphics = document.getElementById(`graphics`);
 
-  // Get the file tree
-  const dirData = await fetch(`/dir`).then((r) => r.json());
-  dirTree = new DirTree();
-  dirTree.tree = dirData;
-  buildDirTreeUI(dirTree);
+  await refreshDirTree();
 
   // And then load every file into memory. Because everything has enough RAM for that.
   dirList = dirTree.flat();
@@ -43,6 +38,13 @@ async function setupPage() {
 
   setGraphicsSource();
   addGlobalEventHandling();
+}
+
+async function refreshDirTree() {
+  const dirData = await fetch(`/dir`).then((r) => r.json());
+  dirTree = new DirTree();
+  dirTree.tree = dirData;
+  buildDirTreeUI(dirTree);
 }
 
 /**
@@ -59,25 +61,98 @@ function addGlobalEventHandling() {
         (filename) => createFileEditTab(filename),
         filetree
       );
-      // TODO: refresh the project dir listing?
+      // TODO: does it make sense to refresh the project dir listing by calling the /dir route?
     }
   });
 
-  // TODO: add a "remove file" option, too
-
   document.getElementById(`format`).addEventListener(`click`, async () => {
     const tab = document.querySelector(`.active`);
-    const filename = tab.title;
+    const entry = Object.values(cmInstances).find((e) => e.tab === tab);
+    const filename = entry.filename;
+    format.hidden = true;
     await fetch(`/format/${filename}`, { method: `post` });
-    const newText = await fetch(`./${filename}`).then((r) => r.text());
-    currentView.dispatch({
+    entry.content = await fetch(`./${filename}`).then((r) => r.text());
+    format.hidden = false;
+    entry.view.dispatch({
       changes: {
         from: 0,
-        to: currentView.state.doc.length,
-        insert: newText,
+        to: entry.view.state.doc.length,
+        insert: entry.content,
       },
     });
   });
+
+  addFileDropFunctionality();
+}
+
+function addFileDropFunctionality() {
+  // fie drag and drop
+  filetree.addEventListener(`dragover`, function dropHandler(ev) {
+    ev.preventDefault();
+    filetree.classList.add(`drop`);
+  });
+
+  filetree.addEventListener(`dragenter`, function dropHandler(ev) {
+    ev.preventDefault();
+    filetree.classList.add(`drop`);
+  });
+
+  filetree.addEventListener(`dragleave`, function dropHandler(ev) {
+    ev.preventDefault();
+    filetree.classList.remove(`drop`);
+  });
+
+  /*async*/ function getFileContent(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = ({ target }) => resolve(target.result);
+      reader.onerror = reject;
+      reader.readAsText(file);
+    });
+  }
+
+  filetree.addEventListener(`drop`, async function dropHandler(ev) {
+    filetree.classList.remove(`drop`);
+
+    async function traverseFileTree(item, path) {
+      path = path || "";
+      if (item.isFile) {
+        item.file(async (file) => {
+          const content = await getFileContent(file);
+          const destination = path + file.name;
+          const form = new FormData();
+          form.append(`filename`, destination);
+          form.append(`content`, content);
+          await fetch(`/upload/${destination}`, {
+            method: `post`,
+            body: form,
+          });
+          console.log("File:", path + file.name);
+          console.log("File content:", content);
+        });
+      } else if (item.isDirectory) {
+        item.createReader().readEntries(function (entries) {
+          entries.forEach(async (entry) => {
+            await traverseFileTree(entry, path + item.name + "/");
+          });
+        });
+      }
+    }
+
+    // Prevent default behavior (Prevent file from being opened)
+    ev.preventDefault();
+    await Promise.all(
+      [...ev.dataTransfer.items].map(async (item) =>
+        traverseFileTree(item.webkitGetAsEntry())
+      )
+    );
+
+    // Not a fan, we should be tallying what we need to upload,
+    // then upload that, then run this after all uploads finish.
+    setTimeout(refreshDirTree, 1000);
+  });
+
+  // TODO: add a "remove file" option, too
 }
 
 /**
@@ -104,6 +179,8 @@ function getFileSum(data) {
  * TODO: make sure we switch when we click a file with an open editor
  */
 function buildDirTreeUI(tree) {
+  filetree.innerHTML = ``;
+  filetree.appendChild(add);
   tree.addToPage((filename) => createFileEditTab(filename), filetree);
 }
 
@@ -236,7 +313,6 @@ function addEventHandling(filename, panel, tab, close, view) {
       .forEach((e) => e.classList.remove(`active`));
     tab.classList.add(`active`);
     tab.scrollIntoView();
-    currentView = view;
   });
 
   close.addEventListener(`click`, () => {
@@ -281,7 +357,15 @@ async function syncContent(filename) {
     console.error(`PRE:`, currentContent);
     console.error(`POST:`, newContent);
     console.error(`HASH:`, getFileSum(newContent), responseHash);
-    throw new Error(`desync for ${filename}, - do something smart!`);
+    console.log(`forced sync: fetching file content from server`);
+    entry.content = await fetch(`./${entry.filename}`).then((r) => r.text());
+    entry.view.dispatch({
+      changes: {
+        from: 0,
+        to: entry.view.state.doc.length,
+        insert: entry.content,
+      },
+    });
   }
   entry.debounce = false;
 }

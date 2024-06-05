@@ -30,6 +30,10 @@ html {
           margin-bottom: 1em;
           font-family: Arial;
 
+          &.drop {
+            background: #cceeff44;
+            color: #333;
+          }
         }
 
         li ul {
@@ -38,6 +42,7 @@ html {
 
         li {
           white-space: nowrap;
+          padding-right: 2em;
 
           &.dir {
             color: #666;
@@ -145,19 +150,18 @@ html {
       top: 1em;
       cursor: pointer;
     }
-  }
-
-  button.active {
-    color: white;
-    background: darkgreen;
-    border: 2px solid green;
-    border-radius: 5px;
-    &:hover {
-      background: rgb(0, 50, 0);
-    }
-    &:active {
-      color: darkgreen;
-      background: white;
+    &.active {
+      color: white;
+      background: darkgreen;
+      border: 2px solid green;
+      border-radius: 5px;
+      &:hover {
+        background: rgb(0, 50, 0);
+      }
+      &:active {
+        color: darkgreen;
+        background: white;
+      }
     }
   }
 }

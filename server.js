@@ -9,6 +9,7 @@ import {
 import { sep, posix } from "path";
 import { exec, spawnSync } from "child_process";
 import express from "express";
+import multer from "multer";
 import helmet from "helmet";
 import nocache from "nocache";
 import bodyParser from "body-parser";
@@ -16,6 +17,11 @@ import { applyPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
 const CONTENT_DIR = `./content`;
+const upload = multer({
+  limits: {
+    fieldSize: 25 * 1024 * 1024,
+  },
+});
 
 // Set up the core server
 const app = express();
@@ -52,13 +58,22 @@ app.post(`/format/:slug*`, (req, res) => {
 
 // Create a new file.
 app.post(`/new/:slug*`, (req, res) => {
-  // TODO: fix this so that we get the correct path vs. filename
   const full = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   const slug = full.substring(full.lastIndexOf(`/`) + 1);
-  console.log(full, slug);
-  mkdirSync(slug, { recursive: true });
-  const filename = slug + req.params[0];
-  if (!existsSync(filename)) writeFileSync(filename, ``);
+  const dirs = full.replace(`/${slug}`, ``);
+  mkdirSync(dirs, { recursive: true });
+  if (!existsSync(full)) writeFileSync(full, ``);
+  return res.send(`ok`);
+});
+
+// Create a fully qualified file.
+app.post(`/upload/:slug*`, upload.none(), (req, res) => {
+  const full = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const slug = full.substring(full.lastIndexOf(`/`) + 1);
+  const dirs = full.replace(`/${slug}`, ``);
+  const data = req.body.content;
+  mkdirSync(dirs, { recursive: true });
+  writeFileSync(full, data);
   return res.send(`ok`);
 });
 
