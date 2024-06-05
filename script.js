@@ -55,13 +55,7 @@ function addGlobalEventHandling() {
     const filename = prompt("filename?");
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
-      createFileEditTab(filename);
-      dirTree.createNewFile(
-        filename,
-        (filename) => createFileEditTab(filename),
-        filetree
-      );
-      // TODO: does it make sense to refresh the project dir listing by calling the /dir route?
+      refreshDirTree();
     }
   });
 

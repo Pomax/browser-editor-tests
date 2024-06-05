@@ -51,6 +51,17 @@ export class DirTree {
       parent.appendChild(item);
       const newPrefix = prefix + (prefix ? `/` : ``) + key;
       if (!isDir) {
+        const btn = create(`button`);
+        btn.textContent = `-`;
+        item.appendChild(btn);
+        btn.addEventListener(`click`, (e) => {
+          e.stopPropagation();
+          const sure = confirm(`Are you sure you want to delete ${key}?\nTHERE IS NO UNDELETE!`);
+          if (sure) {
+            fetch(`/delete/${newPrefix}`, { method: `delete` });
+            item.remove();
+          }
+        });
         item.addEventListener(`click`, () => clickHandler(newPrefix));
       } else {
         const list = create(`ul`);

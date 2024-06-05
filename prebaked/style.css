@@ -15,7 +15,13 @@ html {
       --tab-bar-height: 1em;
 
       #add {
-        float: right;
+        position: absolute;
+        top: 2px;
+        right: 2px;
+      }
+
+      #format {
+        vertical-align: text-top;
       }
 
       ul {
@@ -24,8 +30,10 @@ html {
         height: auto;
 
         &#filetree {
+          position: relative;
           border: 1px solid #444;
           padding: 0.5em;
+          padding-top: 1em;
           margin: 0.5em;
           margin-bottom: 1em;
           font-family: Arial;
@@ -41,26 +49,35 @@ html {
         }
 
         li {
+          position: relative;
           white-space: nowrap;
           padding-right: 2em;
 
           &.dir {
             color: #666;
             font-weight: bolder;
+            font-variant: small-caps;
+            margin-bottom: 0.5em;
           }
 
           &.file {
             color: #222;
             font-weight: normal;
+            font-variant: normal;
           }
 
-          &:not(:has(*)):hover {
+          &:not(:has(ul)):hover {
             background: #eee;
             color: #666;
             cursor: pointer;
             &.dir {
               cursor: auto;
             }
+          }
+
+          button {
+            position: absolute;
+            right: 0;
           }
         }
       }

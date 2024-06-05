@@ -5,6 +5,7 @@ import {
   watch,
   statSync,
   mkdirSync,
+  unlinkSync,
 } from "fs";
 import { sep, posix } from "path";
 import { exec, spawnSync } from "child_process";
@@ -17,6 +18,7 @@ import { applyPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
 const CONTENT_DIR = `./content`;
+const toWatch = [`./script.js`, `./prebaked/dirtree.js`];
 const upload = multer({
   limits: {
     fieldSize: 25 * 1024 * 1024,
@@ -87,6 +89,12 @@ app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
   res.send(`${getFileSum(filename, true)}`);
 });
 
+app.delete(`/delete/:slug*`, (req, res) => {
+  const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  unlinkSync(filename);
+  res.send(`gone`);
+});
+
 // Get the current file tree from the server, and send it over in a way
 // that lets the receiver reconstitute it as a DirTree object.
 app.get(`/dir`, async (req, res) => {
@@ -105,7 +113,7 @@ app.use(`/`, express.static(`prebaked`));
 app.listen(8000, () => {
   console.log(`http://127.0.0.1:8000`);
   rebuild();
-  watch(`./script.js`, () => rebuild());
+  toWatch.forEach((filename) => watch(filename, () => rebuild()));
 });
 
 // -----------------------------------------------------------
