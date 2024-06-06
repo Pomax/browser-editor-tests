@@ -14971,10 +14971,10 @@ function tagHighlighter(tags2, options) {
       for (let tag of style.tag)
         map[tag.id] = style.class;
   }
-  let { scope, all = null } = options || {};
+  let { scope, all: all2 = null } = options || {};
   return {
     style: (tags3) => {
-      let cls = all;
+      let cls = all2;
       for (let tag of tags3) {
         for (let sub of tag.set) {
           let tagClass = map[sub.id];
@@ -16665,14 +16665,14 @@ var HighlightStyle = class _HighlightStyle {
       (modSpec || (modSpec = /* @__PURE__ */ Object.create(null)))["." + cls] = spec;
       return cls;
     }
-    const all = typeof options.all == "string" ? options.all : options.all ? def(options.all) : void 0;
+    const all2 = typeof options.all == "string" ? options.all : options.all ? def(options.all) : void 0;
     const scopeOpt = options.scope;
     this.scope = scopeOpt instanceof Language ? (type) => type.prop(languageDataProp) == scopeOpt.data : scopeOpt ? (type) => type == scopeOpt : void 0;
     this.style = tagHighlighter(specs.map((style) => ({
       tag: style.tag,
       class: style.class || def(Object.assign({}, style, { tag: null }))
     })), {
-      all
+      all: all2
     }).style;
     this.module = modSpec ? new StyleModule(modSpec) : null;
     this.themeType = options.themeType;
@@ -24411,6 +24411,7 @@ The only way to restore is by rewinding!`
 
 // script.js
 var buttons = document.getElementById(`buttons`);
+var all = document.getElementById(`all`);
 var add2 = document.getElementById(`add`);
 var format = document.getElementById(`format`);
 var save = document.getElementById(`save`);
@@ -24444,8 +24445,11 @@ async function refreshDirTree() {
   buildDirTreeUI(dirTree);
 }
 function addGlobalEventHandling() {
+  all.addEventListener(`click`, async () => {
+    document.querySelectorAll(`li.file`).forEach((e) => e.click());
+  });
   add2.addEventListener(`click`, async () => {
-    const filename = prompt("filename?");
+    const filename = prompt("Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)");
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
       refreshDirTree();

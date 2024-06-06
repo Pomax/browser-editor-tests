@@ -4,7 +4,9 @@ import { javascript } from "@codemirror/lang-javascript";
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
+// This is *technically* unnecessary, but it's better to be explicit.
 const buttons = document.getElementById(`buttons`);
+const all = document.getElementById(`all`);
 const add = document.getElementById(`add`);
 const format = document.getElementById(`format`);
 const save = document.getElementById(`save`);
@@ -53,8 +55,12 @@ async function refreshDirTree() {
  * Hook up the "Add new file" and "Format this file" buttons
  */
 function addGlobalEventHandling() {
+  all.addEventListener(`click`, async () => {
+    document.querySelectorAll(`li.file`).forEach((e) => e.click());
+  });
+
   add.addEventListener(`click`, async () => {
-    const filename = prompt("filename?");
+    const filename = prompt("Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)");
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
       refreshDirTree();
