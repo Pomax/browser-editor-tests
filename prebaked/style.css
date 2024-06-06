@@ -14,16 +14,6 @@ html {
 
       --tab-bar-height: 1em;
 
-      #add {
-        position: absolute;
-        top: 2px;
-        right: 2px;
-      }
-
-      #format {
-        vertical-align: text-top;
-      }
-
       ul {
         padding: 0;
         list-style: none;
@@ -41,6 +31,31 @@ html {
           &.drop {
             background: #cceeff44;
             color: #333;
+          }
+
+          #buttons {
+            position: relative;
+            top: -1em;
+            left: -0.5em;
+            margin: 0;
+            padding: 0;
+            width: calc(100% + 1em);
+            background: #999;
+            text-align: right;
+
+            button {
+              position: unset;
+              margin: 0;
+            }
+
+            #add {
+            }
+
+            #save {
+            }
+
+            #format {
+            }
           }
         }
 

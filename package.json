@@ -6,6 +6,7 @@
   "main": "",
   "scripts": {
     "build": "rollup script.js -f iife -o prebaked/editor.bundle.js -p @rollup/plugin-node-resolve",
+    "build:esbuild": "esbuild --log-level=info --bundle --format=esm script.js > prebaked/editor.bundle.js",
     "prettier": "npx prettier -w",
     "start": "node server.js"
   },
@@ -20,6 +21,7 @@
     "codemirror": "^6.0.1",
     "diff": "^5.2.0",
     "diff-match-patch": "^1.0.5",
+    "esbuild": "^0.21.4",
     "express": "^4.19.2",
     "helmet": "^7.1.0",
     "multer": "^1.4.5-lts.1",

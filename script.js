@@ -4,8 +4,10 @@ import { javascript } from "@codemirror/lang-javascript";
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
+const buttons = document.getElementById(`buttons`);
 const add = document.getElementById(`add`);
 const format = document.getElementById(`format`);
+const save = document.getElementById(`save`);
 const filetree = document.getElementById(`filetree`);
 const tabs = document.getElementById(`tabs`);
 const editors = document.getElementById(`editors`);
@@ -51,7 +53,7 @@ async function refreshDirTree() {
  * Hook up the "Add new file" and "Format this file" buttons
  */
 function addGlobalEventHandling() {
-  document.getElementById(`add`).addEventListener(`click`, async () => {
+  add.addEventListener(`click`, async () => {
     const filename = prompt("filename?");
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
@@ -59,7 +61,7 @@ function addGlobalEventHandling() {
     }
   });
 
-  document.getElementById(`format`).addEventListener(`click`, async () => {
+  format.addEventListener(`click`, async () => {
     const tab = document.querySelector(`.active`);
     const entry = Object.values(cmInstances).find((e) => e.tab === tab);
     const filename = entry.filename;
@@ -74,6 +76,21 @@ function addGlobalEventHandling() {
         insert: entry.content,
       },
     });
+  });
+
+  save.addEventListener(`click`, async () => {
+    const addRewindPoint = confirm(
+      `Rewind points get built automatically as\nyou make changes. If you want to make one,\nyou'll have to say why.`
+    );
+    if (addRewindPoint) {
+      const reason = prompt(`Why do you need a manual rewind point?`);
+      if (reason.trim()) {
+        await fetch(`/save?reason=${encodeURIComponent(reason)}`, {
+          method: `post`,
+        });
+        alert(`Manual rewind point created`);
+      }
+    }
   });
 
   addFileDropFunctionality();
@@ -174,7 +191,7 @@ function getFileSum(data) {
  */
 function buildDirTreeUI(tree) {
   filetree.innerHTML = ``;
-  filetree.appendChild(add);
+  filetree.appendChild(buttons);
   tree.addToPage((filename) => createFileEditTab(filename), filetree);
 }
 

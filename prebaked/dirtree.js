@@ -3,19 +3,24 @@ const create = (tag) => document.createElement(tag);
 export class DirTree {
   tree = {};
 
-  constructor(files = [], valuator = (filename) => filename) {
-    files.forEach((file) => this.addFile(file, valuator));
-    this.sort(this.tree);
+  constructor(
+    files = [],
+    { getFileValue = (filename) => filename, ignore = [] } = {}
+  ) {
+    files.forEach((file) => this.addFile(file, getFileValue, ignore));
+    DirTree.sort(this.tree);
   }
 
-  addFile(file, valuator) {
+  addFile(file, valuator = () => {}, ignore = []) {
     const parts = file.split(`/`);
     let curr = this.tree;
     while (parts.length > 1) {
       const part = parts.shift();
+      if (ignore.includes(part)) return;
       curr[part] ??= {};
       curr = curr[part];
     }
+    if (ignore.includes(file)) return;
     curr[parts[0]] = valuator(file);
   }
 
@@ -29,16 +34,17 @@ export class DirTree {
     return list;
   }
 
-  sort(o) {
-    Object.entries(o).forEach(([key, value]) => {
+  static sort(sortable) {
+    // this is really more of a "move dirs up" sort
+    Object.entries(sortable).forEach(([key, value]) => {
       if (typeof value === `object`) {
-        o[key] = this.sort(value);
+        sortable[key] = this.sort(value);
       } else {
-        delete o[key];
-        o[key] = value;
+        delete sortable[key];
+        sortable[key] = value;
       }
     });
-    return o;
+    return sortable;
   }
 
   addToPage(clickHandler, parent, tree = this.tree, prefix = ``) {
@@ -52,11 +58,14 @@ export class DirTree {
       const newPrefix = prefix + (prefix ? `/` : ``) + key;
       if (!isDir) {
         const btn = create(`button`);
-        btn.textContent = `-`;
+        btn.textContent = `🗑️`;
+        btn.title = `Delete`;
         item.appendChild(btn);
         btn.addEventListener(`click`, (e) => {
           e.stopPropagation();
-          const sure = confirm(`Are you sure you want to delete ${key}?\nTHERE IS NO UNDELETE!`);
+          const sure = confirm(
+            `Are you sure you want to delete ${key}?\nThe only way to restore is by rewinding!`
+          );
           if (sure) {
             fetch(`/delete/${newPrefix}`, { method: `delete` });
             item.remove();

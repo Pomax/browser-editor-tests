@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test Editor</title>
-    <script src="./editor.bundle.js" async defer></script>
+    <script src="./editor.bundle.js" async defer type="module"></script>
     <script
       src="./graphics-element/graphics-element.js"
       type="module"
@@ -18,12 +18,14 @@
   <body>
     <main>
       <ul id="filetree">
-        <button id="add" title="new file">+</button>
+        <li id="buttons">
+          <button id="add" title="Create a new file">+</button>
+          <button id="save" title="Create rewind point">↻</button>
+          <button id="format" title="Make my code pretty!">🤩</button>
+        </li>
       </ul>
       <div class="code">
-        <div id="tabs">
-          <button id="format" title="Make it pretty!">🤩</button>
-        </div>
+        <div id="tabs"></div>
         <div id="editors"></div>
       </div>
       <div class="graphics" style="position: relative">
