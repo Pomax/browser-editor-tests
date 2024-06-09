@@ -37,6 +37,24 @@ function update(a, name) {
     z * z * mc + ca,
   ];
 
+
+sa = sin(a)
+
+xsa = x * sa
+ysa = y * sa
+zsa = z * sa
+
+ca = cos(a)
+mc = 1 - ca
+
+xmc = x * mc
+ymc = y * mc
+zmc = z * mc
+
+    | x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa |
+Q = | y * xmc + zsa,  y * ymc +  ca, y * zmc - xsa |
+    | z * xmc - ysa,  z * ymc + xsa, z * zmc +  ca |  
+
   // apply local rotation
   updateLocalFrame(Q);
 }
