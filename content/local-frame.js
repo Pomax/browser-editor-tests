@@ -21,10 +21,10 @@ function update(a, name) {
   pv.forEach((v, i, pv) => (pv[i] = v / m));
 
   // rotation matrix for new pitch axis
+  const [x, y, z] = pv;
   const sa = sin(a);
   const ca = cos(a);
   const mc = 1 - ca;
-  const [x, y, z] = pv;
   const xsa = x * sa;
   const ysa = y * sa;
   const zsa = z * sa;
