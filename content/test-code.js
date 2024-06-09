@@ -1,5 +1,5 @@
 const knots_in_feet_per_s = 1.68781;
-const knots_in_km = 1.852;
+const knots_in_kmph = 1.852;
 const ms_per_s = 1000;
 const ms_per_hour = 3600 * ms_per_s;
 
