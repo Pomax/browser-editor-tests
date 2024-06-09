@@ -8,7 +8,7 @@ Feel free to let me know what additional criteria you'd expect a proper browser-
 
 ## how do I use this?
 
-It's a node project, so you'll need that install, then clone this repo (or fork it and then clone that) and run `npm install`. Things should be cross-platform enough to work on Windows, Mac, and Linux by running `npm start` and then opening the URL that tells you things are running on.
+It's a node project, so you'll need that installed (I recommend `nvm` or its windows equivalent), then clone this repo (or fork it and then clone that) and run `npm install`. Things should be cross-platform enough to work on Windows, Mac, and Linux by running `npm start` and then opening the URL that tells you things are running on.
 
 In order to properly compare editors, this test suite comes with:
 
