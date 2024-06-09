@@ -25,8 +25,8 @@ function draw() {
 
   const [x, y, z] = localFrame.roll;
   const vspeed = speed * z * 1.68781;
-  const sign = 
-  const fspeed = (speed ** 2 - vspeed ** 2) ** 0.5;
+  const s = sign(vspeed);
+  const fspeed = (speed ** 2 - s * vspeed ** 2) ** 0.5;
 
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
   const turnRate = ((heading - oldheading) * 1000) / frameDelta;
