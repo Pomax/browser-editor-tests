@@ -37,7 +37,7 @@ function draw() {
   const turnRate = ((heading - oldheading) * 1000) / frameDelta;
   oldheading = heading;
   if (playing && frameDelta < 50) {
-    const km = (1.852 / 3600000) * frameDelta * speed;
+    const km = (knots_in_kmph / 3600000) * frameDelta * speed;
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
     long = pos[1];
