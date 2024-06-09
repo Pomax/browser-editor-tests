@@ -12,11 +12,12 @@ It's a node project, so you'll need that installed (I recommend `nvm` or its win
 
 In order to properly compare editors, this test suite comes with:
 
-- diff-based edit syncing between the browser and the server side on-disk files
-- automatic git commits on the server as you edit
-- a file tree
-- file create and delete
+- a "user dir" that you can mess around with as much as you like without affecting the test itself
+- a file tree that shows all the files (with the `.git` dir filtered out) in the user content dir.
 - "one tab per file" with both tab based and filetree based "click to view that file"
+- file create and delete, because obviously
+- diff-based (debounced) edit syncing between the browser and the on-disk files at the server
+- automatic (debounced) git commits on the server as you edit 
 - autoformatting (using `prettier`) for JS, CSS, and HTML files
 - a "do something with this content" in the form of aggregating files and loading it as `<graphics-element>`
 
