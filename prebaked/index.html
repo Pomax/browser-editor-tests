@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -12,26 +12,31 @@
       defer
     ></script>
     <link rel="stylesheet" href="./graphics-element/graphics-element.css" />
+    <link rel="stylesheet" href="./layout.css" />
     <link rel="stylesheet" href="./style.css" />
     <link rel="stylesheet" href="./candy.css" />
   </head>
   <body>
     <main>
-      <ul id="filetree">
-        <li id="buttons">
-          <button id="all" title="Open all files">!!!</button>
-          <button id="add" title="Create a new file">+</button>
-          <button id="save" title="Create rewind point">↻</button>
-          <button id="format" title="Make my code pretty!">🤩</button>
-        </li>
-      </ul>
-      <div class="code">
-        <div id="tabs"></div>
-        <div id="editors"></div>
+      <li id="buttons">
+        <button id="all" title="Open all files">!!!</button>
+        <button id="add" title="Create a new file">+</button>
+        <button id="save" title="Create rewind point">↻</button>
+        <button id="format" title="Make my code pretty!">🤩</button>
+      </li>
+      <ul id="filetree"></ul>
+      <div id="left">
+        <button>〈</button>
       </div>
-      <div class="graphics" style="position: relative">
+      <div id="tabs"></div>
+      <div id="right">
+        <button>〉</button>
+      </div>
+      <div id="editors"></div>
+      <div id="preview" class="graphics" style="position: relative">
         <graphics-element id="graphics" title="graphics"></graphics-element>
       </div>
+      <div id="status"></div>
     </main>
   </body>
 </html>

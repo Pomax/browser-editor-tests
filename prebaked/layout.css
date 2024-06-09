@@ -1,0 +1,60 @@
+main {
+  display: grid;
+  grid-template-columns: 10em 2em 46em 2em 1fr;
+  grid-template-rows: 2.5em 1fr 2em;
+  grid-column-gap: 0px;
+  gap: 0em 0.5em;
+  grid-template-areas:
+    "buttons   left    tabs    right  preview"
+    "filetree editors editors editors preview"
+    "status   status  status  status  status";
+}
+
+#buttons {
+  grid-area: buttons;
+  /* background: lightgoldenrodyellow; */
+  margin: 0;
+  padding: 0;
+}
+#filetree {
+  grid-area: filetree;
+  /* background: lightcoral; */
+  margin: 0;
+  padding: 0;
+}
+#status {
+  grid-area: status;
+  /* background: lightgreen; */
+  margin: 0;
+  padding: 0;
+}
+#left {
+  grid-area: left;
+  /* background: lightpink; */
+  margin: 0;
+  padding: 0;
+}
+#tabs {
+  grid-area: tabs;
+  /* background: lightsalmon; */
+  margin: 0;
+  padding: 0;
+}
+#right {
+  grid-area: right;
+  margin: 0;
+  padding: 0;
+  /* background: lightblue; */
+}
+#editors {
+  grid-area: editors;
+  /* background: lightsteelblue; */
+  margin: 0;
+  padding: 0;
+}
+#preview {
+  grid-area: preview;
+  /* background: lightseagreen; */
+  margin: 0;
+  padding: 0;
+}

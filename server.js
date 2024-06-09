@@ -17,7 +17,10 @@ import bodyParser from "body-parser";
 import { applyPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
-const CONTENT_DIR = `./content`;
+const __dirname = import.meta.dirname.replaceAll(sep, posix.sep);
+const isWindows = process.platform === `win32`;
+const npm = isWindows ? `npm.cmd` : `npm`;
+const CONTENT_DIR = isWindows ? `content` : `./content`;
 const toWatch = [`./script.js`, `./prebaked/dirtree.js`];
 const upload = multer({
   limits: {
@@ -70,7 +73,8 @@ app.post(`/format/:slug*`, (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   const ext = filename.substring(filename.lastIndexOf(`.`), filename.length);
   if ([`.js`, `.css`, `.html`].includes(ext)) {
-    spawnSync(`npm`, [`run`, `prettier`, `--`, filename], { stdio: `inherit` });
+    console.log(`running prettier...`);
+    spawnSync(npm, [`run`, `prettier`, `--`, filename], { stdio: `inherit` });
   }
   res.send(`ok`);
   createRewindPoint();
@@ -179,9 +183,10 @@ app.delete(`/delete/:slug*`, (req, res) => {
 // Get the current file tree from the server, and send it over in a way
 // that lets the receiver reconstitute it as a DirTree object.
 app.get(`/dir`, async (req, res) => {
-  const dir = await readContentDir(CONTENT_DIR);
+  const osResponse = await readContentDir(CONTENT_DIR);
+  const dir = osResponse.map((v) => v.replace(__dirname + posix.sep, ``));
   const dirTree = new DirTree(dir, {
-    getFileValue: (filename) => getFileSum(filename),
+    getFileValue: (filename) => getFileSum(filename.replace(__dirname, ``)),
     ignore: [`.git`],
   });
   res.send(JSON.stringify(dirTree.tree));
@@ -231,10 +236,9 @@ function execPromise(command, options = {}) {
  * Ask the OS for a flat dir listing.
  */
 async function readContentDir() {
-  let listCommand =
-    process.platform === `win32`
-      ? `dir ${CONTENT_DIR} /b/o/s`
-      : `find ${CONTENT_DIR}`;
+  let listCommand = isWindows
+    ? `dir /b/o/s ${CONTENT_DIR}`
+    : `find ${CONTENT_DIR}`;
   const output = await execPromise(listCommand);
   const allFileListing = output
     .split(/\r?\n/)
@@ -266,5 +270,10 @@ async function setupGit() {
  * Trigger a rebuild by telling npm to run the `build` script from package.json.
  */
 function rebuild() {
-  spawnSync(`npm`, [`run`, `build:esbuild`], { stdio: `inherit` });
+  console.log(`rebuilding`);
+  const start = Date.now();
+  spawnSync(npm, [`run`, `build:esbuild`], {
+    stdio: `inherit`,
+  });
+  console.log(`Build took ${Date.now() - start}ms`);
 }

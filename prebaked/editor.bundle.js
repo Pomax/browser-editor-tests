@@ -1101,15 +1101,15 @@ function mapSet(setA, setB, before, mkSet = false) {
       }
       b.next();
     } else if (a.ins >= 0) {
-      let len = 0, left = a.len;
-      while (left) {
+      let len = 0, left2 = a.len;
+      while (left2) {
         if (b.ins == -1) {
-          let piece = Math.min(left, b.len);
+          let piece = Math.min(left2, b.len);
           len += piece;
-          left -= piece;
+          left2 -= piece;
           b.forward(piece);
-        } else if (b.ins == 0 && b.len < left) {
-          left -= b.len;
+        } else if (b.ins == 0 && b.len < left2) {
+          left2 -= b.len;
           b.next();
         } else {
           break;
@@ -1119,7 +1119,7 @@ function mapSet(setA, setB, before, mkSet = false) {
       if (insert2 && inserted < a.i)
         addInsert(insert2, sections, a.text);
       inserted = a.i;
-      a.forward(a.len - left);
+      a.forward(a.len - left2);
     } else if (a.done && b.done) {
       return insert2 ? ChangeSet.createSet(sections, insert2) : ChangeDesc.create(sections);
     } else {
@@ -3692,8 +3692,8 @@ function scanFor(node, off, targetNode, targetOff, dir) {
 function maxOffset(node) {
   return node.nodeType == 3 ? node.nodeValue.length : node.childNodes.length;
 }
-function flattenRect(rect, left) {
-  let x = left ? rect.left : rect.right;
+function flattenRect(rect, left2) {
+  let x = left2 ? rect.left : rect.right;
   return { left: x, right: x, top: rect.top, bottom: rect.bottom };
 }
 function windowRect(win) {
@@ -3871,11 +3871,11 @@ function focusPreventScroll(dom) {
   if (!preventScrollSupported) {
     preventScrollSupported = false;
     for (let i = 0; i < stack.length; ) {
-      let elt = stack[i++], top2 = stack[i++], left = stack[i++];
+      let elt = stack[i++], top2 = stack[i++], left2 = stack[i++];
       if (elt.scrollTop != top2)
         elt.scrollTop = top2;
-      if (elt.scrollLeft != left)
-        elt.scrollLeft = left;
+      if (elt.scrollLeft != left2)
+        elt.scrollLeft = left2;
     }
   }
 }
@@ -5938,21 +5938,21 @@ function getIsolatedRanges(view, line) {
 }
 var scrollMargins = /* @__PURE__ */ Facet.define();
 function getScrollMargins(view) {
-  let left = 0, right = 0, top2 = 0, bottom = 0;
+  let left2 = 0, right2 = 0, top2 = 0, bottom = 0;
   for (let source of view.state.facet(scrollMargins)) {
     let m = source(view);
     if (m) {
       if (m.left != null)
-        left = Math.max(left, m.left);
+        left2 = Math.max(left2, m.left);
       if (m.right != null)
-        right = Math.max(right, m.right);
+        right2 = Math.max(right2, m.right);
       if (m.top != null)
         top2 = Math.max(top2, m.top);
       if (m.bottom != null)
         bottom = Math.max(bottom, m.bottom);
     }
   }
-  return { left, right, top: top2, bottom };
+  return { left: left2, right: right2, top: top2, bottom };
 }
 var styleModule = /* @__PURE__ */ Facet.define();
 var ChangedRange = class _ChangedRange {
@@ -6788,11 +6788,11 @@ function domPosInText(node, x, y) {
         generalSide = x - rect.left;
       let dy = (rect.top > y ? rect.top - y : y - rect.bottom) - 1;
       if (rect.left - 1 <= x && rect.right + 1 >= x && dy < closestDY) {
-        let right = x >= (rect.left + rect.right) / 2, after = right;
+        let right2 = x >= (rect.left + rect.right) / 2, after = right2;
         if (browser.chrome || browser.gecko) {
           let rectBefore = textRange(node, i).getBoundingClientRect();
           if (rectBefore.left == rect.right)
-            after = !right;
+            after = !right2;
         }
         if (dy <= 0)
           return { node, offset: i + (after ? 1 : 0) };
@@ -8179,11 +8179,11 @@ var HeightMapGap = class _HeightMapGap extends HeightMap {
   }
 };
 var HeightMapBranch = class extends HeightMap {
-  constructor(left, brk, right) {
-    super(left.length + brk + right.length, left.height + right.height, brk | (left.outdated || right.outdated ? 2 : 0));
-    this.left = left;
-    this.right = right;
-    this.size = left.size + right.size;
+  constructor(left2, brk, right2) {
+    super(left2.length + brk + right2.length, left2.height + right2.height, brk | (left2.outdated || right2.outdated ? 2 : 0));
+    this.left = left2;
+    this.right = right2;
+    this.size = left2.size + right2.size;
   }
   get break() {
     return this.flags & 1;
@@ -8194,12 +8194,12 @@ var HeightMapBranch = class extends HeightMap {
   }
   lineAt(value, type, oracle, top2, offset) {
     let rightTop = top2 + this.left.height, rightOffset = offset + this.left.length + this.break;
-    let left = type == QueryType.ByHeight ? value < rightTop : value < rightOffset;
-    let base2 = left ? this.left.lineAt(value, type, oracle, top2, offset) : this.right.lineAt(value, type, oracle, rightTop, rightOffset);
-    if (this.break || (left ? base2.to < rightOffset : base2.from > rightOffset))
+    let left2 = type == QueryType.ByHeight ? value < rightTop : value < rightOffset;
+    let base2 = left2 ? this.left.lineAt(value, type, oracle, top2, offset) : this.right.lineAt(value, type, oracle, rightTop, rightOffset);
+    if (this.break || (left2 ? base2.to < rightOffset : base2.from > rightOffset))
       return base2;
     let subQuery = type == QueryType.ByPosNoHeight ? QueryType.ByPosNoHeight : QueryType.ByPos;
-    if (left)
+    if (left2)
       return base2.join(this.right.lineAt(rightOffset, subQuery, oracle, rightTop, rightOffset));
     else
       return this.left.lineAt(rightOffset, subQuery, oracle, top2, offset).join(base2);
@@ -8230,64 +8230,64 @@ var HeightMapBranch = class extends HeightMap {
     let result = [];
     if (from > 0)
       this.decomposeLeft(from, result);
-    let left = result.length;
+    let left2 = result.length;
     for (let node of nodes)
       result.push(node);
     if (from > 0)
-      mergeGaps(result, left - 1);
+      mergeGaps(result, left2 - 1);
     if (to < this.length) {
-      let right = result.length;
+      let right2 = result.length;
       this.decomposeRight(to, result);
-      mergeGaps(result, right);
+      mergeGaps(result, right2);
     }
     return HeightMap.of(result);
   }
   decomposeLeft(to, result) {
-    let left = this.left.length;
-    if (to <= left)
+    let left2 = this.left.length;
+    if (to <= left2)
       return this.left.decomposeLeft(to, result);
     result.push(this.left);
     if (this.break) {
-      left++;
-      if (to >= left)
+      left2++;
+      if (to >= left2)
         result.push(null);
     }
-    if (to > left)
-      this.right.decomposeLeft(to - left, result);
+    if (to > left2)
+      this.right.decomposeLeft(to - left2, result);
   }
   decomposeRight(from, result) {
-    let left = this.left.length, right = left + this.break;
-    if (from >= right)
-      return this.right.decomposeRight(from - right, result);
-    if (from < left)
+    let left2 = this.left.length, right2 = left2 + this.break;
+    if (from >= right2)
+      return this.right.decomposeRight(from - right2, result);
+    if (from < left2)
       this.left.decomposeRight(from, result);
-    if (this.break && from < right)
+    if (this.break && from < right2)
       result.push(null);
     result.push(this.right);
   }
-  balanced(left, right) {
-    if (left.size > 2 * right.size || right.size > 2 * left.size)
-      return HeightMap.of(this.break ? [left, null, right] : [left, right]);
-    this.left = left;
-    this.right = right;
-    this.height = left.height + right.height;
-    this.outdated = left.outdated || right.outdated;
-    this.size = left.size + right.size;
-    this.length = left.length + this.break + right.length;
+  balanced(left2, right2) {
+    if (left2.size > 2 * right2.size || right2.size > 2 * left2.size)
+      return HeightMap.of(this.break ? [left2, null, right2] : [left2, right2]);
+    this.left = left2;
+    this.right = right2;
+    this.height = left2.height + right2.height;
+    this.outdated = left2.outdated || right2.outdated;
+    this.size = left2.size + right2.size;
+    this.length = left2.length + this.break + right2.length;
     return this;
   }
   updateHeight(oracle, offset = 0, force = false, measured) {
-    let { left, right } = this, rightStart = offset + left.length + this.break, rebalance = null;
-    if (measured && measured.from <= offset + left.length && measured.more)
-      rebalance = left = left.updateHeight(oracle, offset, force, measured);
+    let { left: left2, right: right2 } = this, rightStart = offset + left2.length + this.break, rebalance = null;
+    if (measured && measured.from <= offset + left2.length && measured.more)
+      rebalance = left2 = left2.updateHeight(oracle, offset, force, measured);
     else
-      left.updateHeight(oracle, offset, force);
-    if (measured && measured.from <= rightStart + right.length && measured.more)
-      rebalance = right = right.updateHeight(oracle, rightStart, force, measured);
+      left2.updateHeight(oracle, offset, force);
+    if (measured && measured.from <= rightStart + right2.length && measured.more)
+      rebalance = right2 = right2.updateHeight(oracle, rightStart, force, measured);
     else
-      right.updateHeight(oracle, rightStart, force);
+      right2.updateHeight(oracle, rightStart, force);
     if (rebalance)
-      return this.balanced(left, right);
+      return this.balanced(left2, right2);
     this.height = this.left.height + this.right.height;
     this.outdated = false;
     return this;
@@ -8441,7 +8441,7 @@ var DecorationComparator2 = class {
 function visiblePixelRange(dom, paddingTop) {
   let rect = dom.getBoundingClientRect();
   let doc2 = dom.ownerDocument, win = doc2.defaultView || window;
-  let left = Math.max(0, rect.left), right = Math.min(win.innerWidth, rect.right);
+  let left2 = Math.max(0, rect.left), right2 = Math.min(win.innerWidth, rect.right);
   let top2 = Math.max(0, rect.top), bottom = Math.min(win.innerHeight, rect.bottom);
   for (let parent = dom.parentNode; parent && parent != doc2.body; ) {
     if (parent.nodeType == 1) {
@@ -8449,8 +8449,8 @@ function visiblePixelRange(dom, paddingTop) {
       let style = window.getComputedStyle(elt);
       if ((elt.scrollHeight > elt.clientHeight || elt.scrollWidth > elt.clientWidth) && style.overflow != "visible") {
         let parentRect = elt.getBoundingClientRect();
-        left = Math.max(left, parentRect.left);
-        right = Math.min(right, parentRect.right);
+        left2 = Math.max(left2, parentRect.left);
+        right2 = Math.min(right2, parentRect.right);
         top2 = Math.max(top2, parentRect.top);
         bottom = parent == dom.parentNode ? parentRect.bottom : Math.min(bottom, parentRect.bottom);
       }
@@ -8462,8 +8462,8 @@ function visiblePixelRange(dom, paddingTop) {
     }
   }
   return {
-    left: left - rect.left,
-    right: Math.max(left, right) - rect.left,
+    left: left2 - rect.left,
+    right: Math.max(left2, right2) - rect.left,
     top: top2 - (rect.top + paddingTop),
     bottom: Math.max(top2, bottom) - (rect.top + paddingTop)
   };
@@ -8825,18 +8825,18 @@ var ViewState = class {
       } else {
         let totalWidth = structure.total * this.heightOracle.charWidth;
         let marginWidth = margin * this.heightOracle.charWidth;
-        let left, right;
+        let left2, right2;
         if (target != null) {
           let targetFrac = findFraction(structure, target);
           let spaceFrac = ((this.pixelViewport.right - this.pixelViewport.left) / 2 + marginWidth) / totalWidth;
-          left = targetFrac - spaceFrac;
-          right = targetFrac + spaceFrac;
+          left2 = targetFrac - spaceFrac;
+          right2 = targetFrac + spaceFrac;
         } else {
-          left = (this.pixelViewport.left - marginWidth) / totalWidth;
-          right = (this.pixelViewport.right + marginWidth) / totalWidth;
+          left2 = (this.pixelViewport.left - marginWidth) / totalWidth;
+          right2 = (this.pixelViewport.right + marginWidth) / totalWidth;
         }
-        viewFrom = findPosition(structure, left);
-        viewTo = findPosition(structure, right);
+        viewFrom = findPosition(structure, left2);
+        viewTo = findPosition(structure, right2);
       }
       if (viewFrom > line.from)
         addGap(line.from, viewFrom, line, structure);
@@ -11144,9 +11144,9 @@ var RectangleMarker = class _RectangleMarker {
   Create a marker with the given class and dimensions. If `width`
   is null, the DOM element will get no width style.
   */
-  constructor(className, left, top2, width, height) {
+  constructor(className, left2, top2, width, height) {
     this.className = className;
-    this.left = left;
+    this.left = left2;
     this.top = top2;
     this.width = width;
     this.height = height;
@@ -11194,8 +11194,8 @@ var RectangleMarker = class _RectangleMarker {
 };
 function getBase(view) {
   let rect = view.scrollDOM.getBoundingClientRect();
-  let left = view.textDirection == Direction.LTR ? rect.left : rect.right - view.scrollDOM.clientWidth * view.scaleX;
-  return { left: left - view.scrollDOM.scrollLeft * view.scaleX, top: rect.top - view.scrollDOM.scrollTop * view.scaleY };
+  let left2 = view.textDirection == Direction.LTR ? rect.left : rect.right - view.scrollDOM.clientWidth * view.scaleX;
+  return { left: left2 - view.scrollDOM.scrollLeft * view.scaleX, top: rect.top - view.scrollDOM.scrollTop * view.scaleY };
 }
 function wrappedLine(view, pos, inside2) {
   let range = EditorSelection.cursor(pos);
@@ -11233,12 +11233,12 @@ function rectanglesForRange(view, className, range) {
       top2.bottom = bottom.top = (top2.bottom + bottom.top) / 2;
     return pieces(top2).concat(between).concat(pieces(bottom));
   }
-  function piece(left, top2, right, bottom) {
+  function piece(left2, top2, right2, bottom) {
     return new RectangleMarker(
       className,
-      left - base2.left,
+      left2 - base2.left,
       top2 - base2.top - 0.01,
-      right - left,
+      right2 - left2,
       bottom - top2 + 0.01
       /* C.Epsilon */
     );
@@ -12178,7 +12178,7 @@ var tooltipPlugin = /* @__PURE__ */ ViewPlugin.fromClass(class {
       let arrowHeight = arrow ? 7 : 0;
       let width = size.right - size.left, height = (_a2 = knownHeight.get(tView)) !== null && _a2 !== void 0 ? _a2 : size.bottom - size.top;
       let offset = tView.offset || noOffset, ltr = this.view.textDirection == Direction.LTR;
-      let left = size.width > space2.right - space2.left ? ltr ? space2.left : space2.right - size.width : ltr ? Math.min(pos.left - (arrow ? 14 : 0) + offset.x, space2.right - width) : Math.max(space2.left, pos.left - width + (arrow ? 14 : 0) - offset.x);
+      let left2 = size.width > space2.right - space2.left ? ltr ? space2.left : space2.right - size.width : ltr ? Math.min(pos.left - (arrow ? 14 : 0) + offset.x, space2.right - width) : Math.max(space2.left, pos.left - width + (arrow ? 14 : 0) - offset.x);
       let above = this.above[i];
       if (!tooltip.strictSide && (above ? pos.top - (size.bottom - size.top) - offset.y < space2.top : pos.bottom + (size.bottom - size.top) + offset.y > space2.bottom) && above == space2.bottom - pos.bottom > pos.top - space2.top)
         above = this.above[i] = !above;
@@ -12194,25 +12194,25 @@ var tooltipPlugin = /* @__PURE__ */ ViewPlugin.fromClass(class {
         dom.style.height = "";
       }
       let top2 = above ? pos.top - height - arrowHeight - offset.y : pos.bottom + arrowHeight + offset.y;
-      let right = left + width;
+      let right2 = left2 + width;
       if (tView.overlap !== true) {
         for (let r of others)
-          if (r.left < right && r.right > left && r.top < top2 + height && r.bottom > top2)
+          if (r.left < right2 && r.right > left2 && r.top < top2 + height && r.bottom > top2)
             top2 = above ? r.top - height - 2 - arrowHeight : r.bottom + arrowHeight + 2;
       }
       if (this.position == "absolute") {
         dom.style.top = (top2 - measured.parent.top) / scaleY + "px";
-        dom.style.left = (left - measured.parent.left) / scaleX + "px";
+        dom.style.left = (left2 - measured.parent.left) / scaleX + "px";
       } else {
         dom.style.top = top2 / scaleY + "px";
-        dom.style.left = left / scaleX + "px";
+        dom.style.left = left2 / scaleX + "px";
       }
       if (arrow) {
-        let arrowLeft = pos.left + (ltr ? offset.x : -offset.x) - (left + 14 - 7);
+        let arrowLeft = pos.left + (ltr ? offset.x : -offset.x) - (left2 + 14 - 7);
         arrow.style.left = arrowLeft / scaleX + "px";
       }
       if (tView.overlap !== true)
-        others.push({ left, top: top2, right, bottom: top2 + height });
+        others.push({ left: left2, top: top2, right: right2, bottom: top2 + height });
       dom.classList.toggle("cm-tooltip-above", above);
       dom.classList.toggle("cm-tooltip-below", !above);
       if (tView.positioned)
@@ -19490,17 +19490,17 @@ function joinClass(a, b) {
   return a ? b ? a + " " + b : a : b;
 }
 function defaultPositionInfo(view, list, option, info, space2, tooltip) {
-  let rtl = view.textDirection == Direction.RTL, left = rtl, narrow = false;
+  let rtl = view.textDirection == Direction.RTL, left2 = rtl, narrow = false;
   let side = "top", offset, maxWidth;
   let spaceLeft = list.left - space2.left, spaceRight = space2.right - list.right;
   let infoWidth = info.right - info.left, infoHeight = info.bottom - info.top;
-  if (left && spaceLeft < Math.min(infoWidth, spaceRight))
-    left = false;
-  else if (!left && spaceRight < Math.min(infoWidth, spaceLeft))
-    left = true;
-  if (infoWidth <= (left ? spaceLeft : spaceRight)) {
+  if (left2 && spaceLeft < Math.min(infoWidth, spaceRight))
+    left2 = false;
+  else if (!left2 && spaceRight < Math.min(infoWidth, spaceLeft))
+    left2 = true;
+  if (infoWidth <= (left2 ? spaceLeft : spaceRight)) {
     offset = Math.max(space2.top, Math.min(option.top, space2.bottom - infoHeight)) - list.top;
-    maxWidth = Math.min(400, left ? spaceLeft : spaceRight);
+    maxWidth = Math.min(400, left2 ? spaceLeft : spaceRight);
   } else {
     narrow = true;
     maxWidth = Math.min(
@@ -19520,7 +19520,7 @@ function defaultPositionInfo(view, list, option, info, space2, tooltip) {
   let scaleX = (list.right - list.left) / tooltip.offsetWidth;
   return {
     style: `${side}: ${offset / scaleY}px; max-width: ${maxWidth / scaleX}px`,
-    class: "cm-completionInfo-" + (narrow ? rtl ? "left-narrow" : "right-narrow" : left ? "left" : "right")
+    class: "cm-completionInfo-" + (narrow ? rtl ? "left-narrow" : "right-narrow" : left2 ? "left" : "right")
   };
 }
 function optionContent(config2) {
@@ -23887,11 +23887,11 @@ Diff.prototype = {
     basePath.oldPos = oldPos;
     return newPos;
   },
-  equals: function equals(left, right) {
+  equals: function equals(left2, right2) {
     if (this.options.comparator) {
-      return this.options.comparator(left, right);
+      return this.options.comparator(left2, right2);
     } else {
-      return left === right || this.options.ignoreCase && left.toLowerCase() === right.toLowerCase();
+      return left2 === right2 || this.options.ignoreCase && left2.toLowerCase() === right2.toLowerCase();
     }
   },
   removeEmpty: function removeEmpty(array) {
@@ -23966,12 +23966,12 @@ var characterDiff = new Diff();
 var extendedWordChars = /^[A-Za-z\xC0-\u02C6\u02C8-\u02D7\u02DE-\u02FF\u1E00-\u1EFF]+$/;
 var reWhitespace = /\S/;
 var wordDiff = new Diff();
-wordDiff.equals = function(left, right) {
+wordDiff.equals = function(left2, right2) {
   if (this.options.ignoreCase) {
-    left = left.toLowerCase();
-    right = right.toLowerCase();
+    left2 = left2.toLowerCase();
+    right2 = right2.toLowerCase();
   }
-  return left === right || this.options.ignoreWhitespace && !reWhitespace.test(left) && !reWhitespace.test(right);
+  return left2 === right2 || this.options.ignoreWhitespace && !reWhitespace.test(left2) && !reWhitespace.test(right2);
 };
 wordDiff.tokenize = function(value) {
   var tokens = value.split(/([^\S\r\n]+|[()[\]{}'"\r\n]|\b)/);
@@ -24073,11 +24073,11 @@ jsonDiff.castInput = function(value) {
     "  "
   );
 };
-jsonDiff.equals = function(left, right) {
+jsonDiff.equals = function(left2, right2) {
   return Diff.prototype.equals.call(
     jsonDiff,
-    left.replace(/,([\r\n])/g, "$1"),
-    right.replace(/,([\r\n])/g, "$1")
+    left2.replace(/,([\r\n])/g, "$1"),
+    right2.replace(/,([\r\n])/g, "$1")
   );
 };
 function canonicalize(obj, stack, replacementStack, replacer, key) {
@@ -24410,11 +24410,12 @@ The only way to restore is by rewinding!`
 };
 
 // script.js
-var buttons = document.getElementById(`buttons`);
 var all = document.getElementById(`all`);
 var add2 = document.getElementById(`add`);
 var format = document.getElementById(`format`);
 var save = document.getElementById(`save`);
+var left = document.getElementById(`left`);
+var right = document.getElementById(`right`);
 var filetree = document.getElementById(`filetree`);
 var tabs = document.getElementById(`tabs`);
 var editors = document.getElementById(`editors`);
@@ -24448,8 +24449,12 @@ function addGlobalEventHandling() {
   all.addEventListener(`click`, async () => {
     document.querySelectorAll(`li.file`).forEach((e) => e.click());
   });
+  left.addEventListener(`click`, () => tabs.scrollBy(-100, 0));
+  right.addEventListener(`click`, () => tabs.scrollBy(100, 0));
   add2.addEventListener(`click`, async () => {
-    const filename = prompt("Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)");
+    const filename = prompt(
+      "Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)"
+    );
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
       refreshDirTree();
@@ -24554,7 +24559,6 @@ function getFileSum(data) {
 }
 function buildDirTreeUI(tree) {
   filetree.innerHTML = ``;
-  filetree.appendChild(buttons);
   tree.addToPage((filename) => createFileEditTab(filename), filetree);
 }
 async function createFileEditTab(filename) {

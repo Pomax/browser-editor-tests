@@ -5,11 +5,12 @@ import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
 // This is *technically* unnecessary, but it's better to be explicit.
-const buttons = document.getElementById(`buttons`);
 const all = document.getElementById(`all`);
 const add = document.getElementById(`add`);
 const format = document.getElementById(`format`);
 const save = document.getElementById(`save`);
+const left = document.getElementById(`left`);
+const right = document.getElementById(`right`);
 const filetree = document.getElementById(`filetree`);
 const tabs = document.getElementById(`tabs`);
 const editors = document.getElementById(`editors`);
@@ -59,8 +60,13 @@ function addGlobalEventHandling() {
     document.querySelectorAll(`li.file`).forEach((e) => e.click());
   });
 
+  left.addEventListener(`click`, () => tabs.scrollBy(-100, 0));
+  right.addEventListener(`click`, () => tabs.scrollBy(+100, 0));
+
   add.addEventListener(`click`, async () => {
-    const filename = prompt("Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)");
+    const filename = prompt(
+      "Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)"
+    );
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
       refreshDirTree();
@@ -197,7 +203,6 @@ function getFileSum(data) {
  */
 function buildDirTreeUI(tree) {
   filetree.innerHTML = ``;
-  filetree.appendChild(buttons);
   tree.addToPage((filename) => createFileEditTab(filename), filetree);
 }
 
