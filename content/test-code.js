@@ -34,14 +34,14 @@ function draw() {
   const fspeed = (speed ** 2 - s * vspeed ** 2) ** 0.5;
 
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
-  const turnRate = ((heading - oldheading) * 1000) / frameDelta;
+  const turnRate = ((heading - oldheading) * ms_per_s) / frameDelta;
   oldheading = heading;
   if (playing && frameDelta < 50) {
     const km = (knots_in_kmph / 3600000) * frameDelta * speed;
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
     long = pos[1];
-    elevation += (vspeed / 1000) * frameDelta;
+    elevation += (vspeed / ms_per_s) * frameDelta;
   }
 
   drawAxes();
