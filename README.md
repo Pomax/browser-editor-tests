@@ -25,4 +25,8 @@ In order to properly compare editors, this test suite comes with:
 
 I know. Get in touch. We can do more.
 
+## Why aren't you testing [...]?
+
+Because you never told me that exists, [file an issue](https://github.com/Pomax/browser-editor-tests/issues/new) so I can add it.
+
 - [Pomax](https://mastodon.social/deck/@TheRealPomax)
