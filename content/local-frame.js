@@ -43,8 +43,7 @@ const zsa = z * sa;
 const xmc = x * mc;
 const ymc = y * mc;
 const zmc = z * mc;
-
-    | x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa |
+const Q = [x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa |
 Q = | y * xmc + zsa,  y * ymc +  ca, y * zmc - xsa |
     | z * xmc - ysa,  z * ymc + xsa, z * zmc +  ca |  
 
