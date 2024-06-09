@@ -29,7 +29,7 @@ function draw() {
   translate(width / 2, height / 2);
 
   const [x, y, z] = localFrame.roll;
-  const vspeed = speed * z * 1.68781;
+  const vspeed = speed * z * knots_in_feet_per_s;
   const s = sign(vspeed);
   const fspeed = (speed ** 2 - s * vspeed ** 2) ** 0.5;
 
