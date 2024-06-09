@@ -32,10 +32,16 @@ function update(a, name) {
   const ymc = y * mc;
   const zmc = z * mc;
   const Q = [
-  x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa,
-  y * xmc + zsa,  y * ymc +  ca, y * zmc - xsa ,
-   z * xmc - ysa,  z * ymc + xsa, z * zmc +  ca ,
-];
+    x * xmc + ca,
+    x * ymc - zsa,
+    x * zmc + ysa,
+    y * xmc + zsa,
+    y * ymc + ca,
+    y * zmc - xsa,
+    z * xmc - ysa,
+    z * ymc + xsa,
+    z * zmc + ca,
+  ];
 
   // apply local rotation
   updateLocalFrame(Q);
