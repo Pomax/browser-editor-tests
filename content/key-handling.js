@@ -9,10 +9,10 @@ function keyDown() {
     rotation -= step / 10;
   }
   if (keyboard.ArrowUp) {
-    update(-step, `pitch`);
+    update(step, `pitch`);
   }
   if (keyboard.ArrowDown) {
-    update(step, `pitch`);
+    update(-step, `pitch`);
   }
   if (keyboard[` `]) {
     playing ? pause() : play();
