@@ -25,17 +25,17 @@ function update(a, name) {
   const ca = cos(a);
   const mc = 1 - ca;
   const [x, y, z] = pv;
-  const Q = [
-    x * x * mc + ca,
-    y * x * mc - z * sa,
-    z * x * mc + y * sa,
-    x * y * mc + z * sa,
-    y * y * mc + ca,
-    z * y * mc - x * sa,
-    x * z * mc - y * sa,
-    y * z * mc + x * sa,
-    z * z * mc + ca,
-  ];
+  // const Q = [
+  //   x * x * mc + ca,
+  //   y * x * mc - z * sa,
+  //   z * x * mc + y * sa,
+  //   x * y * mc + z * sa,
+  //   y * y * mc + ca,
+  //   z * y * mc - x * sa,
+  //   x * z * mc - y * sa,
+  //   y * z * mc + x * sa,
+  //   z * z * mc + ca,
+  // ];
 
 const xsa = x * sa;
 const ysa = y * sa;
