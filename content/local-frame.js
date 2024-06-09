@@ -43,9 +43,11 @@ const zsa = z * sa;
 const xmc = x * mc;
 const ymc = y * mc;
 const zmc = z * mc;
-const Q = [x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa |
-Q = | y * xmc + zsa,  y * ymc +  ca, y * zmc - xsa |
-    | z * xmc - ysa,  z * ymc + xsa, z * zmc +  ca |  
+const Q = [
+  x * xmc +  ca,  x * ymc - zsa, x * zmc + ysa,
+  y * xmc + zsa,  y * ymc +  ca, y * zmc - xsa ,
+   z * xmc - ysa,  z * ymc + xsa, z * zmc +  ca ,
+]
 
   // apply local rotation
   updateLocalFrame(Q);
