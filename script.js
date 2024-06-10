@@ -29,9 +29,9 @@ async function setupPage() {
   console.log(`graphics element is ready`);
   graphics = document.getElementById(`graphics`);
 
+  // Load the dir tree and then load every file into memory.
+  // Because everything has enough RAM for that.
   await refreshDirTree();
-
-  // And then load every file into memory. Because everything has enough RAM for that.
   dirList = dirTree.flat();
   await Promise.all(
     dirList.map(async (filename) => {
@@ -53,7 +53,7 @@ async function refreshDirTree() {
 }
 
 /**
- * Hook up the "Add new file" and "Format this file" buttons
+ * Hook up all the buttons
  */
 function addGlobalEventHandling() {
   all.addEventListener(`click`, async () => {
@@ -105,11 +105,11 @@ function addGlobalEventHandling() {
     }
   });
 
+  // fie drag-and-drop, because life is hard enough already
   addFileDropFunctionality();
 }
 
 function addFileDropFunctionality() {
-  // fie drag and drop
   filetree.addEventListener(`dragover`, function dropHandler(ev) {
     ev.preventDefault();
     filetree.classList.add(`drop`);
@@ -174,12 +174,11 @@ function addFileDropFunctionality() {
     // then upload that, then run this after all uploads finish.
     setTimeout(refreshDirTree, 1000);
   });
-
-  // TODO: add a "remove file" option, too
 }
 
 /**
- * nice than always typing document.createElement
+ * helper function: nicer than always typing
+ * document.createElement all over the place.
  */
 function create(tag) {
   return document.createElement(tag);

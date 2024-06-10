@@ -152,6 +152,7 @@ html {
       &:hover {
         background: rgb(0, 50, 0);
       }
+
       &:active {
         color: darkgreen;
         background: white;
