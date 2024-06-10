@@ -18,7 +18,7 @@ In order to properly compare editors, this test suite comes with:
 - file create and delete, because obviously
 - diff-based (debounced) edit syncing between the browser and the on-disk files at the server
 - automatic (debounced) git commits on the server as you edit 
-- autoformatting (using `prettier`) for JS, CSS, and HTML files
+- on-demand formatting (using `prettier`) for JS, CSS, and HTML files
 - a "do something with this content" in the form of aggregating files and loading it as `<graphics-element>`
 
 ## I want more
