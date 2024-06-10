@@ -28,11 +28,12 @@ const upload = multer({
   },
 });
 
-// schedule a git commit, but as an API call because
-// users should also be able to trigger one, too.
+// Set up the code for scheduling git commit
 const SAVE_TIMEOUT_MS = 5_000;
+
 let saveDebounce = false;
-function createRewindPoint() {
+
+async function createRewindPoint() {
   if (saveDebounce) clearTimeout(saveDebounce);
   console.log(`scheduling rewind point`);
   saveDebounce = setTimeout(async () => {
@@ -76,8 +77,8 @@ app.post(`/format/:slug*`, (req, res) => {
     console.log(`running prettier...`);
     spawnSync(npm, [`run`, `prettier`, `--`, filename], { stdio: `inherit` });
   }
-  res.send(`ok`);
   createRewindPoint();
+  res.send(`ok`);
 });
 
 // Create a new file.
@@ -86,9 +87,11 @@ app.post(`/new/:slug*`, (req, res) => {
   const slug = full.substring(full.lastIndexOf(`/`) + 1);
   const dirs = full.replace(`/${slug}`, ``);
   mkdirSync(dirs, { recursive: true });
-  if (!existsSync(full)) writeFileSync(full, ``);
+  if (!existsSync(full)) {
+    writeFileSync(full, ``);
+    createRewindPoint();
+  }
   res.send(`ok`);
-  createRewindPoint();
 });
 
 // Create a fully qualified file.
@@ -99,8 +102,8 @@ app.post(`/upload/:slug*`, upload.none(), (req, res) => {
   const data = req.body.content;
   mkdirSync(dirs, { recursive: true });
   writeFileSync(full, data);
-  res.send(`ok`);
   createRewindPoint();
+  res.send(`ok`);
 });
 
 // Synchronize file changes from the browser to the on-disk file, by applying a diff patch
@@ -114,7 +117,9 @@ app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
   createRewindPoint();
 });
 
-// Create a "rewind" point.
+// Create a "rewind" point, which we do as an API call
+// because users should also be able to trigger one using
+// an on-page button, too.
 app.post(`/save`, async (req, res) => {
   const autosave = !!req.query.autosave;
   const rewind = req.query.rewind;
@@ -176,8 +181,8 @@ app.post(`/rewind/:hash`, async (req, res) => {
 app.delete(`/delete/:slug*`, (req, res) => {
   const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
   unlinkSync(filename);
-  res.send(`gone`);
   createRewindPoint();
+  res.send(`gone`);
 });
 
 // Get the current file tree from the server, and send it over in a way
