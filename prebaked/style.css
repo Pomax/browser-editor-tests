@@ -25,15 +25,7 @@ html {
       #buttons {
         background: #999;
         text-align: right;
-
-        #add {
-        }
-
-        #save {
-        }
-
-        #format {
-        }
+        list-style: none;
       }
 
       ul {

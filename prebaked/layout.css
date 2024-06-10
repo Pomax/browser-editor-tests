@@ -8,53 +8,60 @@ main {
     "buttons   left    tabs    right  preview"
     "filetree editors editors editors preview"
     "status   status  status  status  status";
-}
 
-#buttons {
-  grid-area: buttons;
-  /* background: lightgoldenrodyellow; */
-  margin: 0;
-  padding: 0;
-}
-#filetree {
-  grid-area: filetree;
-  /* background: lightcoral; */
-  margin: 0;
-  padding: 0;
-}
-#status {
-  grid-area: status;
-  /* background: lightgreen; */
-  margin: 0;
-  padding: 0;
-}
-#left {
-  grid-area: left;
-  /* background: lightpink; */
-  margin: 0;
-  padding: 0;
-}
-#tabs {
-  grid-area: tabs;
-  /* background: lightsalmon; */
-  margin: 0;
-  padding: 0;
-}
-#right {
-  grid-area: right;
-  margin: 0;
-  padding: 0;
-  /* background: lightblue; */
-}
-#editors {
-  grid-area: editors;
-  /* background: lightsteelblue; */
-  margin: 0;
-  padding: 0;
-}
-#preview {
-  grid-area: preview;
-  /* background: lightseagreen; */
-  margin: 0;
-  padding: 0;
+  #buttons {
+    grid-area: buttons;
+    /* background: lightgoldenrodyellow; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #filetree {
+    grid-area: filetree;
+    /* background: lightcoral; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #status {
+    grid-area: status;
+    /* background: lightgreen; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #left {
+    grid-area: left;
+    /* background: lightpink; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #tabs {
+    grid-area: tabs;
+    /* background: lightsalmon; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #right {
+    grid-area: right;
+    margin: 0;
+    padding: 0;
+    /* background: lightblue; */
+  }
+
+  #editors {
+    grid-area: editors;
+    /* background: lightsteelblue; */
+    margin: 0;
+    padding: 0;
+  }
+
+  #preview {
+    grid-area: preview;
+    /* background: lightseagreen; */
+    margin: 0;
+    padding: 0;
+  }
 }
