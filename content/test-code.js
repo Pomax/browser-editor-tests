@@ -37,8 +37,9 @@ function draw() {
   const vspeed = vs_per_s * 60;
 
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
-  const turnRate = ((heading - oldheading) * ms_per_s) / frameDelta;
+  const turnRate =  (heading - plane.heading) * interval_s;
   oldheading = heading;
+
   if (playing && frameDelta < 50) {
     const km = (knots_in_kmph / ms_per_hour) * frameDelta * speed;
     const pos = getPointAtDistance(lat, long, km, heading);
