@@ -74,7 +74,7 @@ function draw() {
   // Update the plane's global yaw based on the current roll,
   // such that a 25 degree bank angle corresponds to a 3 deg/s
   // turn rate, i.e. the ICAO "standard rate" turn.
-  turnFrame(rotation / 3.5);
+  turnFrame(rotation / 6);
 }
 
 function turnFrame(rotation) {
