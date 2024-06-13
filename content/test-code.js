@@ -38,7 +38,7 @@ function draw() {
 
   const bankAngle = degrees(asin(localFrame.pitch[2]));
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
-  const turnRate =  (heading - plane.heading) * interval_s;
+  const turnRate =  (heading - oldheading) * interval_s;
   oldheading = heading;
 
   if (playing && frameDelta < 50) {
