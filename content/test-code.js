@@ -60,24 +60,39 @@ function draw() {
 
   turn();
 
+let s, t;
+
+function drawInfoBox({
+  fspeed,
+  vspeed,
+  bankAngle,
+  heading,
+  turnRate,
+  lat,
+  long,
+  elevation,
+}) {
+  s = -20;
+  t = 20;
   setFill(`white`);
   setStroke(`black`);
-  translate(-width / 2 + 15, height / 2 - 125);
-  rect(0, 0, 180, 120);
-
+  translate(-width / 2 + 15, height / 2 - 8 * t);
+  rect(0, 0, 180, 7 * t);
   setColor(`black`);
   translate(5, 15);
-  text(`SPEED: ${fspeed.toFixed(2)} kt`, 0, 0);
-  text(`VS: ${(60 * vspeed).toFixed(0)} fpm`, 0, 20);
-  text(
-    `HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`,
-    0,
-    40,
-  );
-  text(`LATITUDE: ${lat.toFixed(4)}`, 0, 60);
-  text(`LONGITUDE: ${long.toFixed(4)}`, 0, 80);
-  text(`ELEVATION: ${elevation.toFixed(0)} '`, 0, 100);
+  addEntry(`SPEED: ${fspeed.toFixed(2)} kt`);
+  addEntry(`VS: ${(60 * vspeed).toFixed(0)} fpm`);
+  addEntry(`BANK ANGLE: ${bankAngle.toFixed(0)}`);
+  addEntry(`HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`);
+  addEntry(`LATITUDE: ${lat.toFixed(4)}`);
+  addEntry(`LONGITUDE: ${long.toFixed(4)}`);
+  addEntry(`ELEVATION: ${elevation.toFixed(0)} '`);
 }
+
+function addEntry(str) {
+  text(str, 0, (s = s + t));
+}
+
 
 function turn() {
   const a = rotation / 15;
