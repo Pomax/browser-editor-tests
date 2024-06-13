@@ -37,7 +37,7 @@ function draw() {
   const vspeed = vs_per_s * 60;
 
   const bankAngle = degrees(asin(localFrame.pitch[2]));
-  let heading = (90 + degrees(atan2(y, x)) + 360) % 360;
+  const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
   let turnRate = (heading - oldheading) * interval_s;
   oldheading = heading;
 
