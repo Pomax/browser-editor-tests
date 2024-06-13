@@ -79,39 +79,6 @@ function draw() {
   turnFrame(rotation / 3.5);
 }
 
-let s, t;
-
-function drawInfoBox({
-  fspeed,
-  vspeed,
-  bankAngle,
-  heading,
-  turnRate,
-  lat,
-  long,
-  elevation,
-}) {
-  s = -20;
-  t = 20;
-  setFill(`white`);
-  setStroke(`black`);
-  translate(-width / 2 + 15, height / 2 - 8 * t);
-  rect(0, 0, 180, 7 * t);
-  setColor(`black`);
-  translate(5, 15);
-  addEntry(`SPEED: ${fspeed.toFixed(2)} kt`);
-  addEntry(`VS: ${(60 * vspeed).toFixed(0)} fpm`);
-  addEntry(`BANK ANGLE: ${bankAngle.toFixed(0)}`);
-  addEntry(`HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`);
-  addEntry(`LATITUDE: ${lat.toFixed(4)}`);
-  addEntry(`LONGITUDE: ${long.toFixed(4)}`);
-  addEntry(`ELEVATION: ${elevation.toFixed(0)} '`);
-}
-
-function addEntry(str) {
-  text(str, 0, (s = s + t));
-}
-
 function turnFrame(rotation) {
   const a = rotation / 15;
   const sa = sin(a);
