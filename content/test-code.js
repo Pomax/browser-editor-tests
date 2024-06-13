@@ -33,7 +33,7 @@ function draw() {
   const [x, y, z] = localFrame.roll;
 
   const vs_per_s = speed * z * knots_in_feet_per_s;
-  const fspeed = (speed ** 2 - sign(vs) * vs_per_s ** 2) ** 0.5;
+  const fspeed = (speed ** 2 - sign(vs_per_s) * vs_per_s ** 2) ** 0.5;
   const vspeed = vs_per_s * 60;
 
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
