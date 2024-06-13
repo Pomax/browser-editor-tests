@@ -39,7 +39,6 @@ function draw() {
   const bankAngle = degrees(asin(localFrame.pitch[2]));
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
   let turnRate = 0;
-  oldheading = heading;
 
   if (playing && frameDelta < 50) {
     const km = speed * knots_in_kph * interval_h;
@@ -49,6 +48,7 @@ function draw() {
     elevation += vs_per_s * interval_s;
     turnRate = (heading - oldheading) * interval_s;
   }
+  oldheading = heading;
 
   drawAxes();
   drawPlane();
