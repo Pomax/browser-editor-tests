@@ -8,7 +8,7 @@ import {
   unlinkSync,
 } from "fs";
 import { sep, posix } from "path";
-import { exec, spawnSync } from "child_process";
+import { exec, execSync, spawnSync } from "child_process";
 import express from "express";
 import multer from "multer";
 import helmet from "helmet";
@@ -27,6 +27,12 @@ const upload = multer({
     fieldSize: 25 * 1024 * 1024,
   },
 });
+
+// Ensure that git is watching the content dir
+if (!existsSync(`${CONTENT_DIR}/.git`)) {
+  console.log(`adding git tracking for content dir`);
+  execSync(`cd ${CONTENT_DIR} && git init`);
+}
 
 // schedule a git commit, but as an API call because
 // users should also be able to trigger one, too.
