@@ -30,7 +30,7 @@ function draw() {
   const interval_h = interval_s / s_per_hour;
   const [x, y, z] = localFrame.roll;
 
-  const vs_per_s = speed * z * knots_in_feet_per_s;
+  const vs_per_s = speed * knots_in_feet_per_s * z;
   const fspeed = (speed ** 2 - sign(vs_per_s) * vs_per_s ** 2) ** 0.5;
   const vspeed = vs_per_s * 60;
 
@@ -74,12 +74,4 @@ function draw() {
   // such that a 25 degree bank angle corresponds to a 3 deg/s
   // turn rate, i.e. the ICAO "standard rate" turn.
   turnFrame(rotation / 7);
-}
-
-function turnFrame(rotation) {
-  const a = rotation / 15;
-  const sa = sin(a);
-  const ca = cos(a);
-  const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
-  updateLocalFrame(R);
 }

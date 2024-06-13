@@ -46,3 +46,11 @@ function update(a, name) {
   // apply local rotation
   updateLocalFrame(Q);
 }
+
+function turnFrame(rotation) {
+  const a = rotation / 15;
+  const sa = sin(a);
+  const ca = cos(a);
+  const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
+  updateLocalFrame(R);
+}
