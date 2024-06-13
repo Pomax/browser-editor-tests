@@ -112,12 +112,10 @@ function addEntry(str) {
   text(str, 0, (s = s + t));
 }
 
-
-function turn() {
+function turnFrame(rotation) {
   const a = rotation / 15;
   const sa = sin(a);
   const ca = cos(a);
   const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
-  // apply global rotation
   updateLocalFrame(R);
 }
