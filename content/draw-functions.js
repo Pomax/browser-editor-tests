@@ -85,7 +85,7 @@ function drawInfoBox({
   setColor(`black`);
   translate(5, 15);
   addEntry(`SPEED: ${fspeed.toFixed(2)} kt`);
-  addEntry(`VS: ${(60 * vspeed).toFixed(0)} fpm`);
+  addEntry(`VS: ${vspeed.toFixed(0)} fpm`);
   addEntry(`BANK ANGLE: ${bankAngle.toFixed(0)}`);
   addEntry(`HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`);
   addEntry(`LATITUDE: ${lat.toFixed(4)}`);
