@@ -48,6 +48,7 @@ function draw() {
     elevation += vs_per_s * interval_s;
     turnRate = (heading - oldheading) * interval_s;
   }
+
   oldheading = heading;
 
   drawAxes();
