@@ -52,13 +52,32 @@ function draw() {
 
   oldheading = heading;
 
+  // draw the plane
+  translate(width / 2, height / 2);
   drawAxes();
   drawPlane();
 
+  // and its projection on the ground
   drawPlane(true);
   drawAxes(true);
 
-  turn();
+  // Then draw the info box
+  drawInfoBox({
+    fspeed,
+    vspeed,
+    bankAngle,
+    heading,
+    turnRate,
+    lat,
+    long,
+    elevation,
+  });
+
+  // Update the plane's global yaw based on the current roll,
+  // such that a 25 degree bank angle corresponds to a 3 deg/s
+  // turn rate, i.e. the ICAO "standard rate" turn.
+  turnFrame(rotation / 3.5);
+}
 
 let s, t;
 
