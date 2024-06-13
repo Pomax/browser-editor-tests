@@ -21,55 +21,55 @@ function draw() {
     rect(20, 10, 5, 20);
   }
 
-  translate(width / 2, height / 2);
-
+  // Update our forward and vertical speeds based on our pitch
   const [x, y, z] = localFrame.roll;
   const vspeed = speed * z * 1.68781;
-  const fspeed = (speed ** 2 - vspeed ** 2) ** 0.5;
+  const sign = vspeed < 0 ? 1 : -1;
+  const fspeed = (speed ** 2 + sign * vspeed ** 2) ** 0.5;
 
+  // Update our heading and turn rate based on the roll axis
+  const bankAngle = degrees(asin(localFrame.pitch[2]));
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
-  const turnRate = ((heading - oldheading) * 1000) / frameDelta;
-  oldheading = heading;
+  let turnRate = 0;
+
+  // Update our position based on the amount of time passed,
+  // and the roll axis (moving us along a great circle rather
+  // than using Euclidean distance), as well as our VS
   if (playing && frameDelta < 50) {
     const km = (1.852 / 3600000) * frameDelta * speed;
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
     long = pos[1];
     elevation += (vspeed / 1000) * frameDelta;
+    turnRate = ((heading - oldheading) * 1000) / frameDelta;
   }
 
+  // cache old value(s)
+  oldheading = heading;
+
+  // draw the plane
+  translate(width / 2, height / 2);
   drawAxes();
   drawPlane();
 
+  // and its projection on the ground
   drawPlane(true);
   drawAxes(true);
 
-  turn();
+  // Then draw the info box
+  drawInfoBox({
+    fspeed,
+    vspeed,
+    bankAngle,
+    heading,
+    turnRate,
+    lat,
+    long,
+    elevation,
+  });
 
-  setFill(`white`);
-  setStroke(`black`);
-  translate(-width / 2 + 15, height / 2 - 125);
-  rect(0, 0, 180, 120);
-
-  setColor(`black`);
-  translate(5, 15);
-  text(`SPEED: ${fspeed.toFixed(2)} kt`, 0, 0);
-  text(`VS: ${(60 * vspeed).toFixed(0)} fpm`, 0, 20);
-  text(
-    `HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`,
-    0,
-    40,
-  );
-  text(`LATITUDE: ${lat.toFixed(4)}`, 0, 60);
-  text(`LONGITUDE: ${long.toFixed(4)}`, 0, 80);
-  text(`ELEVATION: ${elevation.toFixed(0)} '`, 0, 100);
-}
-
-function turn() {
-  const a = rotation / 15;
-  const sa = sin(a);
-  const ca = cos(a);
-  const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
-  // apply global rotation
-  updateLocalFrame(R);
+  // Update the plane's global yaw based on the current roll,
+  // such that a 25 degree bank angle corresponds to a 3 deg/s
+  // turn rate, i.e. the ICAO "standard rate" turn.
+  turnFrame(rotation / 3.5);
 }

@@ -266,5 +266,7 @@ async function setupGit() {
  * Trigger a rebuild by telling npm to run the `build` script from package.json.
  */
 function rebuild() {
+  const start = Date.now();
   spawnSync(`npm`, [`run`, `build:esbuild`], { stdio: `inherit` });
+  console.log(`rebuild took ${Date.now() - start}ms`)
 }

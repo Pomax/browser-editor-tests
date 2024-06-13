@@ -8,6 +8,14 @@ function localFrameMat() {
   return [...localFrame.roll, ...localFrame.pitch, ...localFrame.yaw];
 }
 
+function turnFrame(rotation) {
+  const a = rotation / 15;
+  const sa = sin(a);
+  const ca = cos(a);
+  const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
+  updateLocalFrame(R);
+}
+
 function updateLocalFrame(M) {
   localFrame.roll = mul(M, localFrame.roll);
   localFrame.pitch = mul(M, localFrame.pitch);
