@@ -42,7 +42,7 @@ function draw() {
   oldheading = heading;
 
   if (playing && frameDelta < 50) {
-    const km = (knots_in_kmph / ms_per_hour) * frameDelta * speed;
+    const km = speed * knots_in_kph * interval_h;
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
     long = pos[1];
