@@ -46,7 +46,7 @@ function draw() {
     lat = pos[0];
     long = pos[1];
     elevation += vs_per_s * interval_s;
-    turnRate = (heading - oldheading) * 1000/frameDelta;
+    turnRate = (heading - oldheading) / interval_s;
     console.log(heading, oldheading, interval_s);
   }
 
