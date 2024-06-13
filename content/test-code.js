@@ -38,7 +38,7 @@ function draw() {
 
   const bankAngle = degrees(asin(localFrame.pitch[2]));
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
-  const turnRate =  (heading - oldheading) * interval_s;
+  const turnRate = (heading - oldheading) * interval_s;
   oldheading = heading;
 
   if (playing && frameDelta < 50) {
@@ -46,7 +46,7 @@ function draw() {
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
     long = pos[1];
-    elevation += (vspeed / ms_per_s) * frameDelta;
+    elevation += vs_per_s * interval_s;
   }
 
   drawAxes();
