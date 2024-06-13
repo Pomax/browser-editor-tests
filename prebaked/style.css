@@ -25,6 +25,7 @@ html {
       #buttons {
         background: #999;
         text-align: right;
+        list-style: none;
 
         #add {
         }
