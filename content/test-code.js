@@ -17,7 +17,6 @@ function setup() {
 
 function draw() {
   clear(`white`);
-
   setColor(`black`);
   if (playing) {
     triangle(10, 10, 25, 20, 10, 30);
@@ -26,8 +25,10 @@ function draw() {
     rect(20, 10, 5, 20);
   }
 
-  const interval_s = frameDelta / ms_per_s;
+  const customFrameDelta = frameDelta;
+  const interval_s = customFrameDelta / ms_per_s;
   const interval_h = interval_s / s_per_hour;
+  
   const [x, y, z] = localFrame.roll;
 
   const vs_per_s = speed * knots_in_feet_per_s * z;
@@ -38,7 +39,7 @@ function draw() {
   const heading = (90 + degrees(atan2(y, x)) + 360) % 360;
   let turnRate = 0;
 
-  if (playing && frameDelta < 50) {
+  if (playing && customFrameDelta < 50) {
     const km = speed * knots_in_kph * interval_h;
     const pos = getPointAtDistance(lat, long, km, heading);
     lat = pos[0];
@@ -73,5 +74,5 @@ function draw() {
   // Update the plane's global yaw based on the current roll,
   // such that a 25 degree bank angle corresponds to a 3 deg/s
   // turn rate, i.e. the ICAO "standard rate" turn.
-  turnFrame(rotation / 7);
+  turnFrame(bankAngle/10 * interval_s);
 }

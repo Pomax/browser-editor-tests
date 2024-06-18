@@ -47,10 +47,17 @@ function update(a, name) {
   updateLocalFrame(Q);
 }
 
-function turnFrame(rotation) {
-  const a = rotation / 15;
+function turnFrame(deg) {
+  const a = radians(deg);
+  // console.log(localFrame, a, deg);
+
   const sa = sin(a);
   const ca = cos(a);
-  const R = [ca, sa, 0, -sa, ca, 0, 0, 0, 1];
+  // prettier-ignore
+  const R = [
+     ca, sa, 0,
+    -sa, ca, 0,
+      0,  0, 1,
+  ];
   updateLocalFrame(R);
 }

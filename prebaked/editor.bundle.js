@@ -19694,17 +19694,17 @@ var CompletionTooltip = class {
   }
   addInfoPane(content2, completion) {
     this.destroyInfo();
-    let wrap = this.info = document.createElement("div");
-    wrap.className = "cm-tooltip cm-completionInfo";
+    let wrap2 = this.info = document.createElement("div");
+    wrap2.className = "cm-tooltip cm-completionInfo";
     if (content2.nodeType != null) {
-      wrap.appendChild(content2);
+      wrap2.appendChild(content2);
       this.infoDestroy = null;
     } else {
       let { dom, destroy } = content2;
-      wrap.appendChild(dom);
+      wrap2.appendChild(dom);
       this.infoDestroy = destroy || null;
     }
-    this.dom.appendChild(wrap);
+    this.dom.appendChild(wrap2);
     this.view.requestMeasure(this.placeInfoReq);
   }
   updateSelectedOption(selected) {
@@ -24409,6 +24409,79 @@ The only way to restore is by rewinding!`
   }
 };
 
+// prebaked/loop-guard.js
+var DEBUG = false;
+var infError = `Potentially infinite loop detected.`;
+function wrapperCode(loopLimit, uid) {
+  return `{
+if (__break__counter_${uid}++ > ${loopLimit}) {
+  throw new Error("${infError}");
+}`;
+}
+function loopGuard(sourceCode, loopLimit = 1e3, blockLimit = 1e3) {
+  let ptr = 0;
+  let iterations = 0;
+  while (ptr < sourceCode.length) {
+    if (iterations++ > blockLimit) {
+      throw new Error(`Probable infinite loop detected`);
+    }
+    let block = ``;
+    const sclen = sourceCode.length;
+    let loop = ptr + sourceCode.substring(ptr).search(/\b(for|while)[\r\n\s]*\([^\)]+\)[\r\n\s]*{/);
+    let doLoop = ptr + sourceCode.substring(ptr).search(/\bdo[\r\n\s]*{/);
+    if (loop < ptr) loop = sclen;
+    if (doLoop < ptr) doLoop = sclen;
+    if (DEBUG) console.log(`loop: ${loop}, doloop: ${doLoop}`);
+    if (loop === sclen && doLoop === sclen) return sourceCode;
+    let nextPtr = -1;
+    if (loop < sclen && loop <= doLoop) {
+      if (DEBUG) console.log(`get loop`);
+      block = getLoopBlock(sourceCode, loop);
+      nextPtr = loop;
+    } else if (doLoop < sclen) {
+      if (DEBUG) console.log(`get doloop`);
+      block = getDoLoopBlock(sourceCode, doLoop);
+      nextPtr = doLoop;
+    }
+    if (DEBUG) console.log(`block:`, block);
+    if (block === `` || nextPtr === -1) return sourceCode;
+    const uid = `${Date.now()}`.padStart(16, `0`);
+    const wrapped = wrap(block, loopLimit, uid);
+    if (DEBUG) console.log(`wrapped:`, wrapped);
+    sourceCode = sourceCode.substring(0, ptr) + sourceCode.substring(ptr).replace(block, wrapped);
+    ptr = nextPtr + wrapped.indexOf(infError) + 41;
+    if (DEBUG)
+      console.log(`ptr: ${ptr}, next=${sourceCode.substring(ptr, ptr + 20)}`);
+  }
+  return sourceCode;
+}
+function getLoopBlock(sourceCode, position = 0) {
+  let depth = 1;
+  let pos = sourceCode.indexOf(`{`, position) + 1;
+  while (depth > 0 && position < sourceCode.length) {
+    if (sourceCode[pos] === `{`) depth++;
+    else if (sourceCode[pos] === `}`) depth--;
+    pos++;
+  }
+  if (pos >= sourceCode.length) {
+    throw new Error(`ran out of source code trying to match curlies`);
+  }
+  return sourceCode.substring(position, pos);
+}
+function getDoLoopBlock(sourceCode, position = 0) {
+  const chunk = sourceCode.substring(position);
+  const code = chunk.match(
+    /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/
+  )[0];
+  const end = chunk.indexOf(code) + code.length;
+  return chunk.substring(0, end);
+}
+function wrap(block, loopLimit, uid) {
+  return `((__break__counter_${uid}=0) => {
+${block.replace(`{`, wrapperCode(loopLimit, uid))}
+})();`;
+}
+
 // script.js
 var all = document.getElementById(`all`);
 var add2 = document.getElementById(`add`);
@@ -24690,5 +24763,5 @@ function setGraphicsSource() {
   const sourceCode = Object.values(cmInstances).map((e) => e.content).join(`
 
 `);
-  graphics.loadSource(sourceCode);
+  graphics.loadSource(loopGuard(sourceCode, 500, 20));
 }

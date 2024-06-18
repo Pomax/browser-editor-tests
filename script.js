@@ -3,6 +3,7 @@ import { EditorState } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
+import { loopGuard } from "./prebaked/loop-guard.js";
 
 // This is *technically* unnecessary, but it's better to be explicit.
 const all = document.getElementById(`all`);
@@ -399,5 +400,5 @@ function setGraphicsSource() {
   const sourceCode = Object.values(cmInstances)
     .map((e) => e.content)
     .join(`\n\n`);
-  graphics.loadSource(sourceCode);
+  graphics.loadSource(loopGuard(sourceCode, 500, 20));
 }

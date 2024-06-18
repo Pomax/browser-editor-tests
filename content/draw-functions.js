@@ -87,7 +87,7 @@ function drawInfoBox({
   addEntry(`SPEED: ${fspeed.toFixed(2)} kt`);
   addEntry(`VS: ${vspeed.toFixed(0)} fpm`);
   addEntry(`BANK ANGLE: ${bankAngle.toFixed(0)}`);
-  addEntry(`HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(1)} deg/s)`);
+  addEntry(`HEADING: ${heading.toFixed(2)} deg (${turnRate.toFixed(0)} deg/s)`);
   addEntry(`LATITUDE: ${lat.toFixed(4)}`);
   addEntry(`LONGITUDE: ${long.toFixed(4)}`);
   addEntry(`ELEVATION: ${elevation.toFixed(0)} '`);
