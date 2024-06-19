@@ -24418,6 +24418,32 @@ if (__break__counter_${uid}++ > ${loopLimit}) {
   throw new Error("${infError}");
 }`;
 }
+function getLoopBlock(sourceCode, position = 0) {
+  let depth = 1;
+  let pos = sourceCode.indexOf(`{`, position) + 1;
+  while (depth > 0 && position < sourceCode.length) {
+    if (sourceCode[pos] === `{`) depth++;
+    else if (sourceCode[pos] === `}`) depth--;
+    pos++;
+  }
+  if (pos >= sourceCode.length) {
+    throw new Error(`Parse error: source code end prematurely.`);
+  }
+  return sourceCode.substring(position, pos);
+}
+function getDoLoopBlock(sourceCode, position = 0) {
+  const chunk = sourceCode.substring(position);
+  const code = chunk.match(
+    /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/
+  )[0];
+  const end = chunk.indexOf(code) + code.length;
+  return chunk.substring(0, end);
+}
+function wrap(block, loopLimit = 1e3, uid = 1) {
+  return `((__break__counter_${uid}=0) => {
+${block.replace(`{`, wrapperCode(loopLimit, uid))}
+})();`;
+}
 function loopGuard(sourceCode, loopLimit = 1e3, blockLimit = 1e3) {
   let ptr = 0;
   let iterations = 0;
@@ -24431,8 +24457,8 @@ function loopGuard(sourceCode, loopLimit = 1e3, blockLimit = 1e3) {
     let doLoop = ptr + sourceCode.substring(ptr).search(/\bdo[\r\n\s]*{/);
     if (loop < ptr) loop = sclen;
     if (doLoop < ptr) doLoop = sclen;
-    if (DEBUG) console.log(`loop: ${loop}, doloop: ${doLoop}`);
     if (loop === sclen && doLoop === sclen) return sourceCode;
+    if (DEBUG) console.log(`loop: ${loop}, doloop: ${doLoop}`);
     let nextPtr = -1;
     if (loop < sclen && loop <= doLoop) {
       if (DEBUG) console.log(`get loop`);
@@ -24443,43 +24469,17 @@ function loopGuard(sourceCode, loopLimit = 1e3, blockLimit = 1e3) {
       block = getDoLoopBlock(sourceCode, doLoop);
       nextPtr = doLoop;
     }
-    if (DEBUG) console.log(`block:`, block);
     if (block === `` || nextPtr === -1) return sourceCode;
+    if (DEBUG) console.log(`block:`, block);
     const uid = `${Date.now()}`.padStart(16, `0`);
     const wrapped = wrap(block, loopLimit, uid);
     if (DEBUG) console.log(`wrapped:`, wrapped);
     sourceCode = sourceCode.substring(0, ptr) + sourceCode.substring(ptr).replace(block, wrapped);
-    ptr = nextPtr + wrapped.indexOf(infError) + 41;
+    ptr = nextPtr + wrapped.indexOf(infError) + infError.length + 6;
     if (DEBUG)
       console.log(`ptr: ${ptr}, next=${sourceCode.substring(ptr, ptr + 20)}`);
   }
   return sourceCode;
-}
-function getLoopBlock(sourceCode, position = 0) {
-  let depth = 1;
-  let pos = sourceCode.indexOf(`{`, position) + 1;
-  while (depth > 0 && position < sourceCode.length) {
-    if (sourceCode[pos] === `{`) depth++;
-    else if (sourceCode[pos] === `}`) depth--;
-    pos++;
-  }
-  if (pos >= sourceCode.length) {
-    throw new Error(`ran out of source code trying to match curlies`);
-  }
-  return sourceCode.substring(position, pos);
-}
-function getDoLoopBlock(sourceCode, position = 0) {
-  const chunk = sourceCode.substring(position);
-  const code = chunk.match(
-    /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/
-  )[0];
-  const end = chunk.indexOf(code) + code.length;
-  return chunk.substring(0, end);
-}
-function wrap(block, loopLimit, uid) {
-  return `((__break__counter_${uid}=0) => {
-${block.replace(`{`, wrapperCode(loopLimit, uid))}
-})();`;
 }
 
 // script.js
