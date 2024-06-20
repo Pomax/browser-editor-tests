@@ -24410,76 +24410,68 @@ The only way to restore is by rewinding!`
 };
 
 // prebaked/loop-guard.js
-var DEBUG = false;
-var infError = `Potentially infinite loop detected.`;
-function wrapperCode(loopLimit, uid) {
-  return `{
-if (__break__counter_${uid}++ > ${loopLimit}) {
-  throw new Error("${infError}");
-}`;
-}
-function getLoopBlock(sourceCode, position = 0) {
-  let depth = 1;
-  let pos = sourceCode.indexOf(`{`, position) + 1;
-  while (depth > 0 && position < sourceCode.length) {
-    if (sourceCode[pos] === `{`) depth++;
-    else if (sourceCode[pos] === `}`) depth--;
-    pos++;
-  }
-  if (pos >= sourceCode.length) {
-    throw new Error(`Parse error: source code end prematurely.`);
-  }
-  return sourceCode.substring(position, pos);
-}
-function getDoLoopBlock(sourceCode, position = 0) {
-  const chunk = sourceCode.substring(position);
-  const code = chunk.match(
-    /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/
-  )[0];
-  const end = chunk.indexOf(code) + code.length;
-  return chunk.substring(0, end);
-}
-function wrap(block, loopLimit = 1e3, uid = 1) {
-  return `((__break__counter_${uid}=0) => {
-${block.replace(`{`, wrapperCode(loopLimit, uid))}
-})();`;
-}
-function loopGuard(sourceCode, loopLimit = 1e3, blockLimit = 1e3) {
+var errorMessage = `Potentially infinite loop detected.`;
+var loopStart = /\b(for|while)[\r\n\s]*\([^\)]+\)[\r\n\s]*{/;
+var doLoopStart = /\bdo[\r\n\s]*{/;
+var doLoopChunk = /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/;
+function loopGuard(code, loopLimit = 1e3, blockLimit = 1e3) {
   let ptr = 0;
   let iterations = 0;
-  while (ptr < sourceCode.length) {
-    if (iterations++ > blockLimit) {
-      throw new Error(`Probable infinite loop detected`);
-    }
+  while (ptr < code.length) {
+    if (iterations++ > blockLimit) throw new Error(errorMessage);
+    const codeLength = code.length;
     let block = ``;
-    const sclen = sourceCode.length;
-    let loop = ptr + sourceCode.substring(ptr).search(/\b(for|while)[\r\n\s]*\([^\)]+\)[\r\n\s]*{/);
-    let doLoop = ptr + sourceCode.substring(ptr).search(/\bdo[\r\n\s]*{/);
-    if (loop < ptr) loop = sclen;
-    if (doLoop < ptr) doLoop = sclen;
-    if (loop === sclen && doLoop === sclen) return sourceCode;
-    if (DEBUG) console.log(`loop: ${loop}, doloop: ${doLoop}`);
+    let loop = ptr + code.substring(ptr).search(loopStart);
+    let doLoop = ptr + code.substring(ptr).search(doLoopStart);
+    if (loop < ptr) loop = codeLength;
+    if (doLoop < ptr) doLoop = codeLength;
+    if (loop === codeLength && doLoop === codeLength) return code;
     let nextPtr = -1;
-    if (loop < sclen && loop <= doLoop) {
-      if (DEBUG) console.log(`get loop`);
-      block = getLoopBlock(sourceCode, loop);
+    if (loop < codeLength && loop <= doLoop) {
       nextPtr = loop;
-    } else if (doLoop < sclen) {
-      if (DEBUG) console.log(`get doloop`);
-      block = getDoLoopBlock(sourceCode, doLoop);
+      block = getLoopBlock(code, loop);
+    } else if (doLoop < codeLength) {
       nextPtr = doLoop;
+      block = getDoLoopBlock(code, doLoop);
     }
-    if (block === `` || nextPtr === -1) return sourceCode;
-    if (DEBUG) console.log(`block:`, block);
-    const uid = `${Date.now()}`.padStart(16, `0`);
-    const wrapped = wrap(block, loopLimit, uid);
-    if (DEBUG) console.log(`wrapped:`, wrapped);
-    sourceCode = sourceCode.substring(0, ptr) + sourceCode.substring(ptr).replace(block, wrapped);
-    ptr = nextPtr + wrapped.indexOf(infError) + infError.length + 6;
-    if (DEBUG)
-      console.log(`ptr: ${ptr}, next=${sourceCode.substring(ptr, ptr + 20)}`);
+    if (block === `` || nextPtr === -1) return code;
+    const wrapped = wrap(block, loopLimit);
+    code = code.substring(0, ptr) + code.substring(ptr).replace(block, wrapped);
+    ptr = nextPtr + wrapped.indexOf(errorMessage) + errorMessage.length + 6;
   }
-  return sourceCode;
+  return code;
+}
+function getLoopBlock(code, position = 0) {
+  let char = ``;
+  let depth = 1;
+  let pos = code.indexOf(`{`, position) + 1;
+  while (depth > 0 && position < code.length) {
+    char = code[pos];
+    if (char === `{`) depth++;
+    else if (char === `}`) depth--;
+    pos++;
+  }
+  if (pos >= code.length) {
+    throw new Error(`Parse error: source code end prematurely.`);
+  }
+  return code.substring(position, pos);
+}
+function getDoLoopBlock(code, position = 0) {
+  const chunk = code.substring(position);
+  const block = chunk.match(doLoopChunk)[0];
+  const end = chunk.indexOf(block) + block.length;
+  return chunk.substring(0, end);
+}
+function wrap(block, loopLimit = 1e3) {
+  return `((__break__counter=0) => {
+${block.replace(
+    `{`,
+    `{
+  if (__break__counter++ > ${loopLimit}) {
+    throw new Error("${errorMessage}");
+  }`
+  )}
+})();`;
 }
 
 // script.js

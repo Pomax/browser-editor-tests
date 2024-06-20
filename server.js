@@ -21,7 +21,11 @@ const __dirname = import.meta.dirname.replaceAll(sep, posix.sep);
 const isWindows = process.platform === `win32`;
 const npm = isWindows ? `npm.cmd` : `npm`;
 const CONTENT_DIR = isWindows ? `content` : `./content`;
-const toWatch = [`./script.js`, `./prebaked/dirtree.js`];
+const toWatch = [
+  `./script.js`,
+  `./prebaked/dirtree.js`,
+  `./prebaked/loop-guard.js`,
+];
 const upload = multer({
   limits: {
     fieldSize: 25 * 1024 * 1024,
