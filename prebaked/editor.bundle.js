@@ -24464,6 +24464,7 @@ function addGlobalEventHandling() {
         return `li.dir[title="${v}"]`;
       }).join(` `);
       document.querySelector(qs)?.click();
+      setTimeout(() => cmInstances[filename].view.focus(), 100);
     }
   });
   format.addEventListener(`click`, async () => {

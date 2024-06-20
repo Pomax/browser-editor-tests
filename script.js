@@ -79,6 +79,7 @@ function addGlobalEventHandling() {
         })
         .join(` `);
       document.querySelector(qs)?.click();
+      setTimeout(() => cmInstances[filename].view.focus(), 100);
     }
   });
 
