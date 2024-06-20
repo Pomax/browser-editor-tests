@@ -46,6 +46,7 @@ html {
           border: 1px solid #444;
           font-family: Arial;
           padding: 0.25em;
+          overflow-x: auto;
 
           &.drop {
             background: #cceeff44;
@@ -130,6 +131,16 @@ html {
         border: 1px solid grey;
       }
 
+      iframe {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: calc(100% - 0.5em);
+        height: 100%;
+        border: 1px solid gray;
+        box-sizing: border-box;
+      }
+
       graphics-element {
         table.slider-wrapper {
           background: #ececec;
@@ -139,9 +150,17 @@ html {
     }
   }
 
+  #filetree button {
+    opacity: 0.5;
+  }
+
   button {
     border-radius: 5px;
     margin: 2px 5px;
+    border: 1px solid #555;
+    border-radius: 3px;
+
+    border-radius: 3px;
 
     &.clear {
       background: none;

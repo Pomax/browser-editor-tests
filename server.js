@@ -204,9 +204,11 @@ app.get(`/dir`, async (req, res) => {
 
 // serve content from the "content" (user content) and "prebaked" (page itself)
 // directories, with a redirect to index.html (because obviously).
-app.get(`/`, (req, res) => res.redirect(`/index.html`));
-app.use(`/`, express.static(`content`));
+app.get(`/`, (req, res) => res.redirect(`/editor.html`));
+
+// static routes
 app.use(`/`, express.static(`prebaked`));
+app.use(`/`, express.static(`content`));
 
 // Run the server, and trigger a client bundle rebuild every time script.js changes.
 app.listen(8000, () => {

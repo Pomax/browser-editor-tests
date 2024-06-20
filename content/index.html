@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preview</title>
+    <script src="./index.js" type="module" async></script>
+    <link rel="stylesheet" href="./graphics-element/graphics-element.css" />
+    <link rel="stylesheet" href="./index.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Preview window</h1>
+    </header>
+
+    <main>
+      <graphics-element id="graphics" title="graphics" src="./test-code.js">
+        <source src="./local-frame.js" />
+        <source src="./draw-functions.js" />
+        <source src="./key-handling.js" />
+        <source src="./utils/utils.js" />
+        <source src="./utils/geo.js" />
+      </graphics-element>
+    </main>
+
+    <footer>
+      <p>Wow, that sure is some content!</p>
+    </footer>
+  </body>
+</html>

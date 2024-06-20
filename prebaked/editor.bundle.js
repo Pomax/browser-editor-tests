@@ -19694,17 +19694,17 @@ var CompletionTooltip = class {
   }
   addInfoPane(content2, completion) {
     this.destroyInfo();
-    let wrap2 = this.info = document.createElement("div");
-    wrap2.className = "cm-tooltip cm-completionInfo";
+    let wrap = this.info = document.createElement("div");
+    wrap.className = "cm-tooltip cm-completionInfo";
     if (content2.nodeType != null) {
-      wrap2.appendChild(content2);
+      wrap.appendChild(content2);
       this.infoDestroy = null;
     } else {
       let { dom, destroy } = content2;
-      wrap2.appendChild(dom);
+      wrap.appendChild(dom);
       this.infoDestroy = destroy || null;
     }
-    this.dom.appendChild(wrap2);
+    this.dom.appendChild(wrap);
     this.view.requestMeasure(this.placeInfoReq);
   }
   updateSelectedOption(selected) {
@@ -24355,11 +24355,11 @@ var DirTree = class _DirTree {
       const isDir = typeof value === `object`;
       const item = create(`li`);
       item.title = key;
-      item.textContent = key;
       item.classList.add(isDir ? `dir` : `file`);
       parent.appendChild(item);
       const newPrefix = prefix + (prefix ? `/` : ``) + key;
       if (!isDir) {
+        item.textContent = `\u{1F4C4} ${key}`;
         const btn = create(`button`);
         btn.textContent = `\u{1F5D1}\uFE0F`;
         btn.title = `Delete`;
@@ -24377,6 +24377,7 @@ The only way to restore is by rewinding!`
         });
         item.addEventListener(`click`, () => clickHandler(newPrefix));
       } else {
+        item.textContent = `\u{1F4C1} ${key}`;
         const list = create(`ul`);
         list.classList.add(key);
         item.appendChild(list);
@@ -24384,95 +24385,30 @@ The only way to restore is by rewinding!`
       }
     });
   }
-  createNewFile(filename, clickHandler, parent) {
-    const parts = filename.split(`/`);
-    while (parts.length > 1) {
-      const dirname = parts.shift();
-      let ul = parent.querySelector(`& > li ul.${dirname}`);
-      if (!ul) {
-        const item2 = create(`li`);
-        item2.title = dirname;
-        item2.textContent = dirname;
-        item2.classList.add(`dir`);
-        parent.appendChild(item2);
-        ul = create(`ul`);
-        item2.appendChild(ul);
-      }
-      parent = ul;
-    }
-    const item = create(`li`);
-    item.title = parts[0];
-    item.textContent = parts[0];
-    item.classList.add(`file`);
-    item.addEventListener(`click`, () => clickHandler(filename));
-    parent.appendChild(item);
-  }
+  // createNewFile(filename, clickHandler, parent) {
+  //   const parts = filename.split(`/`);
+  //   while (parts.length > 1) {
+  //     const dirname = parts.shift();
+  //     let ul = parent.querySelector(`& > li ul.${dirname}`);
+  //     if (!ul) {
+  //       const item = create(`li`);
+  //       item.title = dirname;
+  //       item.textContent = dirname;
+  //       item.classList.add(`dir`);
+  //       parent.appendChild(item);
+  //       ul = create(`ul`);
+  //       item.appendChild(ul);
+  //     }
+  //     parent = ul;
+  //   }
+  //   const item = create(`li`);
+  //   item.title = parts[0];
+  //   item.textContent = parts[0];
+  //   item.classList.add(`file`);
+  //   item.addEventListener(`click`, () => clickHandler(filename));
+  //   parent.appendChild(item);
+  // }
 };
-
-// prebaked/loop-guard.js
-var errorMessage = `Potentially infinite loop detected.`;
-var loopStart = /\b(for|while)[\r\n\s]*\([^\)]+\)[\r\n\s]*{/;
-var doLoopStart = /\bdo[\r\n\s]*{/;
-var doLoopChunk = /}(\s*(\/\/)[^\n\r]*[\r\n])?[\r\n\s]*while[\r\n\s]*\([^\)]+\)([\r\n\s]*;)?/;
-function loopGuard(code, loopLimit = 1e3, blockLimit = 1e3) {
-  let ptr = 0;
-  let iterations = 0;
-  while (ptr < code.length) {
-    if (iterations++ > blockLimit) throw new Error(errorMessage);
-    const codeLength = code.length;
-    let block = ``;
-    let loop = ptr + code.substring(ptr).search(loopStart);
-    let doLoop = ptr + code.substring(ptr).search(doLoopStart);
-    if (loop < ptr) loop = codeLength;
-    if (doLoop < ptr) doLoop = codeLength;
-    if (loop === codeLength && doLoop === codeLength) return code;
-    let nextPtr = -1;
-    if (loop < codeLength && loop <= doLoop) {
-      nextPtr = loop;
-      block = getLoopBlock(code, loop);
-    } else if (doLoop < codeLength) {
-      nextPtr = doLoop;
-      block = getDoLoopBlock(code, doLoop);
-    }
-    if (block === `` || nextPtr === -1) return code;
-    const wrapped = wrap(block, loopLimit);
-    code = code.substring(0, ptr) + code.substring(ptr).replace(block, wrapped);
-    ptr = nextPtr + wrapped.indexOf(errorMessage) + errorMessage.length + 6;
-  }
-  return code;
-}
-function getLoopBlock(code, position = 0) {
-  let char = ``;
-  let depth = 1;
-  let pos = code.indexOf(`{`, position) + 1;
-  while (depth > 0 && position < code.length) {
-    char = code[pos];
-    if (char === `{`) depth++;
-    else if (char === `}`) depth--;
-    pos++;
-  }
-  if (pos >= code.length) {
-    throw new Error(`Parse error: source code end prematurely.`);
-  }
-  return code.substring(position, pos);
-}
-function getDoLoopBlock(code, position = 0) {
-  const chunk = code.substring(position);
-  const block = chunk.match(doLoopChunk)[0];
-  const end = chunk.indexOf(block) + block.length;
-  return chunk.substring(0, end);
-}
-function wrap(block, loopLimit = 1e3) {
-  return `((__break__counter=0) => {
-${block.replace(
-    `{`,
-    `{
-  if (__break__counter++ > ${loopLimit}) {
-    throw new Error("${errorMessage}");
-  }`
-  )}
-})();`;
-}
 
 // script.js
 var all = document.getElementById(`all`);
@@ -24484,14 +24420,12 @@ var right = document.getElementById(`right`);
 var filetree = document.getElementById(`filetree`);
 var tabs = document.getElementById(`tabs`);
 var editors = document.getElementById(`editors`);
+var preview = document.getElementById(`preview`);
 var cmInstances = {};
 var dirTree = { tree: {} };
 var dirList = [];
-var graphics;
-customElements.whenDefined(`graphics-element`).then(setupPage);
+setupPage();
 async function setupPage() {
-  console.log(`graphics element is ready`);
-  graphics = document.getElementById(`graphics`);
   await refreshDirTree();
   dirList = dirTree.flat();
   await Promise.all(
@@ -24501,7 +24435,7 @@ async function setupPage() {
       cmInstances[filename].content = data;
     })
   );
-  setGraphicsSource();
+  updatePreview();
   addGlobalEventHandling();
 }
 async function refreshDirTree() {
@@ -24522,7 +24456,14 @@ function addGlobalEventHandling() {
     );
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
-      refreshDirTree();
+      await refreshDirTree();
+      const qs = filename.split(`/`).map((v, i, list) => {
+        if (i === list.length - 1) {
+          return `li.file[title="${v}"]`;
+        }
+        return `li.dir[title="${v}"]`;
+      }).join(` `);
+      document.querySelector(qs)?.click();
     }
   });
   format.addEventListener(`click`, async () => {
@@ -24734,7 +24675,7 @@ async function syncContent(filename) {
   const responseHash = parseFloat(await response.text());
   if (responseHash === getFileSum(newContent)) {
     entry.content = newContent;
-    setGraphicsSource();
+    updatePreview();
   } else {
     console.error(`PRE:`, currentContent);
     console.error(`POST:`, newContent);
@@ -24751,9 +24692,17 @@ async function syncContent(filename) {
   }
   entry.debounce = false;
 }
-function setGraphicsSource() {
-  const sourceCode = Object.values(cmInstances).map((e) => e.content).join(`
-
-`);
-  graphics.loadSource(loopGuard(sourceCode, 500, 20));
+function updatePreview() {
+  const iframe = preview.querySelector(`iframe`);
+  const newFrame = document.createElement(`iframe`);
+  newFrame.onload = () => {
+    setTimeout(() => {
+      newFrame.style.opacity = 1;
+      setTimeout(() => iframe.remove(), 750);
+    }, 250);
+  };
+  newFrame.style.opacity = 0;
+  newFrame.style.transition = "opacity 0.25s";
+  preview.append(newFrame);
+  newFrame.src = iframe.src;
 }

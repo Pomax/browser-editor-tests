@@ -3,7 +3,6 @@ import { EditorState } from "@codemirror/state";
 import { javascript } from "@codemirror/lang-javascript";
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
-import { loopGuard } from "./prebaked/loop-guard.js";
 
 // This is *technically* unnecessary, but it's better to be explicit.
 const all = document.getElementById(`all`);
@@ -15,21 +14,20 @@ const right = document.getElementById(`right`);
 const filetree = document.getElementById(`filetree`);
 const tabs = document.getElementById(`tabs`);
 const editors = document.getElementById(`editors`);
+const preview = document.getElementById(`preview`);
 
 const cmInstances = {};
 let dirTree = { tree: {} };
 let dirList = [];
-let graphics;
 
-customElements.whenDefined(`graphics-element`).then(setupPage);
+setupPage();
+
+// -------------------------------
 
 /**
  * Our main entry point
  */
 async function setupPage() {
-  console.log(`graphics element is ready`);
-  graphics = document.getElementById(`graphics`);
-
   await refreshDirTree();
 
   // And then load every file into memory. Because everything has enough RAM for that.
@@ -42,7 +40,7 @@ async function setupPage() {
     })
   );
 
-  setGraphicsSource();
+  updatePreview();
   addGlobalEventHandling();
 }
 
@@ -70,7 +68,17 @@ function addGlobalEventHandling() {
     );
     if (filename) {
       await fetch(`/new/${filename}`, { method: `post` });
-      refreshDirTree();
+      await refreshDirTree();
+      const qs = filename
+        .split(`/`)
+        .map((v, i, list) => {
+          if (i === list.length - 1) {
+            return `li.file[title="${v}"]`;
+          }
+          return `li.dir[title="${v}"]`;
+        })
+        .join(` `);
+      document.querySelector(qs)?.click();
     }
   });
 
@@ -374,7 +382,7 @@ async function syncContent(filename) {
   const responseHash = parseFloat(await response.text());
   if (responseHash === getFileSum(newContent)) {
     entry.content = newContent;
-    setGraphicsSource();
+    updatePreview();
   } else {
     // This should, if I did everything right, never happen.
     console.error(`PRE:`, currentContent);
@@ -396,9 +404,17 @@ async function syncContent(filename) {
 /**
  * update the <graphics-element> based on the current file content.
  */
-function setGraphicsSource() {
-  const sourceCode = Object.values(cmInstances)
-    .map((e) => e.content)
-    .join(`\n\n`);
-  graphics.loadSource(loopGuard(sourceCode, 500, 20));
+function updatePreview() {
+  const iframe = preview.querySelector(`iframe`);
+  const newFrame = document.createElement(`iframe`);
+  newFrame.onload = () => {
+    setTimeout(() => {
+      newFrame.style.opacity = 1;
+      setTimeout(() => iframe.remove(), 750);
+    }, 250);
+  };
+  newFrame.style.opacity = 0;
+  newFrame.style.transition = "opacity 0.25s";
+  preview.append(newFrame);
+  newFrame.src = iframe.src;
 }

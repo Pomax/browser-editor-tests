@@ -25,6 +25,10 @@ function draw() {
     rect(20, 10, 5, 20);
   }
 
+  for (let i=0;i<100;i++) {
+    // lols
+  }
+
   const customFrameDelta = frameDelta;
   const interval_s = customFrameDelta / ms_per_s;
   const interval_h = interval_s / s_per_hour;

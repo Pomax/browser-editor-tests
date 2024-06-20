@@ -52,11 +52,13 @@ export class DirTree {
       const isDir = typeof value === `object`;
       const item = create(`li`);
       item.title = key;
-      item.textContent = key;
       item.classList.add(isDir ? `dir` : `file`);
       parent.appendChild(item);
       const newPrefix = prefix + (prefix ? `/` : ``) + key;
+
+      // Add file entry
       if (!isDir) {
+        item.textContent = `📄 ${key}`;
         const btn = create(`button`);
         btn.textContent = `🗑️`;
         btn.title = `Delete`;
@@ -72,7 +74,11 @@ export class DirTree {
           }
         });
         item.addEventListener(`click`, () => clickHandler(newPrefix));
-      } else {
+      }
+
+      // Add dir entry
+      else {
+        item.textContent = `📁 ${key}`;
         const list = create(`ul`);
         list.classList.add(key);
         item.appendChild(list);
@@ -81,27 +87,27 @@ export class DirTree {
     });
   }
 
-  createNewFile(filename, clickHandler, parent) {
-    const parts = filename.split(`/`);
-    while (parts.length > 1) {
-      const dirname = parts.shift();
-      let ul = parent.querySelector(`& > li ul.${dirname}`);
-      if (!ul) {
-        const item = create(`li`);
-        item.title = dirname;
-        item.textContent = dirname;
-        item.classList.add(`dir`);
-        parent.appendChild(item);
-        ul = create(`ul`);
-        item.appendChild(ul);
-      }
-      parent = ul;
-    }
-    const item = create(`li`);
-    item.title = parts[0];
-    item.textContent = parts[0];
-    item.classList.add(`file`);
-    item.addEventListener(`click`, () => clickHandler(filename));
-    parent.appendChild(item);
-  }
+  // createNewFile(filename, clickHandler, parent) {
+  //   const parts = filename.split(`/`);
+  //   while (parts.length > 1) {
+  //     const dirname = parts.shift();
+  //     let ul = parent.querySelector(`& > li ul.${dirname}`);
+  //     if (!ul) {
+  //       const item = create(`li`);
+  //       item.title = dirname;
+  //       item.textContent = dirname;
+  //       item.classList.add(`dir`);
+  //       parent.appendChild(item);
+  //       ul = create(`ul`);
+  //       item.appendChild(ul);
+  //     }
+  //     parent = ul;
+  //   }
+  //   const item = create(`li`);
+  //   item.title = parts[0];
+  //   item.textContent = parts[0];
+  //   item.classList.add(`file`);
+  //   item.addEventListener(`click`, () => clickHandler(filename));
+  //   parent.appendChild(item);
+  // }
 }
