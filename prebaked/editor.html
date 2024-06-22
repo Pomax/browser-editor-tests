@@ -4,9 +4,10 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Test Editor</title>
-    <script src="./editor.bundle.js" async defer type="module"></script>
+    <script src="./editor.bundle.js" type="module" async></script>
     <link rel="stylesheet" href="./layout.css" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="stylesheet" href="./cm6.css" />
   </head>
   <body>
     <main>
@@ -17,18 +18,25 @@
         <button id="format" title="Make my code pretty!">🤩</button>
       </li>
       <ul id="filetree"></ul>
-      <div id="left">
-        <button>〈</button>
-      </div>
-      <div id="tabs"></div>
-      <div id="right">
-        <button>〉</button>
+
+      <div id="tabnav">
+        <div id="left">
+          <button>〈</button>
+        </div>
+        <div id="tabs"></div>
+        <div id="right">
+          <button>〉</button>
+        </div>
       </div>
       <div id="editors"></div>
+
       <div id="preview" class="graphics" style="position: relative">
-        <iframe src="./index.html"></iframe>
+        <iframe src="./content/index.html"></iframe>
       </div>
-      <div id="status"></div>
+
+      <div id="status">
+        Welcome to the editor test interface! This test uses CodeMirror 6 for its editor component(s).
+      </div>
     </main>
   </body>
 </html>

@@ -208,7 +208,7 @@ app.get(`/`, (req, res) => res.redirect(`/editor.html`));
 
 // static routes
 app.use(`/`, express.static(`prebaked`));
-app.use(`/`, express.static(`content`));
+app.use(`/content`, express.static(`content`));
 
 // Run the server, and trigger a client bundle rebuild every time script.js changes.
 app.listen(8000, () => {

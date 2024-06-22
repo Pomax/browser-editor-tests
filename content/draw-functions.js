@@ -35,9 +35,11 @@ function drawAxes(asProjection = false) {
   if (asProjection) restore();
 }
 
-function drawAxis(colour, o, v) {
+function drawAxis(colour, {x,y}, [x2,y2,z2]) {
+  useProjection();
   setStroke(colour);
-  line(o, project(...v));
+  ({x2,y2} = project(x2,y2,z2));
+  line(x,y,x2,y2);
 }
 
 function drawPlane(asProjection = false) {

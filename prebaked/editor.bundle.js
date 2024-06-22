@@ -24421,6 +24421,7 @@ var filetree = document.getElementById(`filetree`);
 var tabs = document.getElementById(`tabs`);
 var editors = document.getElementById(`editors`);
 var preview = document.getElementById(`preview`);
+var CONTENT_DIR = `content`;
 var cmInstances = {};
 var dirTree = { tree: {} };
 var dirList = [];
@@ -24430,13 +24431,16 @@ async function setupPage() {
   dirList = dirTree.flat();
   await Promise.all(
     dirList.map(async (filename) => {
-      const data = await fetch(`./${filename}`).then((r) => r.text());
+      const data = await fetchFileContents(filename);
       cmInstances[filename] ??= {};
       cmInstances[filename].content = data;
     })
   );
   updatePreview();
   addGlobalEventHandling();
+}
+async function fetchFileContents(filename) {
+  return await fetch(`./${CONTENT_DIR}/${filename}`).then((r) => r.text());
 }
 async function refreshDirTree() {
   const dirData = await fetch(`/dir`).then((r) => r.json());
@@ -24577,7 +24581,7 @@ async function createFileEditTab(filename) {
   editors.appendChild(panel);
   const { tab, close } = setupEditorTab(filename);
   tabs.appendChild(tab);
-  const data = await fetch(`./${filename}`).then((r) => r.text());
+  const data = await fetchFileContents(filename);
   const initialState = getInitialState(filename, data);
   const view = setupView(panel, initialState);
   addEventHandling(filename, panel, tab, close, view);

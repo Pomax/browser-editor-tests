@@ -103,7 +103,7 @@ html {
           }
 
           &.active {
-            background: #cceeff44;
+            background: #e3f6ff;
             color: #333;
           }
 
@@ -129,13 +129,17 @@ html {
         max-height: 100%;
         overflow: auto;
         border: 1px solid grey;
+
+        .editor.tab {
+          width: 100%;
+        }
       }
 
       iframe {
         position: absolute;
         top: 0;
         left: 0;
-        width: calc(100% - 0.5em);
+        width: calc(100% - 1px);
         height: 100%;
         border: 1px solid gray;
         box-sizing: border-box;
@@ -146,6 +150,14 @@ html {
           background: #ececec;
           margin-bottom: 0.25em;
         }
+      }
+
+      #status {
+        background: #eee;
+        padding: 0.25em 0.5em 0.25em;
+        font-family: sans-serif;
+        border-top: 1px solid gray;
+        margin-top: 4px;
       }
     }
   }

@@ -49,7 +49,6 @@ function update(a, name) {
 
 function turnFrame(deg) {
   const a = radians(deg);
-  // console.log(localFrame, a, deg);
 
   const sa = sin(a);
   const ca = cos(a);
