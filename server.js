@@ -10,6 +10,7 @@ import {
 import { sep, posix } from "path";
 import { exec, execSync, spawnSync } from "child_process";
 import express from "express";
+import session from "express-session";
 import multer from "multer";
 import helmet from "helmet";
 import nocache from "nocache";
@@ -60,6 +61,23 @@ const app = express();
 app.set("etag", false);
 app.use(nocache());
 
+// Use session management so we can use different dirs for different "users"
+app.use(
+  session({
+    secret: `this shouldn't matter but here we are anyway`,
+    resave: false,
+    saveUninitialized: false,
+  })
+);
+app.use((req, res, next) => {
+  if (!req.session.dir) {
+    console.log(`setting session dir`);
+    req.session.dir = CONTENT_DIR;
+    req.session.save();
+  }
+  next();
+});
+
 // I hate CSP so much...
 app.use(
   helmet.contentSecurityPolicy({
@@ -80,7 +98,7 @@ app.use(
 
 // A route to trigger on-disk code formatting, based on file extension.
 app.post(`/format/:slug*`, (req, res) => {
-  const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
   const ext = filename.substring(filename.lastIndexOf(`.`), filename.length);
   if ([`.js`, `.css`, `.html`].includes(ext)) {
     console.log(`running prettier...`);
@@ -92,7 +110,7 @@ app.post(`/format/:slug*`, (req, res) => {
 
 // Create a new file.
 app.post(`/new/:slug*`, (req, res) => {
-  const full = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const full = `${req.session.dir}/${req.params.slug + req.params[0]}`;
   const slug = full.substring(full.lastIndexOf(`/`) + 1);
   const dirs = full.replace(`/${slug}`, ``);
   mkdirSync(dirs, { recursive: true });
@@ -103,7 +121,7 @@ app.post(`/new/:slug*`, (req, res) => {
 
 // Create a fully qualified file.
 app.post(`/upload/:slug*`, upload.none(), (req, res) => {
-  const full = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const full = `${req.session.dir}/${req.params.slug + req.params[0]}`;
   const slug = full.substring(full.lastIndexOf(`/`) + 1);
   const dirs = full.replace(`/${slug}`, ``);
   const data = req.body.content;
@@ -115,12 +133,12 @@ app.post(`/upload/:slug*`, upload.none(), (req, res) => {
 
 // Synchronize file changes from the browser to the on-disk file, by applying a diff patch
 app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
-  const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
   let data = readFileSync(filename).toString(`utf8`);
   const patch = req.body;
   const patched = applyPatch(data, patch);
   if (patched) writeFileSync(filename, patched);
-  res.send(`${getFileSum(filename, true)}`);
+  res.send(`${getFileSum(req.session.dir, filename, true)}`);
   createRewindPoint();
 });
 
@@ -131,7 +149,7 @@ app.post(`/save`, async (req, res) => {
   let reason = req.query.reason ?? `Manual save`;
   if (autosave) reason = `Autosave`;
   if (rewind) reason = `Rewind to ${rewind}`;
-  const opts = { cwd: CONTENT_DIR, stdio: `inherit` };
+  const opts = { cwd: req.session.dir, stdio: `inherit` };
   spawnSync(`git`, [`add`, `.`], opts);
   spawnSync(`git`, [`commit`, `-m`, `"${reason}"`, `--allow-empty`], opts);
   res.send(`saved`);
@@ -142,7 +160,7 @@ app.get(`/history`, async (req, res) => {
   const output = await execPromise(
     `git log  --no-abbrev-commit --pretty=format:"%H%x09%ad%x09%s"`,
     {
-      cwd: CONTENT_DIR,
+      cwd: req.session.dir,
     }
   );
   const parsed = output.split(`\n`).map((line) => {
@@ -166,7 +184,7 @@ app.post(`/rewind/:hash`, async (req, res) => {
   const hard = !!req.query.hard;
   console.log(`checking hash ${hash}`);
   try {
-    const cwd = { cwd: CONTENT_DIR };
+    const cwd = { cwd: req.session.dir };
     await execPromise(`git cat-file -t ${hash}`, cwd); // throws if not found
     if (hard) {
       await execPromise(`git reset ${hash}`, cwd);
@@ -184,7 +202,7 @@ app.post(`/rewind/:hash`, async (req, res) => {
 
 // Irreversibly delete a file
 app.delete(`/delete/:slug*`, (req, res) => {
-  const filename = `${CONTENT_DIR}/${req.params.slug + req.params[0]}`;
+  const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
   unlinkSync(filename);
   res.send(`gone`);
   createRewindPoint();
@@ -193,10 +211,11 @@ app.delete(`/delete/:slug*`, (req, res) => {
 // Get the current file tree from the server, and send it over in a way
 // that lets the receiver reconstitute it as a DirTree object.
 app.get(`/dir`, async (req, res) => {
-  const osResponse = await readContentDir(CONTENT_DIR);
+  const osResponse = await readContentDir(req.session.dir);
   const dir = osResponse.map((v) => v.replace(__dirname + posix.sep, ``));
   const dirTree = new DirTree(dir, {
-    getFileValue: (filename) => getFileSum(filename.replace(__dirname, ``)),
+    getFileValue: (filename) =>
+      getFileSum(req.session.dir, filename.replace(__dirname, ``)),
     ignore: [`.git`],
   });
   res.send(JSON.stringify(dirTree.tree));
@@ -226,8 +245,8 @@ app.listen(8000, () => {
  * whether a file on-disk and the same file in the browser differ, and
  * if they're not, the browser simply redownloads the file.
  */
-function getFileSum(filename, nofill = false) {
-  const filepath = nofill ? filename : `${CONTENT_DIR}/${filename}`;
+function getFileSum(dir, filename, nofill = false) {
+  const filepath = nofill ? filename : `${dir}/${filename}`;
   const enc = new TextEncoder();
   return enc.encode(readFileSync(filepath)).reduce((t, e) => t + e, 0);
 }
@@ -247,20 +266,15 @@ function execPromise(command, options = {}) {
 /**
  * Ask the OS for a flat dir listing.
  */
-async function readContentDir() {
-  let listCommand = isWindows
-    ? `dir /b/o/s ${CONTENT_DIR}`
-    : `find ${CONTENT_DIR}`;
+async function readContentDir(dir) {
+  let listCommand = isWindows ? `dir /b/o/s ${dir}` : `find ${dir}`;
   const output = await execPromise(listCommand);
   const allFileListing = output
     .split(/\r?\n/)
     .map((v) => {
       let stats = statSync(v);
       if (stats.isDirectory()) return false;
-      return v
-        .split(sep)
-        .join(posix.sep)
-        .replace(`${CONTENT_DIR}${posix.sep}`, ``);
+      return v.split(sep).join(posix.sep).replace(`${dir}${posix.sep}`, ``);
     })
     .filter((v) => !!v);
   return allFileListing;

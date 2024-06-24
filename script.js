@@ -1,6 +1,11 @@
 import { basicSetup, EditorView } from "codemirror";
 import { EditorState } from "@codemirror/state";
+
 import { javascript } from "@codemirror/lang-javascript";
+import { html } from "@codemirror/lang-html";
+import { css } from "@codemirror/lang-css";
+// and https://github.com/orgs/codemirror/repositories?q=lang for more options
+
 import { createPatch } from "./prebaked/vendor/diff.js";
 import { DirTree } from "./prebaked/dirtree.js";
 
@@ -45,10 +50,16 @@ async function setupPage() {
   addGlobalEventHandling();
 }
 
+/**
+ * helper function for getting file text content:
+ */
 async function fetchFileContents(filename) {
   return await fetch(`./${CONTENT_DIR}/${filename}`).then((r) => r.text());
 }
 
+/**
+ * Make sure we're in sync with the server...
+ */
 async function refreshDirTree() {
   const dirData = await fetch(`/dir`).then((r) => r.json());
   dirTree = new DirTree();
@@ -94,7 +105,7 @@ function addGlobalEventHandling() {
     const filename = entry.filename;
     format.hidden = true;
     await fetch(`/format/${filename}`, { method: `post` });
-    entry.content = await fetch(`./${filename}`).then((r) => r.text());
+    entry.content = await fetchFileContents(filename);
     format.hidden = false;
     entry.view.dispatch({
       changes: {
@@ -123,6 +134,9 @@ function addGlobalEventHandling() {
   addFileDropFunctionality();
 }
 
+/**
+ * Make sure we can drop files (and entire dirs) onto the file tree:
+ */
 function addFileDropFunctionality() {
   // fie drag and drop
   filetree.addEventListener(`dragover`, function dropHandler(ev) {
@@ -189,8 +203,6 @@ function addFileDropFunctionality() {
     // then upload that, then run this after all uploads finish.
     setTimeout(refreshDirTree, 1000);
   });
-
-  // TODO: add a "remove file" option, too
 }
 
 /**
@@ -268,11 +280,17 @@ async function createFileEditTab(filename) {
  * Create an initial CodeMirror6 state object
  */
 function getInitialState(filename, data) {
+  const ext = filename.substring(filename.lastIndexOf(`.`) + 1);
+  const syntax = {
+    html: html,
+    css: css,
+    js: javascript,
+  }[ext];
+
   return EditorState.create({
     extensions: [
       basicSetup,
-      // add JS niceties
-      javascript(),
+      syntax(),
       // Add debounced content change syncing
       EditorView.updateListener.of((e) => {
         if (e.docChanged) {
@@ -395,7 +413,7 @@ async function syncContent(filename) {
     console.error(`POST:`, newContent);
     console.error(`HASH:`, getFileSum(newContent), responseHash);
     console.log(`forced sync: fetching file content from server`);
-    entry.content = await fetch(`./${entry.filename}`).then((r) => r.text());
+    entry.content = await fetchFileContents(entry.filename);
     entry.view.dispatch({
       changes: {
         from: 0,

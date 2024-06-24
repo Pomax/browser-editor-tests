@@ -27,7 +27,7 @@ function drawAxes(asProjection = false) {
     translate(0, 150);
   }
 
-  const p0 = project(...[0, 0, 0]);
+  const p0 = make2D(...[0, 0, 0]);
   drawAxis(`red`, p0, p(d(x)));
   drawAxis(`green`, p0, p(d(y)));
   drawAxis(`blue`, p0, p(d(z)));
@@ -37,7 +37,7 @@ function drawAxes(asProjection = false) {
 
 function drawAxis(colour, o, v) {
   setStroke(colour);
-  const {x,y} = project(...v);
+  const {x,y} = make2D(...v);
   line(o.x, o.y, x, y);
 }
 
@@ -56,7 +56,7 @@ function drawPlane(asProjection = false) {
     let poly = c.map((v) => {
       v = mul(Q, v);
       if (asProjection) v[2] = 0;
-      return project(...v);
+      return make2D(...v);
     });
     plotData(poly, "x", "y");
   });

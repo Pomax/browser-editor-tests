@@ -11,11 +11,16 @@ let step = 0.01;
 let rotation = 0;
 let oldheading = 0; // degrees
 
+// Set up a projector but don't activate it. We'll
+// use it to manually project our own 3D work.
+const projector = createProjector(HOMOGENEOUS);
+projector.setRotation(0.1, -0.25, -0.4);
+function make2D(x, y, z) {
+  return projector.project(x, y, z);
+}
+
 function setup() {
   setSize(600, 400);
-  setProjector(HOMOGENEOUS);
-  rotateProjector(0.15, -0.25, -0.4);
-  noProjection();
 }
 
 function draw() {
@@ -27,7 +32,7 @@ function draw() {
     rect(10, 10, 5, 20);
     rect(20, 10, 5, 20);
   }
-  
+
   center();
 
   const customFrameDelta = frameDelta;
