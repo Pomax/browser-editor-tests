@@ -1,12 +1,12 @@
 // key handler
 function keyDown() {
   if (keyboard.ArrowLeft) {
-    update(step, `roll`);
-    rotation += step / 10;
-  }
-  if (keyboard.ArrowRight) {
     update(-step, `roll`);
     rotation -= step / 10;
+  }
+  if (keyboard.ArrowRight) {
+    update(step, `roll`);
+    rotation += step / 10;
   }
   if (keyboard.ArrowUp) {
     update(step, `pitch`);

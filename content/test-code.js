@@ -14,10 +14,11 @@ let oldheading = 0; // degrees
 function setup() {
   setSize(600, 400);
   setProjector(HOMOGENEOUS);
+  rotateProjector(0.15, -0.25, -0.4);
+  noProjection();
 }
 
 function draw() {
-  noProjection();
   clear(`white`);
   setColor(`black`);
   if (playing) {
@@ -26,6 +27,8 @@ function draw() {
     rect(10, 10, 5, 20);
     rect(20, 10, 5, 20);
   }
+  
+  center();
 
   const customFrameDelta = frameDelta;
   const interval_s = customFrameDelta / ms_per_s;
@@ -53,28 +56,27 @@ function draw() {
   oldheading = heading;
 
   // draw the plane
-  translate(width / 2, height / 2);
   drawAxes();
-//  drawPlane();
-//
-//  // and its projection on the ground
-//  drawPlane(true);
-//  drawAxes(true);
+  drawPlane();
 
-  // // Then draw the info box
-  // drawInfoBox({
-  //   fspeed,
-  //   vspeed,
-  //   bankAngle,
-  //   heading,
-  //   turnRate,
-  //   lat,
-  //   long,
-  //   elevation,
-  // });
+  // and its projection on the ground
+  drawPlane(true);
+  drawAxes(true);
 
-  // // Update the plane's global yaw based on the current roll,
-  // // such that a 25 degree bank angle corresponds to a 3 deg/s
-  // // turn rate, i.e. the ICAO "standard rate" turn.
-  // turnFrame((bankAngle / 10) * interval_s);
+  // Then draw the info box
+  drawInfoBox({
+    fspeed,
+    vspeed,
+    bankAngle,
+    heading,
+    turnRate,
+    lat,
+    long,
+    elevation,
+  });
+
+  // Update the plane's global yaw based on the current roll,
+  // such that a 25 degree bank angle corresponds to a 3 deg/s
+  // turn rate, i.e. the ICAO "standard rate" turn.
+  turnFrame((bankAngle / 10) * interval_s);
 }
