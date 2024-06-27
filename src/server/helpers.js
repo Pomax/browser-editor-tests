@@ -61,7 +61,6 @@ function watchForRebuild() {
     // append to this list as necessary
     `./src/script.js`,
     `./public/dirtree.js`,
-    `./public/loop-guard.js`,
   ].forEach((filename) => watch(filename, () => rebuild()));
   rebuild();
 }
@@ -170,7 +169,7 @@ function switchUser(req, name = req.params.name) {
   // ensure there's a git dir
   if (!existsSync(`${dir}/.git`)) {
     console.log(`adding git tracking for ${dir}`);
-    execSync(`cd ${dir} && git init && cd..`);
+    execSync(`cd ${dir} && git init && cd ..`);
   }
 
   // If not, is this a switch from an anonymous "account" to a new, real "account"?
