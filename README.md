@@ -18,16 +18,19 @@ It's a node project, so you'll need that installed (I recommend `nvm` or its win
 In order to properly compare editors, this test suite comes with:
 
 - a content dir inside of which "user" dirs get built including anonymous user dirs. The latter of which get deleted if they get too old (and this is a test, so "too old" means 1 second =)
+  - There are two special dirs: `anonymous`, which houses the content that gets copied over to anonymous user dirs, and `testuser`, which is the content that gets copied over to new "real" user directories.
 - a normal editor UI, meaning there's a file tree that shows all the files in a user content directory.
-  - those files are backed by git on the server side, for "free" rewinding functionality (with the .git folder never shown in the UI)
   - "one tab per file" with both tab based and file tree based "click to view that file"
   - file create and delete, because obviously. And deletions are reversible, because of git.
-- diff-based (debounced) edit syncing between the browser and the on-disk files at the server
-  - syncs also trigger automatic (debounced) git commits on the server so there's no manual saving.
+- syntax highlighting for HTMl, CSS, JS, and Markdown
+  - support for languages entirely _possible_, but: not actually relevant for "exhaustive enough" testing.
 - autoformatting (using `prettier`) for JS, CSS, and HTML files
-  - additional autoformatting entirely _possible_ but not actually relevant for "exhaustive enough" testing.
+  - additional autoformatting entirely _possible_ but again: not actually relevant for "exhaustive enough" testing.
+- diff-based (debounced) edit syncing between the browser and the on-disk files at the server
+- files are backed by git on the server side, for "free" rewinding functionality (with the .git folder never shown in the UI)
+  - syncs also trigger automatic (debounced) git commits on the server so there's no manual saving.
 - a "do something with this content" mechanism, which in this case is a live website preview.
-  - additional "do something"s entirely _possible_, but again not actually relevant for "exhaustive enough" testing.
+  - additional "do something"s entirely _possible_, but again: not actually relevant for "exhaustive enough" testing.
 
 ## I want more
 
