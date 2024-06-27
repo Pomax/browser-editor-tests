@@ -13,9 +13,10 @@
   <body>
     <main>
       <li id="buttons">
+        <span class="username">{{ name }}</span>
+        <button id="switch" title="Switch to a different user">switch</button>
         <button id="all" title="Open all files">!!!</button>
         <button id="add" title="Create a new file">+</button>
-        <button id="save" title="Create rewind point">↻</button>
         <button id="format" title="Make my code pretty!">🤩</button>
       </li>
       <ul id="filetree"></ul>
@@ -31,8 +32,8 @@
       </div>
       <div id="editors"></div>
 
-      <div id="preview" class="graphics" style="position: relative">
-        <iframe src="./content/index.html"></iframe>
+      <div id="preview" style="position: relative">
+        <iframe sandbox data-src="{{dir}}/index.html?preview=true"></iframe>
       </div>
 
       <div id="status">

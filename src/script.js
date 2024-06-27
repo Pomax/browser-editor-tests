@@ -1,19 +1,19 @@
 import { basicSetup, EditorView } from "codemirror";
 import { EditorState } from "@codemirror/state";
-
 import { javascript } from "@codemirror/lang-javascript";
 import { html } from "@codemirror/lang-html";
 import { css } from "@codemirror/lang-css";
+import { markdown } from "@codemirror/lang-markdown";
 // and https://github.com/orgs/codemirror/repositories?q=lang for more options
 
-import { createPatch } from "./prebaked/vendor/diff.js";
-import { DirTree } from "./prebaked/dirtree.js";
+import { createPatch } from "../public/vendor/diff.js";
+import { DirTree } from "../public/dirtree.js";
 
 // This is *technically* unnecessary, but it's better to be explicit.
+const changeUser = document.getElementById(`switch`);
 const all = document.getElementById(`all`);
 const add = document.getElementById(`add`);
 const format = document.getElementById(`format`);
-const save = document.getElementById(`save`);
 const left = document.getElementById(`left`);
 const right = document.getElementById(`right`);
 const filetree = document.getElementById(`filetree`);
@@ -21,7 +21,8 @@ const tabs = document.getElementById(`tabs`);
 const editors = document.getElementById(`editors`);
 const preview = document.getElementById(`preview`);
 
-const CONTENT_DIR = `content`;
+const user = document.querySelector(`.username`)?.textContent;
+let CONTENT_DIR = `content/${user ?? `anonymous`}`;
 const cmInstances = {};
 let dirTree = { tree: {} };
 let dirList = [];
@@ -36,7 +37,7 @@ setupPage();
 async function setupPage() {
   await refreshDirTree();
 
-  // And then load every file into memory. Because everything has enough RAM for that.
+  // Load every file into memory. Because everything has enough RAM for that.
   dirList = dirTree.flat();
   await Promise.all(
     dirList.map(async (filename) => {
@@ -46,8 +47,8 @@ async function setupPage() {
     })
   );
 
-  updatePreview();
   addGlobalEventHandling();
+  updatePreview();
 }
 
 /**
@@ -71,12 +72,23 @@ async function refreshDirTree() {
  * Hook up the "Add new file" and "Format this file" buttons
  */
 function addGlobalEventHandling() {
+  changeUser.addEventListener(`click`, async () => {
+    const name = prompt(`Username?`).trim();
+    if (name) {
+      const response = await fetch(`/login/${name}`, { method: `post` });
+      if (response.status === 200) {
+        location.reload();
+      } else {
+        alert(await response.text());
+      }
+    }
+  });
+
   all.addEventListener(`click`, async () => {
     document.querySelectorAll(`li.file`).forEach((e) => e.click());
   });
 
-  left.addEventListener(`click`, () => tabs.scrollBy(-100, 0));
-  right.addEventListener(`click`, () => tabs.scrollBy(+100, 0));
+  addTabScrollHandling();
 
   add.addEventListener(`click`, async () => {
     const filename = prompt(
@@ -116,22 +128,40 @@ function addGlobalEventHandling() {
     });
   });
 
-  save.addEventListener(`click`, async () => {
-    const addRewindPoint = confirm(
-      `Rewind points get built automatically as\nyou make changes. If you want to make one,\nyou'll have to say why.`
-    );
-    if (addRewindPoint) {
-      const reason = prompt(`Why do you need a manual rewind point?`);
-      if (reason.trim()) {
-        await fetch(`/save?reason=${encodeURIComponent(reason)}`, {
-          method: `post`,
-        });
-        alert(`Manual rewind point created`);
-      }
-    }
-  });
-
   addFileDropFunctionality();
+}
+
+/**
+ * Basic tab scrolling: click/touch-and-hold
+ */
+function addTabScrollHandling() {
+  let scrolling = false;
+
+  function scrollTabs(step) {
+    if (!scrolling) return;
+    tabs.scrollBy(step, 0);
+    setTimeout(() => scrollTabs(step), 4);
+  }
+
+  for (const type of [`mouseup`, `touchend`]) {
+    document.addEventListener(type, () => (scrolling = false));
+  }
+
+  for (const type of [`mouseout`, `touchend`]) {
+    left.addEventListener(type, () => (scrolling = false));
+    right.addEventListener(type, () => (scrolling = false));
+  }
+
+  for (const type of [`mousedown`, `touchstart`]) {
+    left.addEventListener(type, () => {
+      scrolling = true;
+      scrollTabs(-2);
+    });
+    right.addEventListener(type, () => {
+      scrolling = true;
+      scrollTabs(2);
+    });
+  }
 }
 
 /**
@@ -285,23 +315,30 @@ function getInitialState(filename, data) {
     html: html,
     css: css,
     js: javascript,
+    md: markdown,
   }[ext];
 
-  return EditorState.create({
-    extensions: [
-      basicSetup,
-      syntax(),
-      // Add debounced content change syncing
-      EditorView.updateListener.of((e) => {
-        if (e.docChanged) {
-          const entry = cmInstances[filename];
-          if (entry.debounce) {
-            clearTimeout(entry.debounce);
-          }
-          entry.debounce = setTimeout(entry.sync, 1000);
+  const extensions = [basicSetup];
+
+  if (syntax) {
+    extensions.push(syntax());
+  }
+
+  extensions.push(
+    // Add debounced content change syncing
+    EditorView.updateListener.of((e) => {
+      if (e.docChanged) {
+        const entry = cmInstances[filename];
+        if (entry.debounce) {
+          clearTimeout(entry.debounce);
         }
-      }),
-    ],
+        entry.debounce = setTimeout(entry.sync, 1000);
+      }
+    })
+  );
+
+  return EditorState.create({
+    extensions,
     // And make sure the editor starts with whatever content is in our file.
     doc: data.toString(),
   });
@@ -428,7 +465,7 @@ async function syncContent(filename) {
 /**
  * update the <graphics-element> based on the current file content.
  */
-function updatePreview() {
+function updatePreview(find, replace) {
   const iframe = preview.querySelector(`iframe`);
   const newFrame = document.createElement(`iframe`);
   newFrame.onload = () => {
@@ -440,5 +477,10 @@ function updatePreview() {
   newFrame.style.opacity = 0;
   newFrame.style.transition = "opacity 0.25s";
   preview.append(newFrame);
-  newFrame.src = iframe.src;
+  const src = iframe.src ? iframe.src : iframe.dataset.src;
+  if (find && replace) {
+    newFrame.src = src.replace(find, replace);
+  } else {
+    newFrame.src = src;
+  }
 }

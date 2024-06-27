@@ -1,3 +1,5 @@
-content/.git
+content/*
+!content/anonymous
+!content/testuser
 node_modules
 .DS_Store

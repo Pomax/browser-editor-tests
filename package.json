@@ -4,11 +4,13 @@
   "type": "module",
   "description": "",
   "main": "",
+  "engines": {
+    "node": "16.x"
+  },
   "scripts": {
-    "build": "rollup script.js -f iife -o prebaked/editor.bundle.js -p @rollup/plugin-node-resolve",
-    "build:esbuild": "esbuild --log-level=info --bundle --format=esm script.js > prebaked/editor.bundle.js",
+    "build": "esbuild --log-level=info --bundle --format=esm src/script.js > public/editor.bundle.js",
     "prettier": "npx prettier -w",
-    "start": "node server.js"
+    "start": "node src/server/index.js"
   },
   "author": "",
   "license": "ISC",
@@ -17,6 +19,7 @@
     "@codemirror/lang-css": "^6.2.1",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.2",
+    "@codemirror/lang-markdown": "^6.2.5",
     "@codemirror/state": "^6.4.1",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "body-parser": "^1.20.2",
@@ -28,8 +31,9 @@
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
     "multer": "^1.4.5-lts.1",
+    "mustache": "^4.2.0",
     "nocache": "^4.0.0",
-    "prettier": "^3.3.1",
-    "rollup": "^4.18.0"
+    "nunjucks": "^3.2.4",
+    "prettier": "^3.3.1"
   }
 }

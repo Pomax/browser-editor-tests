@@ -1,5 +1,5 @@
 let localFrame = {
-  roll: [1, 0, 0],
+  roll: [-1, 0, 0],
   pitch: [0, 1, 0],
   yaw: [0, 0, 1],
 };
@@ -48,7 +48,7 @@ function update(a, name) {
 }
 
 function turnFrame(deg) {
-  const a = radians(deg);
+  const a = -radians(deg);
   // console.log(localFrame, a, deg);
 
   const sa = sin(a);

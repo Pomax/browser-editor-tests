@@ -16,7 +16,7 @@ main {
   grid-area: tabnav;
   display: grid;
   grid-template-columns: 2em 1fr 2em;
-  grid-template-rows: 2.5em;
+  grid-template-rows: 100%;
   grid-template-areas: "left tabs right";
 }
 

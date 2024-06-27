@@ -3632,10 +3632,10 @@ function contains(dom, node) {
   return node ? dom == node || dom.contains(node.nodeType != 1 ? node.parentNode : node) : false;
 }
 function deepActiveElement(doc2) {
-  let elt = doc2.activeElement;
-  while (elt && elt.shadowRoot)
-    elt = elt.shadowRoot.activeElement;
-  return elt;
+  let elt2 = doc2.activeElement;
+  while (elt2 && elt2.shadowRoot)
+    elt2 = elt2.shadowRoot.activeElement;
+  return elt2;
 }
 function hasSelection(dom, selection) {
   if (!selection.anchorNode)
@@ -3712,12 +3712,12 @@ function windowRect(win) {
     bottom: win.innerHeight
   };
 }
-function getScale(elt, rect) {
-  let scaleX = rect.width / elt.offsetWidth;
-  let scaleY = rect.height / elt.offsetHeight;
-  if (scaleX > 0.995 && scaleX < 1.005 || !isFinite(scaleX) || Math.abs(rect.width - elt.offsetWidth) < 1)
+function getScale(elt2, rect) {
+  let scaleX = rect.width / elt2.offsetWidth;
+  let scaleY = rect.height / elt2.offsetHeight;
+  if (scaleX > 0.995 && scaleX < 1.005 || !isFinite(scaleX) || Math.abs(rect.width - elt2.offsetWidth) < 1)
     scaleX = 1;
-  if (scaleY > 0.995 && scaleY < 1.005 || !isFinite(scaleY) || Math.abs(rect.height - elt.offsetHeight) < 1)
+  if (scaleY > 0.995 && scaleY < 1.005 || !isFinite(scaleY) || Math.abs(rect.height - elt2.offsetHeight) < 1)
     scaleY = 1;
   return { scaleX, scaleY };
 }
@@ -3871,11 +3871,11 @@ function focusPreventScroll(dom) {
   if (!preventScrollSupported) {
     preventScrollSupported = false;
     for (let i = 0; i < stack.length; ) {
-      let elt = stack[i++], top2 = stack[i++], left2 = stack[i++];
-      if (elt.scrollTop != top2)
-        elt.scrollTop = top2;
-      if (elt.scrollLeft != left2)
-        elt.scrollLeft = left2;
+      let elt2 = stack[i++], top2 = stack[i++], left2 = stack[i++];
+      if (elt2.scrollTop != top2)
+        elt2.scrollTop = top2;
+      if (elt2.scrollLeft != left2)
+        elt2.scrollLeft = left2;
     }
   }
 }
@@ -3886,16 +3886,16 @@ function textRange(node, from, to = from) {
   range.setStart(node, from);
   return range;
 }
-function dispatchKey(elt, name2, code, mods) {
+function dispatchKey(elt2, name2, code, mods) {
   let options = { key: name2, code: name2, keyCode: code, which: code, cancelable: true };
   if (mods)
     ({ altKey: options.altKey, ctrlKey: options.ctrlKey, shiftKey: options.shiftKey, metaKey: options.metaKey } = mods);
   let down = new KeyboardEvent("keydown", options);
   down.synthetic = true;
-  elt.dispatchEvent(down);
+  elt2.dispatchEvent(down);
   let up = new KeyboardEvent("keyup", options);
   up.synthetic = true;
-  elt.dispatchEvent(up);
+  elt2.dispatchEvent(up);
   return down.defaultPrevented || up.defaultPrevented;
 }
 function getRoot(node) {
@@ -3934,8 +3934,8 @@ function atElementStart(doc2, selection) {
     }
   }
 }
-function isScrolledToBottom(elt) {
-  return elt.scrollTop > Math.max(1, elt.scrollHeight - elt.clientHeight - 4);
+function isScrolledToBottom(elt2) {
+  return elt2.scrollTop > Math.max(1, elt2.scrollHeight - elt2.clientHeight - 4);
 }
 function textNodeBefore(startNode, startOffset) {
   for (let node = startNode, offset = startOffset; ; ) {
@@ -4426,10 +4426,10 @@ var MarkView = class _MarkView extends ContentView {
   }
   split(from) {
     let result = [], off = 0, detachFrom = -1, i = 0;
-    for (let elt of this.children) {
-      let end = off + elt.length;
+    for (let elt2 of this.children) {
+      let end = off + elt2.length;
       if (end > from)
-        result.push(off < from ? elt.split(from - off) : elt);
+        result.push(off < from ? elt2.split(from - off) : elt2);
       if (detachFrom < 0 && off >= from)
         detachFrom = i;
       off = end;
@@ -5400,8 +5400,8 @@ var NullWidget = class extends WidgetType {
   toDOM() {
     return document.createElement(this.tag);
   }
-  updateDOM(elt) {
-    return elt.nodeName.toLowerCase() == this.tag;
+  updateDOM(elt2) {
+    return elt2.nodeName.toLowerCase() == this.tag;
   }
   get isHidden() {
     return true;
@@ -6568,16 +6568,16 @@ var BlockGapWidget = class extends WidgetType {
     this.height = height;
   }
   toDOM() {
-    let elt = document.createElement("div");
-    elt.className = "cm-gap";
-    this.updateDOM(elt);
-    return elt;
+    let elt2 = document.createElement("div");
+    elt2.className = "cm-gap";
+    this.updateDOM(elt2);
+    return elt2;
   }
   eq(other) {
     return other.height == this.height;
   }
-  updateDOM(elt) {
-    elt.style.height = this.height + "px";
+  updateDOM(elt2) {
+    elt2.style.height = this.height + "px";
     return true;
   }
   get editable() {
@@ -7593,9 +7593,9 @@ handlers.paste = (view, event) => {
   if (view.state.readOnly)
     return true;
   view.observer.flush();
-  let data = brokenClipboardAPI ? null : event.clipboardData;
-  if (data) {
-    doPaste(view, data.getData("text/plain") || data.getData("text/uri-list"));
+  let data2 = brokenClipboardAPI ? null : event.clipboardData;
+  if (data2) {
+    doPaste(view, data2.getData("text/plain") || data2.getData("text/uri-list"));
     return true;
   } else {
     capturePaste(view);
@@ -7650,10 +7650,10 @@ handlers.copy = handlers.cut = (view, event) => {
       scrollIntoView: true,
       userEvent: "delete.cut"
     });
-  let data = brokenClipboardAPI ? null : event.clipboardData;
-  if (data) {
-    data.clearData();
-    data.setData("text/plain", text);
+  let data2 = brokenClipboardAPI ? null : event.clipboardData;
+  if (data2) {
+    data2.clearData();
+    data2.setData("text/plain", text);
     return true;
   } else {
     captureCopy(view, text);
@@ -8445,16 +8445,16 @@ function visiblePixelRange(dom, paddingTop) {
   let top2 = Math.max(0, rect.top), bottom = Math.min(win.innerHeight, rect.bottom);
   for (let parent = dom.parentNode; parent && parent != doc2.body; ) {
     if (parent.nodeType == 1) {
-      let elt = parent;
-      let style = window.getComputedStyle(elt);
-      if ((elt.scrollHeight > elt.clientHeight || elt.scrollWidth > elt.clientWidth) && style.overflow != "visible") {
-        let parentRect = elt.getBoundingClientRect();
+      let elt2 = parent;
+      let style = window.getComputedStyle(elt2);
+      if ((elt2.scrollHeight > elt2.clientHeight || elt2.scrollWidth > elt2.clientWidth) && style.overflow != "visible") {
+        let parentRect = elt2.getBoundingClientRect();
         left2 = Math.max(left2, parentRect.left);
         right2 = Math.min(right2, parentRect.right);
         top2 = Math.max(top2, parentRect.top);
         bottom = parent == dom.parentNode ? parentRect.bottom : Math.min(bottom, parentRect.bottom);
       }
-      parent = style.position == "absolute" || style.position == "fixed" ? elt.offsetParent : elt.parentNode;
+      parent = style.position == "absolute" || style.position == "fixed" ? elt2.offsetParent : elt2.parentNode;
     } else if (parent.nodeType == 11) {
       parent = parent.host;
     } else {
@@ -8509,15 +8509,15 @@ var LineGapWidget = class extends WidgetType {
     return other.size == this.size && other.vertical == this.vertical;
   }
   toDOM() {
-    let elt = document.createElement("div");
+    let elt2 = document.createElement("div");
     if (this.vertical) {
-      elt.style.height = this.size + "px";
+      elt2.style.height = this.size + "px";
     } else {
-      elt.style.width = this.size + "px";
-      elt.style.height = "2px";
-      elt.style.display = "inline-block";
+      elt2.style.width = this.size + "px";
+      elt2.style.height = "2px";
+      elt2.style.display = "inline-block";
     }
-    return elt;
+    return elt2;
   }
   get estimatedHeight() {
     return this.vertical ? this.size : -1;
@@ -11152,23 +11152,23 @@ var RectangleMarker = class _RectangleMarker {
     this.height = height;
   }
   draw() {
-    let elt = document.createElement("div");
-    elt.className = this.className;
-    this.adjust(elt);
-    return elt;
+    let elt2 = document.createElement("div");
+    elt2.className = this.className;
+    this.adjust(elt2);
+    return elt2;
   }
-  update(elt, prev) {
+  update(elt2, prev) {
     if (prev.className != this.className)
       return false;
-    this.adjust(elt);
+    this.adjust(elt2);
     return true;
   }
-  adjust(elt) {
-    elt.style.left = this.left + "px";
-    elt.style.top = this.top + "px";
+  adjust(elt2) {
+    elt2.style.left = this.left + "px";
+    elt2.style.top = this.top + "px";
     if (this.width != null)
-      elt.style.width = this.width + "px";
-    elt.style.height = this.height + "px";
+      elt2.style.width = this.width + "px";
+    elt2.style.height = this.height + "px";
   }
   eq(p) {
     return this.left == p.left && this.top == p.top && this.width == p.width && this.height == p.height && this.className == p.className;
@@ -12165,12 +12165,12 @@ var tooltipPlugin = /* @__PURE__ */ ViewPlugin.fromClass(class {
       for (let t2 of this.manager.tooltipViews)
         t2.dom.style.position = "absolute";
     }
-    let { editor, space: space3, scaleX, scaleY } = measured;
+    let { editor, space: space4, scaleX, scaleY } = measured;
     let others = [];
     for (let i = 0; i < this.manager.tooltips.length; i++) {
       let tooltip = this.manager.tooltips[i], tView = this.manager.tooltipViews[i], { dom } = tView;
       let pos = measured.pos[i], size = measured.size[i];
-      if (!pos || pos.bottom <= Math.max(editor.top, space3.top) || pos.top >= Math.min(editor.bottom, space3.bottom) || pos.right < Math.max(editor.left, space3.left) - 0.1 || pos.left > Math.min(editor.right, space3.right) + 0.1) {
+      if (!pos || pos.bottom <= Math.max(editor.top, space4.top) || pos.top >= Math.min(editor.bottom, space4.bottom) || pos.right < Math.max(editor.left, space4.left) - 0.1 || pos.left > Math.min(editor.right, space4.right) + 0.1) {
         dom.style.top = Outside;
         continue;
       }
@@ -12178,11 +12178,11 @@ var tooltipPlugin = /* @__PURE__ */ ViewPlugin.fromClass(class {
       let arrowHeight = arrow ? 7 : 0;
       let width = size.right - size.left, height = (_a2 = knownHeight.get(tView)) !== null && _a2 !== void 0 ? _a2 : size.bottom - size.top;
       let offset = tView.offset || noOffset, ltr = this.view.textDirection == Direction.LTR;
-      let left2 = size.width > space3.right - space3.left ? ltr ? space3.left : space3.right - size.width : ltr ? Math.min(pos.left - (arrow ? 14 : 0) + offset.x, space3.right - width) : Math.max(space3.left, pos.left - width + (arrow ? 14 : 0) - offset.x);
+      let left2 = size.width > space4.right - space4.left ? ltr ? space4.left : space4.right - size.width : ltr ? Math.min(pos.left - (arrow ? 14 : 0) + offset.x, space4.right - width) : Math.max(space4.left, pos.left - width + (arrow ? 14 : 0) - offset.x);
       let above = this.above[i];
-      if (!tooltip.strictSide && (above ? pos.top - (size.bottom - size.top) - offset.y < space3.top : pos.bottom + (size.bottom - size.top) + offset.y > space3.bottom) && above == space3.bottom - pos.bottom > pos.top - space3.top)
+      if (!tooltip.strictSide && (above ? pos.top - (size.bottom - size.top) - offset.y < space4.top : pos.bottom + (size.bottom - size.top) + offset.y > space4.bottom) && above == space4.bottom - pos.bottom > pos.top - space4.top)
         above = this.above[i] = !above;
-      let spaceVert = (above ? pos.top - space3.top : space3.bottom - pos.bottom) - arrowHeight;
+      let spaceVert = (above ? pos.top - space4.top : space4.bottom - pos.bottom) - arrowHeight;
       if (spaceVert < height && tView.resize !== false) {
         if (spaceVert < this.view.defaultLineHeight) {
           dom.style.top = Outside;
@@ -12334,10 +12334,10 @@ var HoverTooltipHost = class _HoverTooltipHost {
     }
     this.mounted = true;
   }
-  positioned(space3) {
+  positioned(space4) {
     for (let hostedView of this.manager.tooltipViews) {
       if (hostedView.positioned)
-        hostedView.positioned(space3);
+        hostedView.positioned(space4);
     }
   }
   update(update) {
@@ -12992,8 +12992,8 @@ var SingleGutterView = class {
     return !RangeSet.eq(this.markers, prevMarkers, vp.from, vp.to) || (this.config.lineMarkerChange ? this.config.lineMarkerChange(update) : false);
   }
   destroy() {
-    for (let elt of this.elements)
-      elt.destroy();
+    for (let elt2 of this.elements)
+      elt2.destroy();
   }
 };
 var GutterElement = class {
@@ -13205,10 +13205,10 @@ NodeProp.contextHash = new NodeProp({ perNode: true });
 NodeProp.lookAhead = new NodeProp({ perNode: true });
 NodeProp.mounted = new NodeProp({ perNode: true });
 var MountedTree = class {
-  constructor(tree, overlay, parser4) {
+  constructor(tree, overlay, parser5) {
     this.tree = tree;
     this.overlay = overlay;
-    this.parser = parser4;
+    this.parser = parser5;
   }
   /**
   @internal
@@ -13521,8 +13521,8 @@ var Tree = class _Tree {
   Build a tree from a postfix-ordered buffer of node information,
   or a cursor over such a buffer.
   */
-  static build(data) {
-    return buildTree(data);
+  static build(data2) {
+    return buildTree(data2);
   }
 };
 Tree.empty = new Tree(NodeType.none, [], [], 0);
@@ -14383,9 +14383,9 @@ var TreeCursor = class {
 function hasChild(tree) {
   return tree.children.some((ch) => ch instanceof TreeBuffer || !ch.type.isAnonymous || hasChild(ch));
 }
-function buildTree(data) {
+function buildTree(data2) {
   var _a2;
-  let { buffer, nodeSet, maxBufferLength = DefaultBufferLength, reused = [], minRepeatType = nodeSet.types.length } = data;
+  let { buffer, nodeSet, maxBufferLength = DefaultBufferLength, reused = [], minRepeatType = nodeSet.types.length } = data2;
   let cursor = Array.isArray(buffer) ? new FlatBufferCursor(buffer, buffer.length) : buffer;
   let types2 = nodeSet.types;
   let contextHash = 0, lookAhead = 0;
@@ -14412,11 +14412,11 @@ function buildTree(data) {
     let type = types2[id2], node, buffer2;
     let startPos = start - parentStart;
     if (end - start <= maxBufferLength && (buffer2 = findBufferSize(cursor.pos - minPos, inRepeat))) {
-      let data2 = new Uint16Array(buffer2.size - buffer2.skip);
-      let endPos = cursor.pos - buffer2.size, index = data2.length;
+      let data3 = new Uint16Array(buffer2.size - buffer2.skip);
+      let endPos = cursor.pos - buffer2.size, index = data3.length;
       while (cursor.pos > endPos)
-        index = copyToBuffer(buffer2.start, data2, index);
-      node = new TreeBuffer(data2, end - buffer2.start, nodeSet);
+        index = copyToBuffer(buffer2.start, data3, index);
+      node = new TreeBuffer(data3, end - buffer2.start, nodeSet);
       startPos = buffer2.start - parentStart;
     } else {
       let endPos = cursor.pos - size;
@@ -14580,9 +14580,9 @@ function buildTree(data) {
   }
   let children = [], positions = [];
   while (cursor.pos > 0)
-    takeNode(data.start || 0, data.bufferStart || 0, children, positions, -1, 0);
-  let length = (_a2 = data.length) !== null && _a2 !== void 0 ? _a2 : children.length ? positions[0] + children[0].length : 0;
-  return new Tree(types2[data.topID], children.reverse(), positions.reverse(), length);
+    takeNode(data2.start || 0, data2.bufferStart || 0, children, positions, -1, 0);
+  let length = (_a2 = data2.length) !== null && _a2 !== void 0 ? _a2 : children.length ? positions[0] + children[0].length : 0;
+  return new Tree(types2[data2.topID], children.reverse(), positions.reverse(), length);
 }
 var nodeSizeCache = /* @__PURE__ */ new WeakMap();
 function nodeSize(balanceType, node) {
@@ -14813,8 +14813,8 @@ function parseMixed(nest) {
   return (parse, input, fragments, ranges) => new MixedParse(parse, nest, input, fragments, ranges);
 }
 var InnerParse = class {
-  constructor(parser4, parse, overlay, target, from) {
-    this.parser = parser4;
+  constructor(parser5, parse, overlay, target, from) {
+    this.parser = parser5;
     this.parse = parse;
     this.overlay = overlay;
     this.target = target;
@@ -14826,8 +14826,8 @@ function checkRanges(ranges) {
     throw new RangeError("Invalid inner parse ranges given: " + JSON.stringify(ranges));
 }
 var ActiveOverlay = class {
-  constructor(parser4, predicate, mounts, index, start, target, prev) {
-    this.parser = parser4;
+  constructor(parser5, predicate, mounts, index, start, target, prev) {
+    this.parser = parser5;
     this.predicate = predicate;
     this.mounts = mounts;
     this.index = index;
@@ -15070,14 +15070,14 @@ var FragmentCursor = class {
       this.inner = new StructureCursor(frag.tree, -frag.offset);
     }
   }
-  findMounts(pos, parser4) {
+  findMounts(pos, parser5) {
     var _a2;
     let result = [];
     if (this.inner) {
       this.inner.cursor.moveTo(pos, 1);
       for (let pos2 = this.inner.cursor.node; pos2; pos2 = pos2.parent) {
         let mount = (_a2 = pos2.tree) === null || _a2 === void 0 ? void 0 : _a2.prop(NodeProp.mounted);
-        if (mount && mount.parser == parser4) {
+        if (mount && mount.parser == parser5) {
           for (let i = this.fragI; i < this.fragments.length; i++) {
             let frag = this.fragments[i];
             if (frag.from >= pos2.to)
@@ -15885,27 +15885,27 @@ var Language = class {
   configure your parser to [attach](https://codemirror.net/6/docs/ref/#language.languageDataProp) it
   to the language's outer syntax node.
   */
-  constructor(data, parser4, extraExtensions = [], name2 = "") {
-    this.data = data;
+  constructor(data2, parser5, extraExtensions = [], name2 = "") {
+    this.data = data2;
     this.name = name2;
     if (!EditorState.prototype.hasOwnProperty("tree"))
       Object.defineProperty(EditorState.prototype, "tree", { get() {
         return syntaxTree(this);
       } });
-    this.parser = parser4;
+    this.parser = parser5;
     this.extension = [
       language.of(this),
       EditorState.languageData.of((state, pos, side) => {
-        let top2 = topNodeAt(state, pos, side), data2 = top2.type.prop(languageDataProp);
-        if (!data2)
+        let top2 = topNodeAt(state, pos, side), data3 = top2.type.prop(languageDataProp);
+        if (!data3)
           return [];
-        let base2 = state.facet(data2), sub = top2.type.prop(sublanguageProp);
+        let base2 = state.facet(data3), sub = top2.type.prop(sublanguageProp);
         if (sub) {
           let innerNode = top2.resolve(pos - top2.from, side);
           for (let sublang of sub)
             if (sublang.test(innerNode, state)) {
-              let data3 = state.facet(sublang.facet);
-              return sublang.type == "replace" ? data3 : data3.concat(base2);
+              let data4 = state.facet(sublang.facet);
+              return sublang.type == "replace" ? data4 : data4.concat(base2);
             }
         }
         return base2;
@@ -15979,17 +15979,17 @@ function topNodeAt(state, pos, side) {
   return tree;
 }
 var LRLanguage = class _LRLanguage extends Language {
-  constructor(data, parser4, name2) {
-    super(data, parser4, [], name2);
-    this.parser = parser4;
+  constructor(data2, parser5, name2) {
+    super(data2, parser5, [], name2);
+    this.parser = parser5;
   }
   /**
   Define a language from a parser.
   */
   static define(spec) {
-    let data = defineLanguageFacet(spec.languageData);
-    return new _LRLanguage(data, spec.parser.configure({
-      props: [languageDataProp.add((type) => type.isTop ? data : void 0)]
+    let data2 = defineLanguageFacet(spec.languageData);
+    return new _LRLanguage(data2, spec.parser.configure({
+      props: [languageDataProp.add((type) => type.isTop ? data2 : void 0)]
     }), spec.name);
   }
   /**
@@ -16042,8 +16042,8 @@ var DocInput = class {
 };
 var currentContext = null;
 var ParseContext = class _ParseContext {
-  constructor(parser4, state, fragments = [], tree, treeLen, viewport, skipped, scheduleOn) {
-    this.parser = parser4;
+  constructor(parser5, state, fragments = [], tree, treeLen, viewport, skipped, scheduleOn) {
+    this.parser = parser5;
     this.state = state;
     this.fragments = fragments;
     this.tree = tree;
@@ -16057,8 +16057,8 @@ var ParseContext = class _ParseContext {
   /**
   @internal
   */
-  static create(parser4, state, viewport) {
-    return new _ParseContext(parser4, state, [], Tree.empty, 0, viewport, [], null);
+  static create(parser5, state, viewport) {
+    return new _ParseContext(parser5, state, [], Tree.empty, 0, viewport, [], null);
   }
   startParse() {
     return this.parser.startParse(new DocInput(this.state.doc), this.fragments);
@@ -16206,7 +16206,7 @@ var ParseContext = class _ParseContext {
     return new class extends Parser {
       createParse(input, fragments, ranges) {
         let from = ranges[0].from, to = ranges[ranges.length - 1].to;
-        let parser4 = {
+        let parser5 = {
           parsedPos: from,
           advance() {
             let cx = currentContext;
@@ -16223,7 +16223,7 @@ var ParseContext = class _ParseContext {
           stopAt() {
           }
         };
-        return parser4;
+        return parser5;
       }
     }();
   }
@@ -16399,6 +16399,80 @@ var LanguageSupport = class {
     this.language = language2;
     this.support = support;
     this.extension = [language2, support];
+  }
+};
+var LanguageDescription = class _LanguageDescription {
+  constructor(name2, alias, extensions, filename, loadFunc, support = void 0) {
+    this.name = name2;
+    this.alias = alias;
+    this.extensions = extensions;
+    this.filename = filename;
+    this.loadFunc = loadFunc;
+    this.support = support;
+    this.loading = null;
+  }
+  /**
+  Start loading the the language. Will return a promise that
+  resolves to a [`LanguageSupport`](https://codemirror.net/6/docs/ref/#language.LanguageSupport)
+  object when the language successfully loads.
+  */
+  load() {
+    return this.loading || (this.loading = this.loadFunc().then((support) => this.support = support, (err) => {
+      this.loading = null;
+      throw err;
+    }));
+  }
+  /**
+  Create a language description.
+  */
+  static of(spec) {
+    let { load, support } = spec;
+    if (!load) {
+      if (!support)
+        throw new RangeError("Must pass either 'load' or 'support' to LanguageDescription.of");
+      load = () => Promise.resolve(support);
+    }
+    return new _LanguageDescription(spec.name, (spec.alias || []).concat(spec.name).map((s) => s.toLowerCase()), spec.extensions || [], spec.filename, load, support);
+  }
+  /**
+  Look for a language in the given array of descriptions that
+  matches the filename. Will first match
+  [`filename`](https://codemirror.net/6/docs/ref/#language.LanguageDescription.filename) patterns,
+  and then [extensions](https://codemirror.net/6/docs/ref/#language.LanguageDescription.extensions),
+  and return the first language that matches.
+  */
+  static matchFilename(descs, filename) {
+    for (let d of descs)
+      if (d.filename && d.filename.test(filename))
+        return d;
+    let ext = /\.([^.]+)$/.exec(filename);
+    if (ext) {
+      for (let d of descs)
+        if (d.extensions.indexOf(ext[1]) > -1)
+          return d;
+    }
+    return null;
+  }
+  /**
+  Look for a language whose name or alias matches the the given
+  name (case-insensitively). If `fuzzy` is true, and no direct
+  matchs is found, this'll also search for a language whose name
+  or alias occurs in the string (for names shorter than three
+  characters, only when surrounded by non-word characters).
+  */
+  static matchLanguageName(descs, name2, fuzzy = true) {
+    name2 = name2.toLowerCase();
+    for (let d of descs)
+      if (d.alias.some((a) => a == name2))
+        return d;
+    if (fuzzy)
+      for (let d of descs)
+        for (let a of d.alias) {
+          let found = name2.indexOf(a);
+          if (found > -1 && (a.length > 2 || !/\w/.test(name2[found - 1]) && !/\w/.test(name2[found + a.length])))
+            return d;
+        }
+    return null;
   }
 };
 var indentService = /* @__PURE__ */ Facet.define();
@@ -16632,13 +16706,13 @@ function bracketedAligned(context) {
     return null;
   let sim = context.options.simulateBreak;
   let openLine = context.state.doc.lineAt(openToken.from);
-  let lineEnd = sim == null || sim <= openLine.from ? openLine.to : Math.min(openLine.to, sim);
+  let lineEnd2 = sim == null || sim <= openLine.from ? openLine.to : Math.min(openLine.to, sim);
   for (let pos = openToken.to; ; ) {
     let next = tree.childAfter(pos);
     if (!next || next == last)
       return null;
     if (!next.type.isSkipped)
-      return next.from < lineEnd ? openToken : null;
+      return next.from < lineEnd2 ? openToken : null;
     pos = next.to;
   }
 }
@@ -16646,8 +16720,8 @@ function delimitedIndent({ closing: closing2, align = true, units = 1 }) {
   return (context) => delimitedStrategy(context, align, units, closing2);
 }
 function delimitedStrategy(context, align, units, closing2, closedAt) {
-  let after = context.textAfter, space3 = after.match(/^\s*/)[0].length;
-  let closed = closing2 && after.slice(space3, space3 + closing2.length) == closing2 || closedAt == context.pos + space3;
+  let after = context.textAfter, space4 = after.match(/^\s*/)[0].length;
+  let closed = closing2 && after.slice(space4, space4 + closing2.length) == closing2 || closedAt == context.pos + space4;
   let aligned = align ? bracketedAligned(context) : null;
   if (aligned)
     return closed ? context.column(aligned.from) : context.column(aligned.to);
@@ -16722,13 +16796,13 @@ function isUnfinished(node) {
   let ch = node.lastChild;
   return ch && ch.to == node.to && ch.type.isError;
 }
-function foldable(state, lineStart, lineEnd) {
+function foldable(state, lineStart, lineEnd2) {
   for (let service of state.facet(foldService)) {
-    let result = service(state, lineStart, lineEnd);
+    let result = service(state, lineStart, lineEnd2);
     if (result)
       return result;
   }
-  return syntaxFolding(state, lineStart, lineEnd);
+  return syntaxFolding(state, lineStart, lineEnd2);
 }
 function mapRange(range, mapping) {
   let from = mapping.mapPos(range.from, 1), to = mapping.mapPos(range.to, -1);
@@ -17440,8 +17514,8 @@ var toggleBlockCommentByLine = /* @__PURE__ */ command(
   /* CommentOption.Toggle */
 );
 function getConfig(state, pos) {
-  let data = state.languageDataAt("commentTokens", pos);
-  return data.length ? data[0] : {};
+  let data2 = state.languageDataAt("commentTokens", pos);
+  return data2.length ? data2[0] : {};
 }
 var SearchMargin = 50;
 function findBlockComment(state, { open, close }, from, to) {
@@ -17942,9 +18016,9 @@ function moveByLineBoundary(view, start, forward) {
   if (moved.head == start.head && moved.head != (forward ? line.to : line.from))
     moved = view.moveToLineBoundary(start, forward, false);
   if (!forward && moved.head == line.from && line.length) {
-    let space3 = /^\s*/.exec(view.state.sliceDoc(line.from, Math.min(line.from + 100, line.to)))[0].length;
-    if (space3 && start.head != line.from + space3)
-      moved = EditorSelection.cursor(line.from + space3);
+    let space4 = /^\s*/.exec(view.state.sliceDoc(line.from, Math.min(line.from + 100, line.to)))[0].length;
+    if (space4 && start.head != line.from + space4)
+      moved = EditorSelection.cursor(line.from + space4);
   }
   return moved;
 }
@@ -18141,8 +18215,8 @@ var deleteByGroup = (target, forward) => deleteBy(target, (range) => {
 var deleteGroupBackward = (target) => deleteByGroup(target, false);
 var deleteGroupForward = (target) => deleteByGroup(target, true);
 var deleteToLineEnd = (view) => deleteBy(view, (range) => {
-  let lineEnd = view.lineBlockAt(range.head).to;
-  return range.head < lineEnd ? lineEnd : Math.min(view.state.doc.length, range.head + 1);
+  let lineEnd2 = view.lineBlockAt(range.head).to;
+  return range.head < lineEnd2 ? lineEnd2 : Math.min(view.state.doc.length, range.head + 1);
 });
 var deleteLineBoundaryBackward = (view) => deleteBy(view, (range) => {
   let lineStart = view.moveToLineBoundary(range, false).head;
@@ -18366,14 +18440,14 @@ var indentLess = ({ state, dispatch }) => {
   if (state.readOnly)
     return false;
   dispatch(state.update(changeBySelectedLine(state, (line, changes) => {
-    let space3 = /^\s*/.exec(line.text)[0];
-    if (!space3)
+    let space4 = /^\s*/.exec(line.text)[0];
+    if (!space4)
       return;
-    let col = countColumn(space3, state.tabSize), keep = 0;
+    let col = countColumn(space4, state.tabSize), keep = 0;
     let insert2 = indentString(state, Math.max(0, col - getIndentUnit(state)));
-    while (keep < space3.length && keep < insert2.length && space3.charCodeAt(keep) == insert2.charCodeAt(keep))
+    while (keep < space4.length && keep < insert2.length && space4.charCodeAt(keep) == insert2.charCodeAt(keep))
       keep++;
-    changes.push({ from: line.from + keep, to: line.from + space3.length, insert: insert2.slice(keep) });
+    changes.push({ from: line.from + keep, to: line.from + space4.length, insert: insert2.slice(keep) });
   }), { userEvent: "delete.dedent" }));
   return true;
 };
@@ -18442,28 +18516,28 @@ var defaultKeymap = /* @__PURE__ */ [
 
 // node_modules/crelt/index.js
 function crelt() {
-  var elt = arguments[0];
-  if (typeof elt == "string") elt = document.createElement(elt);
+  var elt2 = arguments[0];
+  if (typeof elt2 == "string") elt2 = document.createElement(elt2);
   var i = 1, next = arguments[1];
   if (next && typeof next == "object" && next.nodeType == null && !Array.isArray(next)) {
     for (var name2 in next) if (Object.prototype.hasOwnProperty.call(next, name2)) {
       var value = next[name2];
-      if (typeof value == "string") elt.setAttribute(name2, value);
-      else if (value != null) elt[name2] = value;
+      if (typeof value == "string") elt2.setAttribute(name2, value);
+      else if (value != null) elt2[name2] = value;
     }
     i++;
   }
-  for (; i < arguments.length; i++) add(elt, arguments[i]);
-  return elt;
+  for (; i < arguments.length; i++) add(elt2, arguments[i]);
+  return elt2;
 }
-function add(elt, child) {
+function add(elt2, child) {
   if (typeof child == "string") {
-    elt.appendChild(document.createTextNode(child));
+    elt2.appendChild(document.createTextNode(child));
   } else if (child == null) {
   } else if (child.nodeType != null) {
-    elt.appendChild(child);
+    elt2.appendChild(child);
   } else if (Array.isArray(child)) {
-    for (var i = 0; i < child.length; i++) add(elt, child[i]);
+    for (var i = 0; i < child.length; i++) add(elt2, child[i]);
   } else {
     throw new RangeError("Unsupported child node: " + child);
   }
@@ -19494,8 +19568,8 @@ function phrase(view, phrase2) {
 var AnnounceMargin = 30;
 var Break = /[\s\.,:;?!]/;
 function announceMatch(view, { from, to }) {
-  let line = view.state.doc.lineAt(from), lineEnd = view.state.doc.lineAt(to).to;
-  let start = Math.max(line.from, from - AnnounceMargin), end = Math.min(lineEnd, to + AnnounceMargin);
+  let line = view.state.doc.lineAt(from), lineEnd2 = view.state.doc.lineAt(to).to;
+  let start = Math.max(line.from, from - AnnounceMargin), end = Math.min(lineEnd2, to + AnnounceMargin);
   let text = view.state.sliceDoc(start, end);
   if (start != line.from) {
     for (let i = 0; i < AnnounceMargin; i++)
@@ -19504,7 +19578,7 @@ function announceMatch(view, { from, to }) {
         break;
       }
   }
-  if (end != lineEnd) {
+  if (end != lineEnd2) {
     for (let i = text.length - 1; i > text.length - AnnounceMargin; i--)
       if (!Break.test(text[i - 1]) && Break.test(text[i])) {
         text = text.slice(0, i);
@@ -19854,26 +19928,26 @@ var completionConfig = /* @__PURE__ */ Facet.define({
 function joinClass(a, b) {
   return a ? b ? a + " " + b : a : b;
 }
-function defaultPositionInfo(view, list, option, info, space3, tooltip) {
+function defaultPositionInfo(view, list, option, info, space4, tooltip) {
   let rtl = view.textDirection == Direction.RTL, left2 = rtl, narrow = false;
   let side = "top", offset, maxWidth;
-  let spaceLeft = list.left - space3.left, spaceRight = space3.right - list.right;
+  let spaceLeft = list.left - space4.left, spaceRight = space4.right - list.right;
   let infoWidth = info.right - info.left, infoHeight = info.bottom - info.top;
   if (left2 && spaceLeft < Math.min(infoWidth, spaceRight))
     left2 = false;
   else if (!left2 && spaceRight < Math.min(infoWidth, spaceLeft))
     left2 = true;
   if (infoWidth <= (left2 ? spaceLeft : spaceRight)) {
-    offset = Math.max(space3.top, Math.min(option.top, space3.bottom - infoHeight)) - list.top;
+    offset = Math.max(space4.top, Math.min(option.top, space4.bottom - infoHeight)) - list.top;
     maxWidth = Math.min(400, left2 ? spaceLeft : spaceRight);
   } else {
     narrow = true;
     maxWidth = Math.min(
       400,
-      (rtl ? list.right : space3.right - list.left) - 30
+      (rtl ? list.right : space4.right - list.left) - 30
       /* Info.Margin */
     );
-    let spaceBelow = space3.bottom - list.bottom;
+    let spaceBelow = space4.bottom - list.bottom;
     if (spaceBelow >= infoHeight || spaceBelow > list.top) {
       offset = option.bottom - list.top;
     } else {
@@ -20027,8 +20101,8 @@ var CompletionTooltip = class {
       this.currentClass = cls;
     }
   }
-  positioned(space3) {
-    this.space = space3;
+  positioned(space4) {
+    this.space = space4;
     if (this.info)
       this.view.requestMeasure(this.placeInfoReq);
   }
@@ -20098,14 +20172,14 @@ var CompletionTooltip = class {
     let listRect = this.dom.getBoundingClientRect();
     let infoRect = this.info.getBoundingClientRect();
     let selRect = sel.getBoundingClientRect();
-    let space3 = this.space;
-    if (!space3) {
+    let space4 = this.space;
+    if (!space4) {
       let win = this.dom.ownerDocument.defaultView || window;
-      space3 = { left: 0, top: 0, right: win.innerWidth, bottom: win.innerHeight };
+      space4 = { left: 0, top: 0, right: win.innerWidth, bottom: win.innerHeight };
     }
-    if (selRect.top > Math.min(space3.bottom, listRect.bottom) - 10 || selRect.bottom < Math.max(space3.top, listRect.top) + 10)
+    if (selRect.top > Math.min(space4.bottom, listRect.bottom) - 10 || selRect.bottom < Math.max(space4.top, listRect.top) + 10)
       return null;
-    return this.view.state.facet(completionConfig).positionInfo(this.view, listRect, selRect, infoRect, space3, this.dom);
+    return this.view.state.facet(completionConfig).positionInfo(this.view, listRect, selRect, infoRect, space4, this.dom);
   }
   placeInfo(pos) {
     if (this.info) {
@@ -21893,15 +21967,15 @@ var Stack = class _Stack {
   reduce(action) {
     var _a2;
     let depth = action >> 19, type = action & 65535;
-    let { parser: parser4 } = this.p;
+    let { parser: parser5 } = this.p;
     if (this.reducePos < this.pos - 25)
       this.setLookAhead(this.pos);
-    let dPrec = parser4.dynamicPrecedence(type);
+    let dPrec = parser5.dynamicPrecedence(type);
     if (dPrec)
       this.score += dPrec;
     if (depth == 0) {
-      this.pushState(parser4.getGoto(this.state, type, true), this.reducePos);
-      if (type < parser4.minRepeatTerm)
+      this.pushState(parser5.getGoto(this.state, type, true), this.reducePos);
+      if (type < parser5.minRepeatTerm)
         this.storeNode(type, this.reducePos, this.reducePos, 4, true);
       this.reduceContext(type, this.reducePos);
       return;
@@ -21918,20 +21992,20 @@ var Stack = class _Stack {
         this.p.lastBigReductionSize = size;
       }
     }
-    let bufferBase = base2 ? this.stack[base2 - 1] : 0, count = this.bufferBase + this.buffer.length - bufferBase;
-    if (type < parser4.minRepeatTerm || action & 131072) {
-      let pos = parser4.stateFlag(
+    let bufferBase = base2 ? this.stack[base2 - 1] : 0, count2 = this.bufferBase + this.buffer.length - bufferBase;
+    if (type < parser5.minRepeatTerm || action & 131072) {
+      let pos = parser5.stateFlag(
         this.state,
         1
         /* StateFlag.Skipped */
       ) ? this.pos : this.reducePos;
-      this.storeNode(type, start, pos, count + 4, true);
+      this.storeNode(type, start, pos, count2 + 4, true);
     }
     if (action & 262144) {
       this.state = this.stack[base2];
     } else {
       let baseStateID = this.stack[base2 - 3];
-      this.state = parser4.getGoto(baseStateID, type, true);
+      this.state = parser5.getGoto(baseStateID, type, true);
     }
     while (this.stack.length > base2)
       this.stack.pop();
@@ -21985,10 +22059,10 @@ var Stack = class _Stack {
     if (action & 131072) {
       this.pushState(action & 65535, this.pos);
     } else if ((action & 262144) == 0) {
-      let nextState = action, { parser: parser4 } = this.p;
-      if (end > this.pos || type <= parser4.maxNode) {
+      let nextState = action, { parser: parser5 } = this.p;
+      if (end > this.pos || type <= parser5.maxNode) {
         this.pos = end;
-        if (!parser4.stateFlag(
+        if (!parser5.stateFlag(
           nextState,
           1
           /* StateFlag.Skipped */
@@ -21997,7 +22071,7 @@ var Stack = class _Stack {
       }
       this.pushState(nextState, start);
       this.shiftContext(type, start);
-      if (type <= parser4.maxNode)
+      if (type <= parser5.maxNode)
         this.buffer.push(type, start, end, 4);
     } else {
       this.pos = end;
@@ -22131,18 +22205,18 @@ var Stack = class _Stack {
   @internal
   */
   forceReduce() {
-    let { parser: parser4 } = this.p;
-    let reduce = parser4.stateSlot(
+    let { parser: parser5 } = this.p;
+    let reduce = parser5.stateSlot(
       this.state,
       5
       /* ParseState.ForcedReduce */
     );
     if ((reduce & 65536) == 0)
       return false;
-    if (!parser4.validAction(this.state, reduce)) {
+    if (!parser5.validAction(this.state, reduce)) {
       let depth = reduce >> 19, term = reduce & 65535;
       let target = this.stack.length - depth * 3;
-      if (target < 0 || parser4.getGoto(this.stack[target], term, false) < 0) {
+      if (target < 0 || parser5.getGoto(this.stack[target], term, false) < 0) {
         let backup = this.findForcedReduction();
         if (backup == null)
           return false;
@@ -22161,18 +22235,18 @@ var Stack = class _Stack {
   isn't a valid action. @internal
   */
   findForcedReduction() {
-    let { parser: parser4 } = this.p, seen = [];
+    let { parser: parser5 } = this.p, seen = [];
     let explore = (state, depth) => {
       if (seen.includes(state))
         return;
       seen.push(state);
-      return parser4.allActions(state, (action) => {
+      return parser5.allActions(state, (action) => {
         if (action & (262144 | 131072)) ;
         else if (action & 65536) {
           let rDepth = (action >> 19) - depth;
           if (rDepth > 1) {
             let term = action & 65535, target = this.stack.length - rDepth * 3;
-            if (target >= 0 && parser4.getGoto(this.stack[target], term, false) >= 0)
+            if (target >= 0 && parser5.getGoto(this.stack[target], term, false) >= 0)
               return rDepth << 19 | 65536 | term;
           }
         } else {
@@ -22208,12 +22282,12 @@ var Stack = class _Stack {
   get deadEnd() {
     if (this.stack.length != 3)
       return false;
-    let { parser: parser4 } = this.p;
-    return parser4.data[parser4.stateSlot(
+    let { parser: parser5 } = this.p;
+    return parser5.data[parser5.stateSlot(
       this.state,
       1
       /* ParseState.Actions */
-    )] == 65535 && !parser4.stateSlot(
+    )] == 65535 && !parser5.stateSlot(
       this.state,
       4
       /* ParseState.DefaultReduce */
@@ -22374,7 +22448,7 @@ var StackBufferCursor = class _StackBufferCursor {
     return new _StackBufferCursor(this.stack, this.pos, this.index);
   }
 };
-function decodeArray(input, Type = Uint16Array) {
+function decodeArray(input, Type2 = Uint16Array) {
   if (typeof input != "string")
     return input;
   let array = null;
@@ -22403,7 +22477,7 @@ function decodeArray(input, Type = Uint16Array) {
     if (array)
       array[out++] = value;
     else
-      array = new Type(value);
+      array = new Type2(value);
   }
   return array;
 }
@@ -22630,21 +22704,21 @@ var InputStream = class {
   }
 };
 var TokenGroup = class {
-  constructor(data, id2) {
-    this.data = data;
+  constructor(data2, id2) {
+    this.data = data2;
     this.id = id2;
   }
   token(input, stack) {
-    let { parser: parser4 } = stack.p;
-    readToken(this.data, input, stack, this.id, parser4.data, parser4.tokenPrecTable);
+    let { parser: parser5 } = stack.p;
+    readToken(this.data, input, stack, this.id, parser5.data, parser5.tokenPrecTable);
   }
 };
 TokenGroup.prototype.contextual = TokenGroup.prototype.fallback = TokenGroup.prototype.extend = false;
 var LocalTokenGroup = class {
-  constructor(data, precTable, elseToken) {
+  constructor(data2, precTable, elseToken) {
     this.precTable = precTable;
     this.elseToken = elseToken;
-    this.data = typeof data == "string" ? decodeArray(data) : data;
+    this.data = typeof data2 == "string" ? decodeArray(data2) : data2;
   }
   token(input, stack) {
     let start = input.pos, skipped = 0;
@@ -22683,35 +22757,35 @@ var ExternalTokenizer = class {
     this.extend = !!options.extend;
   }
 };
-function readToken(data, input, stack, group, precTable, precOffset) {
+function readToken(data2, input, stack, group, precTable, precOffset) {
   let state = 0, groupMask = 1 << group, { dialect } = stack.p.parser;
   scan: for (; ; ) {
-    if ((groupMask & data[state]) == 0)
+    if ((groupMask & data2[state]) == 0)
       break;
-    let accEnd = data[state + 1];
+    let accEnd = data2[state + 1];
     for (let i = state + 3; i < accEnd; i += 2)
-      if ((data[i + 1] & groupMask) > 0) {
-        let term = data[i];
+      if ((data2[i + 1] & groupMask) > 0) {
+        let term = data2[i];
         if (dialect.allows(term) && (input.token.value == -1 || input.token.value == term || overrides(term, input.token.value, precTable, precOffset))) {
           input.acceptToken(term);
           break;
         }
       }
-    let next = input.next, low = 0, high = data[state + 2];
-    if (input.next < 0 && high > low && data[accEnd + high * 3 - 3] == 65535) {
-      state = data[accEnd + high * 3 - 1];
+    let next = input.next, low = 0, high = data2[state + 2];
+    if (input.next < 0 && high > low && data2[accEnd + high * 3 - 3] == 65535) {
+      state = data2[accEnd + high * 3 - 1];
       continue scan;
     }
     for (; low < high; ) {
       let mid = low + high >> 1;
       let index = accEnd + mid + (mid << 1);
-      let from = data[index], to = data[index + 1] || 65536;
+      let from = data2[index], to = data2[index + 1] || 65536;
       if (next < from)
         high = mid;
       else if (next >= to)
         low = mid + 1;
       else {
-        state = data[index + 2];
+        state = data2[index + 2];
         input.advance();
         continue scan;
       }
@@ -22719,8 +22793,8 @@ function readToken(data, input, stack, group, precTable, precOffset) {
     break;
   }
 }
-function findOffset(data, start, term) {
-  for (let i = start, next; (next = data[i]) != 65535; i++)
+function findOffset(data2, start, term) {
+  for (let i = start, next; (next = data2[i]) != 65535; i++)
     if (next == term)
       return i - start;
   return -1;
@@ -22837,18 +22911,18 @@ var FragmentCursor2 = class {
   }
 };
 var TokenCache = class {
-  constructor(parser4, stream) {
+  constructor(parser5, stream) {
     this.stream = stream;
     this.tokens = [];
     this.mainToken = null;
     this.actions = [];
-    this.tokens = parser4.tokenizers.map((_) => new CachedToken());
+    this.tokens = parser5.tokenizers.map((_) => new CachedToken());
   }
   getActions(stack) {
     let actionIndex = 0;
     let main = null;
-    let { parser: parser4 } = stack.p, { tokenizers } = parser4;
-    let mask = parser4.stateSlot(
+    let { parser: parser5 } = stack.p, { tokenizers } = parser5;
+    let mask = parser5.stateSlot(
       stack.state,
       3
       /* ParseState.TokenizerMask */
@@ -22906,10 +22980,10 @@ var TokenCache = class {
     let start = this.stream.clipPos(stack.pos);
     tokenizer.token(this.stream.reset(start, token), stack);
     if (token.value > -1) {
-      let { parser: parser4 } = stack.p;
-      for (let i = 0; i < parser4.specialized.length; i++)
-        if (parser4.specialized[i] == token.value) {
-          let result = parser4.specializers[i](this.stream.read(token.start, token.end), stack);
+      let { parser: parser5 } = stack.p;
+      for (let i = 0; i < parser5.specialized.length; i++)
+        if (parser5.specialized[i] == token.value) {
+          let result = parser5.specializers[i](this.stream.read(token.start, token.end), stack);
           if (result >= 0 && stack.p.parser.dialect.allows(result >> 1)) {
             if ((result & 1) == 0)
               token.value = result >> 1;
@@ -22933,32 +23007,32 @@ var TokenCache = class {
     return index;
   }
   addActions(stack, token, end, index) {
-    let { state } = stack, { parser: parser4 } = stack.p, { data } = parser4;
+    let { state } = stack, { parser: parser5 } = stack.p, { data: data2 } = parser5;
     for (let set = 0; set < 2; set++) {
-      for (let i = parser4.stateSlot(
+      for (let i = parser5.stateSlot(
         state,
         set ? 2 : 1
         /* ParseState.Actions */
       ); ; i += 3) {
-        if (data[i] == 65535) {
-          if (data[i + 1] == 1) {
-            i = pair(data, i + 2);
+        if (data2[i] == 65535) {
+          if (data2[i + 1] == 1) {
+            i = pair(data2, i + 2);
           } else {
-            if (index == 0 && data[i + 1] == 2)
-              index = this.putAction(pair(data, i + 2), token, end, index);
+            if (index == 0 && data2[i + 1] == 2)
+              index = this.putAction(pair(data2, i + 2), token, end, index);
             break;
           }
         }
-        if (data[i] == token)
-          index = this.putAction(pair(data, i + 1), token, end, index);
+        if (data2[i] == token)
+          index = this.putAction(pair(data2, i + 1), token, end, index);
       }
     }
     return index;
   }
 };
 var Parse = class {
-  constructor(parser4, input, fragments, ranges) {
-    this.parser = parser4;
+  constructor(parser5, input, fragments, ranges) {
+    this.parser = parser5;
     this.input = input;
     this.ranges = ranges;
     this.recovering = 0;
@@ -22970,11 +23044,11 @@ var Parse = class {
     this.lastBigReductionSize = 0;
     this.bigReductionCount = 0;
     this.stream = new InputStream(input, ranges);
-    this.tokens = new TokenCache(parser4, this.stream);
-    this.topTerm = parser4.top[1];
+    this.tokens = new TokenCache(parser5, this.stream);
+    this.topTerm = parser5.top[1];
     let { from } = ranges[0];
-    this.stacks = [Stack.start(this, parser4.top[0], from)];
-    this.fragments = fragments.length && this.stream.end - from > parser4.bufferLength * 4 ? new FragmentCursor2(fragments, parser4.nodeSet) : null;
+    this.stacks = [Stack.start(this, parser5.top[0], from)];
+    this.fragments = fragments.length && this.stream.end - from > parser5.bufferLength * 4 ? new FragmentCursor2(fragments, parser5.nodeSet) : null;
   }
   get parsedPos() {
     return this.minStackPos;
@@ -23085,18 +23159,18 @@ var Parse = class {
   // given, stacks split off by ambiguous operations will be pushed to
   // `split`, or added to `stacks` if they move `pos` forward.
   advanceStack(stack, stacks, split) {
-    let start = stack.pos, { parser: parser4 } = this;
+    let start = stack.pos, { parser: parser5 } = this;
     let base2 = verbose ? this.stackID(stack) + " -> " : "";
     if (this.stoppedAt != null && start > this.stoppedAt)
       return stack.forceReduce() ? stack : null;
     if (this.fragments) {
       let strictCx = stack.curContext && stack.curContext.tracker.strict, cxHash = strictCx ? stack.curContext.hash : 0;
       for (let cached = this.fragments.nodeAt(start); cached; ) {
-        let match = this.parser.nodeSet.types[cached.type.id] == cached.type ? parser4.getGoto(stack.state, cached.type.id) : -1;
+        let match = this.parser.nodeSet.types[cached.type.id] == cached.type ? parser5.getGoto(stack.state, cached.type.id) : -1;
         if (match > -1 && cached.length && (!strictCx || (cached.prop(NodeProp.contextHash) || 0) == cxHash)) {
           stack.useNode(cached, match);
           if (verbose)
-            console.log(base2 + this.stackID(stack) + ` (via reuse of ${parser4.getName(cached.type.id)})`);
+            console.log(base2 + this.stackID(stack) + ` (via reuse of ${parser5.getName(cached.type.id)})`);
           return true;
         }
         if (!(cached instanceof Tree) || cached.children.length == 0 || cached.positions[0] > 0)
@@ -23108,7 +23182,7 @@ var Parse = class {
           break;
       }
     }
-    let defaultReduce = parser4.stateSlot(
+    let defaultReduce = parser5.stateSlot(
       stack.state,
       4
       /* ParseState.DefaultReduce */
@@ -23116,7 +23190,7 @@ var Parse = class {
     if (defaultReduce > 0) {
       stack.reduce(defaultReduce);
       if (verbose)
-        console.log(base2 + this.stackID(stack) + ` (via always-reduce ${parser4.getName(
+        console.log(base2 + this.stackID(stack) + ` (via always-reduce ${parser5.getName(
           defaultReduce & 65535
           /* Action.ValueMask */
         )})`);
@@ -23134,10 +23208,10 @@ var Parse = class {
       let main = this.tokens.mainToken;
       localStack.apply(action, term, main ? main.start : localStack.pos, end);
       if (verbose)
-        console.log(base2 + this.stackID(localStack) + ` (via ${(action & 65536) == 0 ? "shift" : `reduce of ${parser4.getName(
+        console.log(base2 + this.stackID(localStack) + ` (via ${(action & 65536) == 0 ? "shift" : `reduce of ${parser5.getName(
           action & 65535
           /* Action.ValueMask */
-        )}`} for ${parser4.getName(term)} @ ${start}${localStack == stack ? "" : ", split"})`);
+        )}`} for ${parser5.getName(term)} @ ${start}${localStack == stack ? "" : ", split"})`);
       if (last)
         return true;
       else if (localStack.pos > start)
@@ -23362,23 +23436,23 @@ var LRParser = class _LRParser extends Parser {
   Check if this state has an action for a given terminal @internal
   */
   hasAction(state, terminal) {
-    let data = this.data;
+    let data2 = this.data;
     for (let set = 0; set < 2; set++) {
       for (let i = this.stateSlot(
         state,
         set ? 2 : 1
         /* ParseState.Actions */
       ), next; ; i += 3) {
-        if ((next = data[i]) == 65535) {
-          if (data[i + 1] == 1)
-            next = data[i = pair(data, i + 2)];
-          else if (data[i + 1] == 2)
-            return pair(data, i + 2);
+        if ((next = data2[i]) == 65535) {
+          if (data2[i + 1] == 1)
+            next = data2[i = pair(data2, i + 2)];
+          else if (data2[i + 1] == 2)
+            return pair(data2, i + 2);
           else
             break;
         }
         if (next == terminal || next == 0)
-          return pair(data, i + 1);
+          return pair(data2, i + 1);
       }
     }
     return 0;
@@ -23561,8 +23635,8 @@ var LRParser = class _LRParser extends Parser {
     return new _LRParser(spec);
   }
 };
-function pair(data, off) {
-  return data[off] | data[off + 1] << 16;
+function pair(data2, off) {
+  return data2[off] | data2[off + 1] << 16;
 }
 function findFinished(stacks) {
   let best = null;
@@ -25926,7 +26000,7 @@ function completeStartTag(state, schema, tree, pos) {
   return { from: pos, to: pos, options, validFor: /^<\/?[:\-\.\w\u00b7-\uffff]*$/ };
 }
 function completeAttrName(state, schema, tree, from, to) {
-  let elt = findParentElement(tree), info = elt ? schema.tags[elementName2(state.doc, elt)] : null;
+  let elt2 = findParentElement(tree), info = elt2 ? schema.tags[elementName2(state.doc, elt2)] : null;
   let localAttrs = info && info.attrs ? Object.keys(info.attrs) : [];
   let names = info && info.globalAttrs === false ? localAttrs : localAttrs.length ? localAttrs.concat(schema.globalAttrNames) : schema.globalAttrNames;
   return {
@@ -25944,7 +26018,7 @@ function completeAttrValue(state, schema, tree, from, to) {
     let attrName = state.sliceDoc(nameNode.from, nameNode.to);
     let attrs = schema.globalAttrs[attrName];
     if (!attrs) {
-      let elt = findParentElement(tree), info = elt ? schema.tags[elementName2(state.doc, elt)] : null;
+      let elt2 = findParentElement(tree), info = elt2 ? schema.tags[elementName2(state.doc, elt2)] : null;
       attrs = (info === null || info === void 0 ? void 0 : info.attrs) && info.attrs[attrName];
     }
     if (attrs) {
@@ -25988,6 +26062,9 @@ function htmlCompletionFor(schema, context) {
   } else {
     return null;
   }
+}
+function htmlCompletionSource(context) {
+  return htmlCompletionFor(Schema.default, context);
 }
 function htmlCompletionSourceWith(config2) {
   let { extraTags, extraGlobalAttributes: extraAttrs } = config2;
@@ -26147,7 +26224,2322 @@ var autoCloseTags2 = /* @__PURE__ */ EditorView.inputHandler.of((view, from, to,
   return true;
 });
 
-// prebaked/vendor/diff.js
+// node_modules/@lezer/markdown/dist/index.js
+var CompositeBlock = class _CompositeBlock {
+  static create(type, value, from, parentHash, end) {
+    let hash2 = parentHash + (parentHash << 8) + type + (value << 4) | 0;
+    return new _CompositeBlock(type, value, from, hash2, end, [], []);
+  }
+  constructor(type, value, from, hash2, end, children, positions) {
+    this.type = type;
+    this.value = value;
+    this.from = from;
+    this.hash = hash2;
+    this.end = end;
+    this.children = children;
+    this.positions = positions;
+    this.hashProp = [[NodeProp.contextHash, hash2]];
+  }
+  addChild(child, pos) {
+    if (child.prop(NodeProp.contextHash) != this.hash)
+      child = new Tree(child.type, child.children, child.positions, child.length, this.hashProp);
+    this.children.push(child);
+    this.positions.push(pos);
+  }
+  toTree(nodeSet, end = this.end) {
+    let last = this.children.length - 1;
+    if (last >= 0)
+      end = Math.max(end, this.positions[last] + this.children[last].length + this.from);
+    return new Tree(nodeSet.types[this.type], this.children, this.positions, end - this.from).balance({
+      makeTree: (children, positions, length) => new Tree(NodeType.none, children, positions, length, this.hashProp)
+    });
+  }
+};
+var Type;
+(function(Type2) {
+  Type2[Type2["Document"] = 1] = "Document";
+  Type2[Type2["CodeBlock"] = 2] = "CodeBlock";
+  Type2[Type2["FencedCode"] = 3] = "FencedCode";
+  Type2[Type2["Blockquote"] = 4] = "Blockquote";
+  Type2[Type2["HorizontalRule"] = 5] = "HorizontalRule";
+  Type2[Type2["BulletList"] = 6] = "BulletList";
+  Type2[Type2["OrderedList"] = 7] = "OrderedList";
+  Type2[Type2["ListItem"] = 8] = "ListItem";
+  Type2[Type2["ATXHeading1"] = 9] = "ATXHeading1";
+  Type2[Type2["ATXHeading2"] = 10] = "ATXHeading2";
+  Type2[Type2["ATXHeading3"] = 11] = "ATXHeading3";
+  Type2[Type2["ATXHeading4"] = 12] = "ATXHeading4";
+  Type2[Type2["ATXHeading5"] = 13] = "ATXHeading5";
+  Type2[Type2["ATXHeading6"] = 14] = "ATXHeading6";
+  Type2[Type2["SetextHeading1"] = 15] = "SetextHeading1";
+  Type2[Type2["SetextHeading2"] = 16] = "SetextHeading2";
+  Type2[Type2["HTMLBlock"] = 17] = "HTMLBlock";
+  Type2[Type2["LinkReference"] = 18] = "LinkReference";
+  Type2[Type2["Paragraph"] = 19] = "Paragraph";
+  Type2[Type2["CommentBlock"] = 20] = "CommentBlock";
+  Type2[Type2["ProcessingInstructionBlock"] = 21] = "ProcessingInstructionBlock";
+  Type2[Type2["Escape"] = 22] = "Escape";
+  Type2[Type2["Entity"] = 23] = "Entity";
+  Type2[Type2["HardBreak"] = 24] = "HardBreak";
+  Type2[Type2["Emphasis"] = 25] = "Emphasis";
+  Type2[Type2["StrongEmphasis"] = 26] = "StrongEmphasis";
+  Type2[Type2["Link"] = 27] = "Link";
+  Type2[Type2["Image"] = 28] = "Image";
+  Type2[Type2["InlineCode"] = 29] = "InlineCode";
+  Type2[Type2["HTMLTag"] = 30] = "HTMLTag";
+  Type2[Type2["Comment"] = 31] = "Comment";
+  Type2[Type2["ProcessingInstruction"] = 32] = "ProcessingInstruction";
+  Type2[Type2["Autolink"] = 33] = "Autolink";
+  Type2[Type2["HeaderMark"] = 34] = "HeaderMark";
+  Type2[Type2["QuoteMark"] = 35] = "QuoteMark";
+  Type2[Type2["ListMark"] = 36] = "ListMark";
+  Type2[Type2["LinkMark"] = 37] = "LinkMark";
+  Type2[Type2["EmphasisMark"] = 38] = "EmphasisMark";
+  Type2[Type2["CodeMark"] = 39] = "CodeMark";
+  Type2[Type2["CodeText"] = 40] = "CodeText";
+  Type2[Type2["CodeInfo"] = 41] = "CodeInfo";
+  Type2[Type2["LinkTitle"] = 42] = "LinkTitle";
+  Type2[Type2["LinkLabel"] = 43] = "LinkLabel";
+  Type2[Type2["URL"] = 44] = "URL";
+})(Type || (Type = {}));
+var LeafBlock = class {
+  /// @internal
+  constructor(start, content2) {
+    this.start = start;
+    this.content = content2;
+    this.marks = [];
+    this.parsers = [];
+  }
+};
+var Line2 = class {
+  constructor() {
+    this.text = "";
+    this.baseIndent = 0;
+    this.basePos = 0;
+    this.depth = 0;
+    this.markers = [];
+    this.pos = 0;
+    this.indent = 0;
+    this.next = -1;
+  }
+  /// @internal
+  forward() {
+    if (this.basePos > this.pos)
+      this.forwardInner();
+  }
+  /// @internal
+  forwardInner() {
+    let newPos = this.skipSpace(this.basePos);
+    this.indent = this.countIndent(newPos, this.pos, this.indent);
+    this.pos = newPos;
+    this.next = newPos == this.text.length ? -1 : this.text.charCodeAt(newPos);
+  }
+  /// Skip whitespace after the given position, return the position of
+  /// the next non-space character or the end of the line if there's
+  /// only space after `from`.
+  skipSpace(from) {
+    return skipSpace(this.text, from);
+  }
+  /// @internal
+  reset(text) {
+    this.text = text;
+    this.baseIndent = this.basePos = this.pos = this.indent = 0;
+    this.forwardInner();
+    this.depth = 1;
+    while (this.markers.length)
+      this.markers.pop();
+  }
+  /// Move the line's base position forward to the given position.
+  /// This should only be called by composite [block
+  /// parsers](#BlockParser.parse) or [markup skipping
+  /// functions](#NodeSpec.composite).
+  moveBase(to) {
+    this.basePos = to;
+    this.baseIndent = this.countIndent(to, this.pos, this.indent);
+  }
+  /// Move the line's base position forward to the given _column_.
+  moveBaseColumn(indent) {
+    this.baseIndent = indent;
+    this.basePos = this.findColumn(indent);
+  }
+  /// Store a composite-block-level marker. Should be called from
+  /// [markup skipping functions](#NodeSpec.composite) when they
+  /// consume any non-whitespace characters.
+  addMarker(elt2) {
+    this.markers.push(elt2);
+  }
+  /// Find the column position at `to`, optionally starting at a given
+  /// position and column.
+  countIndent(to, from = 0, indent = 0) {
+    for (let i = from; i < to; i++)
+      indent += this.text.charCodeAt(i) == 9 ? 4 - indent % 4 : 1;
+    return indent;
+  }
+  /// Find the position corresponding to the given column.
+  findColumn(goal) {
+    let i = 0;
+    for (let indent = 0; i < this.text.length && indent < goal; i++)
+      indent += this.text.charCodeAt(i) == 9 ? 4 - indent % 4 : 1;
+    return i;
+  }
+  /// @internal
+  scrub() {
+    if (!this.baseIndent)
+      return this.text;
+    let result = "";
+    for (let i = 0; i < this.basePos; i++)
+      result += " ";
+    return result + this.text.slice(this.basePos);
+  }
+};
+function skipForList(bl, cx, line) {
+  if (line.pos == line.text.length || bl != cx.block && line.indent >= cx.stack[line.depth + 1].value + line.baseIndent)
+    return true;
+  if (line.indent >= line.baseIndent + 4)
+    return false;
+  let size = (bl.type == Type.OrderedList ? isOrderedList : isBulletList)(line, cx, false);
+  return size > 0 && (bl.type != Type.BulletList || isHorizontalRule(line, cx, false) < 0) && line.text.charCodeAt(line.pos + size - 1) == bl.value;
+}
+var DefaultSkipMarkup = {
+  [Type.Blockquote](bl, cx, line) {
+    if (line.next != 62)
+      return false;
+    line.markers.push(elt(Type.QuoteMark, cx.lineStart + line.pos, cx.lineStart + line.pos + 1));
+    line.moveBase(line.pos + (space3(line.text.charCodeAt(line.pos + 1)) ? 2 : 1));
+    bl.end = cx.lineStart + line.text.length;
+    return true;
+  },
+  [Type.ListItem](bl, _cx, line) {
+    if (line.indent < line.baseIndent + bl.value && line.next > -1)
+      return false;
+    line.moveBaseColumn(line.baseIndent + bl.value);
+    return true;
+  },
+  [Type.OrderedList]: skipForList,
+  [Type.BulletList]: skipForList,
+  [Type.Document]() {
+    return true;
+  }
+};
+function space3(ch) {
+  return ch == 32 || ch == 9 || ch == 10 || ch == 13;
+}
+function skipSpace(line, i = 0) {
+  while (i < line.length && space3(line.charCodeAt(i)))
+    i++;
+  return i;
+}
+function skipSpaceBack(line, i, to) {
+  while (i > to && space3(line.charCodeAt(i - 1)))
+    i--;
+  return i;
+}
+function isFencedCode(line) {
+  if (line.next != 96 && line.next != 126)
+    return -1;
+  let pos = line.pos + 1;
+  while (pos < line.text.length && line.text.charCodeAt(pos) == line.next)
+    pos++;
+  if (pos < line.pos + 3)
+    return -1;
+  if (line.next == 96) {
+    for (let i = pos; i < line.text.length; i++)
+      if (line.text.charCodeAt(i) == 96)
+        return -1;
+  }
+  return pos;
+}
+function isBlockquote(line) {
+  return line.next != 62 ? -1 : line.text.charCodeAt(line.pos + 1) == 32 ? 2 : 1;
+}
+function isHorizontalRule(line, cx, breaking) {
+  if (line.next != 42 && line.next != 45 && line.next != 95)
+    return -1;
+  let count2 = 1;
+  for (let pos = line.pos + 1; pos < line.text.length; pos++) {
+    let ch = line.text.charCodeAt(pos);
+    if (ch == line.next)
+      count2++;
+    else if (!space3(ch))
+      return -1;
+  }
+  if (breaking && line.next == 45 && isSetextUnderline(line) > -1 && line.depth == cx.stack.length)
+    return -1;
+  return count2 < 3 ? -1 : 1;
+}
+function inList(cx, type) {
+  for (let i = cx.stack.length - 1; i >= 0; i--)
+    if (cx.stack[i].type == type)
+      return true;
+  return false;
+}
+function isBulletList(line, cx, breaking) {
+  return (line.next == 45 || line.next == 43 || line.next == 42) && (line.pos == line.text.length - 1 || space3(line.text.charCodeAt(line.pos + 1))) && (!breaking || inList(cx, Type.BulletList) || line.skipSpace(line.pos + 2) < line.text.length) ? 1 : -1;
+}
+function isOrderedList(line, cx, breaking) {
+  let pos = line.pos, next = line.next;
+  for (; ; ) {
+    if (next >= 48 && next <= 57)
+      pos++;
+    else
+      break;
+    if (pos == line.text.length)
+      return -1;
+    next = line.text.charCodeAt(pos);
+  }
+  if (pos == line.pos || pos > line.pos + 9 || next != 46 && next != 41 || pos < line.text.length - 1 && !space3(line.text.charCodeAt(pos + 1)) || breaking && !inList(cx, Type.OrderedList) && (line.skipSpace(pos + 1) == line.text.length || pos > line.pos + 1 || line.next != 49))
+    return -1;
+  return pos + 1 - line.pos;
+}
+function isAtxHeading(line) {
+  if (line.next != 35)
+    return -1;
+  let pos = line.pos + 1;
+  while (pos < line.text.length && line.text.charCodeAt(pos) == 35)
+    pos++;
+  if (pos < line.text.length && line.text.charCodeAt(pos) != 32)
+    return -1;
+  let size = pos - line.pos;
+  return size > 6 ? -1 : size;
+}
+function isSetextUnderline(line) {
+  if (line.next != 45 && line.next != 61 || line.indent >= line.baseIndent + 4)
+    return -1;
+  let pos = line.pos + 1;
+  while (pos < line.text.length && line.text.charCodeAt(pos) == line.next)
+    pos++;
+  let end = pos;
+  while (pos < line.text.length && space3(line.text.charCodeAt(pos)))
+    pos++;
+  return pos == line.text.length ? end : -1;
+}
+var EmptyLine = /^[ \t]*$/;
+var CommentEnd = /-->/;
+var ProcessingEnd = /\?>/;
+var HTMLBlockStyle = [
+  [/^<(?:script|pre|style)(?:\s|>|$)/i, /<\/(?:script|pre|style)>/i],
+  [/^\s*<!--/, CommentEnd],
+  [/^\s*<\?/, ProcessingEnd],
+  [/^\s*<![A-Z]/, />/],
+  [/^\s*<!\[CDATA\[/, /\]\]>/],
+  [/^\s*<\/?(?:address|article|aside|base|basefont|blockquote|body|caption|center|col|colgroup|dd|details|dialog|dir|div|dl|dt|fieldset|figcaption|figure|footer|form|frame|frameset|h1|h2|h3|h4|h5|h6|head|header|hr|html|iframe|legend|li|link|main|menu|menuitem|nav|noframes|ol|optgroup|option|p|param|section|source|summary|table|tbody|td|tfoot|th|thead|title|tr|track|ul)(?:\s|\/?>|$)/i, EmptyLine],
+  [/^\s*(?:<\/[a-z][\w-]*\s*>|<[a-z][\w-]*(\s+[a-z:_][\w-.]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*>)\s*$/i, EmptyLine]
+];
+function isHTMLBlock(line, _cx, breaking) {
+  if (line.next != 60)
+    return -1;
+  let rest = line.text.slice(line.pos);
+  for (let i = 0, e = HTMLBlockStyle.length - (breaking ? 1 : 0); i < e; i++)
+    if (HTMLBlockStyle[i][0].test(rest))
+      return i;
+  return -1;
+}
+function getListIndent(line, pos) {
+  let indentAfter = line.countIndent(pos, line.pos, line.indent);
+  let indented = line.countIndent(line.skipSpace(pos), pos, indentAfter);
+  return indented >= indentAfter + 5 ? indentAfter + 1 : indented;
+}
+function addCodeText(marks2, from, to) {
+  let last = marks2.length - 1;
+  if (last >= 0 && marks2[last].to == from && marks2[last].type == Type.CodeText)
+    marks2[last].to = to;
+  else
+    marks2.push(elt(Type.CodeText, from, to));
+}
+var DefaultBlockParsers = {
+  LinkReference: void 0,
+  IndentedCode(cx, line) {
+    let base2 = line.baseIndent + 4;
+    if (line.indent < base2)
+      return false;
+    let start = line.findColumn(base2);
+    let from = cx.lineStart + start, to = cx.lineStart + line.text.length;
+    let marks2 = [], pendingMarks = [];
+    addCodeText(marks2, from, to);
+    while (cx.nextLine() && line.depth >= cx.stack.length) {
+      if (line.pos == line.text.length) {
+        addCodeText(pendingMarks, cx.lineStart - 1, cx.lineStart);
+        for (let m of line.markers)
+          pendingMarks.push(m);
+      } else if (line.indent < base2) {
+        break;
+      } else {
+        if (pendingMarks.length) {
+          for (let m of pendingMarks) {
+            if (m.type == Type.CodeText)
+              addCodeText(marks2, m.from, m.to);
+            else
+              marks2.push(m);
+          }
+          pendingMarks = [];
+        }
+        addCodeText(marks2, cx.lineStart - 1, cx.lineStart);
+        for (let m of line.markers)
+          marks2.push(m);
+        to = cx.lineStart + line.text.length;
+        let codeStart = cx.lineStart + line.findColumn(line.baseIndent + 4);
+        if (codeStart < to)
+          addCodeText(marks2, codeStart, to);
+      }
+    }
+    if (pendingMarks.length) {
+      pendingMarks = pendingMarks.filter((m) => m.type != Type.CodeText);
+      if (pendingMarks.length)
+        line.markers = pendingMarks.concat(line.markers);
+    }
+    cx.addNode(cx.buffer.writeElements(marks2, -from).finish(Type.CodeBlock, to - from), from);
+    return true;
+  },
+  FencedCode(cx, line) {
+    let fenceEnd = isFencedCode(line);
+    if (fenceEnd < 0)
+      return false;
+    let from = cx.lineStart + line.pos, ch = line.next, len = fenceEnd - line.pos;
+    let infoFrom = line.skipSpace(fenceEnd), infoTo = skipSpaceBack(line.text, line.text.length, infoFrom);
+    let marks2 = [elt(Type.CodeMark, from, from + len)];
+    if (infoFrom < infoTo)
+      marks2.push(elt(Type.CodeInfo, cx.lineStart + infoFrom, cx.lineStart + infoTo));
+    for (let first = true; cx.nextLine() && line.depth >= cx.stack.length; first = false) {
+      let i = line.pos;
+      if (line.indent - line.baseIndent < 4)
+        while (i < line.text.length && line.text.charCodeAt(i) == ch)
+          i++;
+      if (i - line.pos >= len && line.skipSpace(i) == line.text.length) {
+        for (let m of line.markers)
+          marks2.push(m);
+        marks2.push(elt(Type.CodeMark, cx.lineStart + line.pos, cx.lineStart + i));
+        cx.nextLine();
+        break;
+      } else {
+        if (!first)
+          addCodeText(marks2, cx.lineStart - 1, cx.lineStart);
+        for (let m of line.markers)
+          marks2.push(m);
+        let textStart = cx.lineStart + line.basePos, textEnd = cx.lineStart + line.text.length;
+        if (textStart < textEnd)
+          addCodeText(marks2, textStart, textEnd);
+      }
+    }
+    cx.addNode(cx.buffer.writeElements(marks2, -from).finish(Type.FencedCode, cx.prevLineEnd() - from), from);
+    return true;
+  },
+  Blockquote(cx, line) {
+    let size = isBlockquote(line);
+    if (size < 0)
+      return false;
+    cx.startContext(Type.Blockquote, line.pos);
+    cx.addNode(Type.QuoteMark, cx.lineStart + line.pos, cx.lineStart + line.pos + 1);
+    line.moveBase(line.pos + size);
+    return null;
+  },
+  HorizontalRule(cx, line) {
+    if (isHorizontalRule(line, cx, false) < 0)
+      return false;
+    let from = cx.lineStart + line.pos;
+    cx.nextLine();
+    cx.addNode(Type.HorizontalRule, from);
+    return true;
+  },
+  BulletList(cx, line) {
+    let size = isBulletList(line, cx, false);
+    if (size < 0)
+      return false;
+    if (cx.block.type != Type.BulletList)
+      cx.startContext(Type.BulletList, line.basePos, line.next);
+    let newBase = getListIndent(line, line.pos + 1);
+    cx.startContext(Type.ListItem, line.basePos, newBase - line.baseIndent);
+    cx.addNode(Type.ListMark, cx.lineStart + line.pos, cx.lineStart + line.pos + size);
+    line.moveBaseColumn(newBase);
+    return null;
+  },
+  OrderedList(cx, line) {
+    let size = isOrderedList(line, cx, false);
+    if (size < 0)
+      return false;
+    if (cx.block.type != Type.OrderedList)
+      cx.startContext(Type.OrderedList, line.basePos, line.text.charCodeAt(line.pos + size - 1));
+    let newBase = getListIndent(line, line.pos + size);
+    cx.startContext(Type.ListItem, line.basePos, newBase - line.baseIndent);
+    cx.addNode(Type.ListMark, cx.lineStart + line.pos, cx.lineStart + line.pos + size);
+    line.moveBaseColumn(newBase);
+    return null;
+  },
+  ATXHeading(cx, line) {
+    let size = isAtxHeading(line);
+    if (size < 0)
+      return false;
+    let off = line.pos, from = cx.lineStart + off;
+    let endOfSpace = skipSpaceBack(line.text, line.text.length, off), after = endOfSpace;
+    while (after > off && line.text.charCodeAt(after - 1) == line.next)
+      after--;
+    if (after == endOfSpace || after == off || !space3(line.text.charCodeAt(after - 1)))
+      after = line.text.length;
+    let buf = cx.buffer.write(Type.HeaderMark, 0, size).writeElements(cx.parser.parseInline(line.text.slice(off + size + 1, after), from + size + 1), -from);
+    if (after < line.text.length)
+      buf.write(Type.HeaderMark, after - off, endOfSpace - off);
+    let node = buf.finish(Type.ATXHeading1 - 1 + size, line.text.length - off);
+    cx.nextLine();
+    cx.addNode(node, from);
+    return true;
+  },
+  HTMLBlock(cx, line) {
+    let type = isHTMLBlock(line, cx, false);
+    if (type < 0)
+      return false;
+    let from = cx.lineStart + line.pos, end = HTMLBlockStyle[type][1];
+    let marks2 = [], trailing = end != EmptyLine;
+    while (!end.test(line.text) && cx.nextLine()) {
+      if (line.depth < cx.stack.length) {
+        trailing = false;
+        break;
+      }
+      for (let m of line.markers)
+        marks2.push(m);
+    }
+    if (trailing)
+      cx.nextLine();
+    let nodeType = end == CommentEnd ? Type.CommentBlock : end == ProcessingEnd ? Type.ProcessingInstructionBlock : Type.HTMLBlock;
+    let to = cx.prevLineEnd();
+    cx.addNode(cx.buffer.writeElements(marks2, -from).finish(nodeType, to - from), from);
+    return true;
+  },
+  SetextHeading: void 0
+  // Specifies relative precedence for block-continue function
+};
+var LinkReferenceParser = class {
+  constructor(leaf) {
+    this.stage = 0;
+    this.elts = [];
+    this.pos = 0;
+    this.start = leaf.start;
+    this.advance(leaf.content);
+  }
+  nextLine(cx, line, leaf) {
+    if (this.stage == -1)
+      return false;
+    let content2 = leaf.content + "\n" + line.scrub();
+    let finish = this.advance(content2);
+    if (finish > -1 && finish < content2.length)
+      return this.complete(cx, leaf, finish);
+    return false;
+  }
+  finish(cx, leaf) {
+    if ((this.stage == 2 || this.stage == 3) && skipSpace(leaf.content, this.pos) == leaf.content.length)
+      return this.complete(cx, leaf, leaf.content.length);
+    return false;
+  }
+  complete(cx, leaf, len) {
+    cx.addLeafElement(leaf, elt(Type.LinkReference, this.start, this.start + len, this.elts));
+    return true;
+  }
+  nextStage(elt2) {
+    if (elt2) {
+      this.pos = elt2.to - this.start;
+      this.elts.push(elt2);
+      this.stage++;
+      return true;
+    }
+    if (elt2 === false)
+      this.stage = -1;
+    return false;
+  }
+  advance(content2) {
+    for (; ; ) {
+      if (this.stage == -1) {
+        return -1;
+      } else if (this.stage == 0) {
+        if (!this.nextStage(parseLinkLabel(content2, this.pos, this.start, true)))
+          return -1;
+        if (content2.charCodeAt(this.pos) != 58)
+          return this.stage = -1;
+        this.elts.push(elt(Type.LinkMark, this.pos + this.start, this.pos + this.start + 1));
+        this.pos++;
+      } else if (this.stage == 1) {
+        if (!this.nextStage(parseURL(content2, skipSpace(content2, this.pos), this.start)))
+          return -1;
+      } else if (this.stage == 2) {
+        let skip = skipSpace(content2, this.pos), end = 0;
+        if (skip > this.pos) {
+          let title = parseLinkTitle(content2, skip, this.start);
+          if (title) {
+            let titleEnd = lineEnd(content2, title.to - this.start);
+            if (titleEnd > 0) {
+              this.nextStage(title);
+              end = titleEnd;
+            }
+          }
+        }
+        if (!end)
+          end = lineEnd(content2, this.pos);
+        return end > 0 && end < content2.length ? end : -1;
+      } else {
+        return lineEnd(content2, this.pos);
+      }
+    }
+  }
+};
+function lineEnd(text, pos) {
+  for (; pos < text.length; pos++) {
+    let next = text.charCodeAt(pos);
+    if (next == 10)
+      break;
+    if (!space3(next))
+      return -1;
+  }
+  return pos;
+}
+var SetextHeadingParser = class {
+  nextLine(cx, line, leaf) {
+    let underline2 = line.depth < cx.stack.length ? -1 : isSetextUnderline(line);
+    let next = line.next;
+    if (underline2 < 0)
+      return false;
+    let underlineMark = elt(Type.HeaderMark, cx.lineStart + line.pos, cx.lineStart + underline2);
+    cx.nextLine();
+    cx.addLeafElement(leaf, elt(next == 61 ? Type.SetextHeading1 : Type.SetextHeading2, leaf.start, cx.prevLineEnd(), [
+      ...cx.parser.parseInline(leaf.content, leaf.start),
+      underlineMark
+    ]));
+    return true;
+  }
+  finish() {
+    return false;
+  }
+};
+var DefaultLeafBlocks = {
+  LinkReference(_, leaf) {
+    return leaf.content.charCodeAt(0) == 91 ? new LinkReferenceParser(leaf) : null;
+  },
+  SetextHeading() {
+    return new SetextHeadingParser();
+  }
+};
+var DefaultEndLeaf = [
+  (_, line) => isAtxHeading(line) >= 0,
+  (_, line) => isFencedCode(line) >= 0,
+  (_, line) => isBlockquote(line) >= 0,
+  (p, line) => isBulletList(line, p, true) >= 0,
+  (p, line) => isOrderedList(line, p, true) >= 0,
+  (p, line) => isHorizontalRule(line, p, true) >= 0,
+  (p, line) => isHTMLBlock(line, p, true) >= 0
+];
+var scanLineResult = { text: "", end: 0 };
+var BlockContext = class {
+  /// @internal
+  constructor(parser5, input, fragments, ranges) {
+    this.parser = parser5;
+    this.input = input;
+    this.ranges = ranges;
+    this.line = new Line2();
+    this.atEnd = false;
+    this.reusePlaceholders = /* @__PURE__ */ new Map();
+    this.stoppedAt = null;
+    this.rangeI = 0;
+    this.to = ranges[ranges.length - 1].to;
+    this.lineStart = this.absoluteLineStart = this.absoluteLineEnd = ranges[0].from;
+    this.block = CompositeBlock.create(Type.Document, 0, this.lineStart, 0, 0);
+    this.stack = [this.block];
+    this.fragments = fragments.length ? new FragmentCursor3(fragments, input) : null;
+    this.readLine();
+  }
+  get parsedPos() {
+    return this.absoluteLineStart;
+  }
+  advance() {
+    if (this.stoppedAt != null && this.absoluteLineStart > this.stoppedAt)
+      return this.finish();
+    let { line } = this;
+    for (; ; ) {
+      for (let markI = 0; ; ) {
+        let next = line.depth < this.stack.length ? this.stack[this.stack.length - 1] : null;
+        while (markI < line.markers.length && (!next || line.markers[markI].from < next.end)) {
+          let mark = line.markers[markI++];
+          this.addNode(mark.type, mark.from, mark.to);
+        }
+        if (!next)
+          break;
+        this.finishContext();
+      }
+      if (line.pos < line.text.length)
+        break;
+      if (!this.nextLine())
+        return this.finish();
+    }
+    if (this.fragments && this.reuseFragment(line.basePos))
+      return null;
+    start: for (; ; ) {
+      for (let type of this.parser.blockParsers)
+        if (type) {
+          let result = type(this, line);
+          if (result != false) {
+            if (result == true)
+              return null;
+            line.forward();
+            continue start;
+          }
+        }
+      break;
+    }
+    let leaf = new LeafBlock(this.lineStart + line.pos, line.text.slice(line.pos));
+    for (let parse of this.parser.leafBlockParsers)
+      if (parse) {
+        let parser5 = parse(this, leaf);
+        if (parser5)
+          leaf.parsers.push(parser5);
+      }
+    lines: while (this.nextLine()) {
+      if (line.pos == line.text.length)
+        break;
+      if (line.indent < line.baseIndent + 4) {
+        for (let stop of this.parser.endLeafBlock)
+          if (stop(this, line, leaf))
+            break lines;
+      }
+      for (let parser5 of leaf.parsers)
+        if (parser5.nextLine(this, line, leaf))
+          return null;
+      leaf.content += "\n" + line.scrub();
+      for (let m of line.markers)
+        leaf.marks.push(m);
+    }
+    this.finishLeaf(leaf);
+    return null;
+  }
+  stopAt(pos) {
+    if (this.stoppedAt != null && this.stoppedAt < pos)
+      throw new RangeError("Can't move stoppedAt forward");
+    this.stoppedAt = pos;
+  }
+  reuseFragment(start) {
+    if (!this.fragments.moveTo(this.absoluteLineStart + start, this.absoluteLineStart) || !this.fragments.matches(this.block.hash))
+      return false;
+    let taken = this.fragments.takeNodes(this);
+    if (!taken)
+      return false;
+    this.absoluteLineStart += taken;
+    this.lineStart = toRelative(this.absoluteLineStart, this.ranges);
+    this.moveRangeI();
+    if (this.absoluteLineStart < this.to) {
+      this.lineStart++;
+      this.absoluteLineStart++;
+      this.readLine();
+    } else {
+      this.atEnd = true;
+      this.readLine();
+    }
+    return true;
+  }
+  /// The number of parent blocks surrounding the current block.
+  get depth() {
+    return this.stack.length;
+  }
+  /// Get the type of the parent block at the given depth. When no
+  /// depth is passed, return the type of the innermost parent.
+  parentType(depth = this.depth - 1) {
+    return this.parser.nodeSet.types[this.stack[depth].type];
+  }
+  /// Move to the next input line. This should only be called by
+  /// (non-composite) [block parsers](#BlockParser.parse) that consume
+  /// the line directly, or leaf block parser
+  /// [`nextLine`](#LeafBlockParser.nextLine) methods when they
+  /// consume the current line (and return true).
+  nextLine() {
+    this.lineStart += this.line.text.length;
+    if (this.absoluteLineEnd >= this.to) {
+      this.absoluteLineStart = this.absoluteLineEnd;
+      this.atEnd = true;
+      this.readLine();
+      return false;
+    } else {
+      this.lineStart++;
+      this.absoluteLineStart = this.absoluteLineEnd + 1;
+      this.moveRangeI();
+      this.readLine();
+      return true;
+    }
+  }
+  moveRangeI() {
+    while (this.rangeI < this.ranges.length - 1 && this.absoluteLineStart >= this.ranges[this.rangeI].to) {
+      this.rangeI++;
+      this.absoluteLineStart = Math.max(this.absoluteLineStart, this.ranges[this.rangeI].from);
+    }
+  }
+  /// @internal
+  scanLine(start) {
+    let r = scanLineResult;
+    r.end = start;
+    if (start >= this.to) {
+      r.text = "";
+    } else {
+      r.text = this.lineChunkAt(start);
+      r.end += r.text.length;
+      if (this.ranges.length > 1) {
+        let textOffset = this.absoluteLineStart, rangeI = this.rangeI;
+        while (this.ranges[rangeI].to < r.end) {
+          rangeI++;
+          let nextFrom = this.ranges[rangeI].from;
+          let after = this.lineChunkAt(nextFrom);
+          r.end = nextFrom + after.length;
+          r.text = r.text.slice(0, this.ranges[rangeI - 1].to - textOffset) + after;
+          textOffset = r.end - r.text.length;
+        }
+      }
+    }
+    return r;
+  }
+  /// @internal
+  readLine() {
+    let { line } = this, { text, end } = this.scanLine(this.absoluteLineStart);
+    this.absoluteLineEnd = end;
+    line.reset(text);
+    for (; line.depth < this.stack.length; line.depth++) {
+      let cx = this.stack[line.depth], handler = this.parser.skipContextMarkup[cx.type];
+      if (!handler)
+        throw new Error("Unhandled block context " + Type[cx.type]);
+      if (!handler(cx, this, line))
+        break;
+      line.forward();
+    }
+  }
+  lineChunkAt(pos) {
+    let next = this.input.chunk(pos), text;
+    if (!this.input.lineChunks) {
+      let eol = next.indexOf("\n");
+      text = eol < 0 ? next : next.slice(0, eol);
+    } else {
+      text = next == "\n" ? "" : next;
+    }
+    return pos + text.length > this.to ? text.slice(0, this.to - pos) : text;
+  }
+  /// The end position of the previous line.
+  prevLineEnd() {
+    return this.atEnd ? this.lineStart : this.lineStart - 1;
+  }
+  /// @internal
+  startContext(type, start, value = 0) {
+    this.block = CompositeBlock.create(type, value, this.lineStart + start, this.block.hash, this.lineStart + this.line.text.length);
+    this.stack.push(this.block);
+  }
+  /// Start a composite block. Should only be called from [block
+  /// parser functions](#BlockParser.parse) that return null.
+  startComposite(type, start, value = 0) {
+    this.startContext(this.parser.getNodeType(type), start, value);
+  }
+  /// @internal
+  addNode(block, from, to) {
+    if (typeof block == "number")
+      block = new Tree(this.parser.nodeSet.types[block], none4, none4, (to !== null && to !== void 0 ? to : this.prevLineEnd()) - from);
+    this.block.addChild(block, from - this.block.from);
+  }
+  /// Add a block element. Can be called by [block
+  /// parsers](#BlockParser.parse).
+  addElement(elt2) {
+    this.block.addChild(elt2.toTree(this.parser.nodeSet), elt2.from - this.block.from);
+  }
+  /// Add a block element from a [leaf parser](#LeafBlockParser). This
+  /// makes sure any extra composite block markup (such as blockquote
+  /// markers) inside the block are also added to the syntax tree.
+  addLeafElement(leaf, elt2) {
+    this.addNode(this.buffer.writeElements(injectMarks(elt2.children, leaf.marks), -elt2.from).finish(elt2.type, elt2.to - elt2.from), elt2.from);
+  }
+  /// @internal
+  finishContext() {
+    let cx = this.stack.pop();
+    let top2 = this.stack[this.stack.length - 1];
+    top2.addChild(cx.toTree(this.parser.nodeSet), cx.from - top2.from);
+    this.block = top2;
+  }
+  finish() {
+    while (this.stack.length > 1)
+      this.finishContext();
+    return this.addGaps(this.block.toTree(this.parser.nodeSet, this.lineStart));
+  }
+  addGaps(tree) {
+    return this.ranges.length > 1 ? injectGaps(this.ranges, 0, tree.topNode, this.ranges[0].from, this.reusePlaceholders) : tree;
+  }
+  /// @internal
+  finishLeaf(leaf) {
+    for (let parser5 of leaf.parsers)
+      if (parser5.finish(this, leaf))
+        return;
+    let inline = injectMarks(this.parser.parseInline(leaf.content, leaf.start), leaf.marks);
+    this.addNode(this.buffer.writeElements(inline, -leaf.start).finish(Type.Paragraph, leaf.content.length), leaf.start);
+  }
+  elt(type, from, to, children) {
+    if (typeof type == "string")
+      return elt(this.parser.getNodeType(type), from, to, children);
+    return new TreeElement(type, from);
+  }
+  /// @internal
+  get buffer() {
+    return new Buffer(this.parser.nodeSet);
+  }
+};
+function injectGaps(ranges, rangeI, tree, offset, dummies) {
+  let rangeEnd2 = ranges[rangeI].to;
+  let children = [], positions = [], start = tree.from + offset;
+  function movePastNext(upto, inclusive) {
+    while (inclusive ? upto >= rangeEnd2 : upto > rangeEnd2) {
+      let size = ranges[rangeI + 1].from - rangeEnd2;
+      offset += size;
+      upto += size;
+      rangeI++;
+      rangeEnd2 = ranges[rangeI].to;
+    }
+  }
+  for (let ch = tree.firstChild; ch; ch = ch.nextSibling) {
+    movePastNext(ch.from + offset, true);
+    let from = ch.from + offset, node, reuse = dummies.get(ch.tree);
+    if (reuse) {
+      node = reuse;
+    } else if (ch.to + offset > rangeEnd2) {
+      node = injectGaps(ranges, rangeI, ch, offset, dummies);
+      movePastNext(ch.to + offset, false);
+    } else {
+      node = ch.toTree();
+    }
+    children.push(node);
+    positions.push(from - start);
+  }
+  movePastNext(tree.to + offset, false);
+  return new Tree(tree.type, children, positions, tree.to + offset - start, tree.tree ? tree.tree.propValues : void 0);
+}
+var MarkdownParser = class _MarkdownParser extends Parser {
+  /// @internal
+  constructor(nodeSet, blockParsers, leafBlockParsers, blockNames, endLeafBlock, skipContextMarkup, inlineParsers, inlineNames, wrappers) {
+    super();
+    this.nodeSet = nodeSet;
+    this.blockParsers = blockParsers;
+    this.leafBlockParsers = leafBlockParsers;
+    this.blockNames = blockNames;
+    this.endLeafBlock = endLeafBlock;
+    this.skipContextMarkup = skipContextMarkup;
+    this.inlineParsers = inlineParsers;
+    this.inlineNames = inlineNames;
+    this.wrappers = wrappers;
+    this.nodeTypes = /* @__PURE__ */ Object.create(null);
+    for (let t2 of nodeSet.types)
+      this.nodeTypes[t2.name] = t2.id;
+  }
+  createParse(input, fragments, ranges) {
+    let parse = new BlockContext(this, input, fragments, ranges);
+    for (let w of this.wrappers)
+      parse = w(parse, input, fragments, ranges);
+    return parse;
+  }
+  /// Reconfigure the parser.
+  configure(spec) {
+    let config2 = resolveConfig(spec);
+    if (!config2)
+      return this;
+    let { nodeSet, skipContextMarkup } = this;
+    let blockParsers = this.blockParsers.slice(), leafBlockParsers = this.leafBlockParsers.slice(), blockNames = this.blockNames.slice(), inlineParsers = this.inlineParsers.slice(), inlineNames = this.inlineNames.slice(), endLeafBlock = this.endLeafBlock.slice(), wrappers = this.wrappers;
+    if (nonEmpty(config2.defineNodes)) {
+      skipContextMarkup = Object.assign({}, skipContextMarkup);
+      let nodeTypes2 = nodeSet.types.slice(), styles;
+      for (let s of config2.defineNodes) {
+        let { name: name2, block, composite, style } = typeof s == "string" ? { name: s } : s;
+        if (nodeTypes2.some((t2) => t2.name == name2))
+          continue;
+        if (composite)
+          skipContextMarkup[nodeTypes2.length] = (bl, cx, line) => composite(cx, line, bl.value);
+        let id2 = nodeTypes2.length;
+        let group = composite ? ["Block", "BlockContext"] : !block ? void 0 : id2 >= Type.ATXHeading1 && id2 <= Type.SetextHeading2 ? ["Block", "LeafBlock", "Heading"] : ["Block", "LeafBlock"];
+        nodeTypes2.push(NodeType.define({
+          id: id2,
+          name: name2,
+          props: group && [[NodeProp.group, group]]
+        }));
+        if (style) {
+          if (!styles)
+            styles = {};
+          if (Array.isArray(style) || style instanceof Tag)
+            styles[name2] = style;
+          else
+            Object.assign(styles, style);
+        }
+      }
+      nodeSet = new NodeSet(nodeTypes2);
+      if (styles)
+        nodeSet = nodeSet.extend(styleTags(styles));
+    }
+    if (nonEmpty(config2.props))
+      nodeSet = nodeSet.extend(...config2.props);
+    if (nonEmpty(config2.remove)) {
+      for (let rm2 of config2.remove) {
+        let block = this.blockNames.indexOf(rm2), inline = this.inlineNames.indexOf(rm2);
+        if (block > -1)
+          blockParsers[block] = leafBlockParsers[block] = void 0;
+        if (inline > -1)
+          inlineParsers[inline] = void 0;
+      }
+    }
+    if (nonEmpty(config2.parseBlock)) {
+      for (let spec2 of config2.parseBlock) {
+        let found = blockNames.indexOf(spec2.name);
+        if (found > -1) {
+          blockParsers[found] = spec2.parse;
+          leafBlockParsers[found] = spec2.leaf;
+        } else {
+          let pos = spec2.before ? findName(blockNames, spec2.before) : spec2.after ? findName(blockNames, spec2.after) + 1 : blockNames.length - 1;
+          blockParsers.splice(pos, 0, spec2.parse);
+          leafBlockParsers.splice(pos, 0, spec2.leaf);
+          blockNames.splice(pos, 0, spec2.name);
+        }
+        if (spec2.endLeaf)
+          endLeafBlock.push(spec2.endLeaf);
+      }
+    }
+    if (nonEmpty(config2.parseInline)) {
+      for (let spec2 of config2.parseInline) {
+        let found = inlineNames.indexOf(spec2.name);
+        if (found > -1) {
+          inlineParsers[found] = spec2.parse;
+        } else {
+          let pos = spec2.before ? findName(inlineNames, spec2.before) : spec2.after ? findName(inlineNames, spec2.after) + 1 : inlineNames.length - 1;
+          inlineParsers.splice(pos, 0, spec2.parse);
+          inlineNames.splice(pos, 0, spec2.name);
+        }
+      }
+    }
+    if (config2.wrap)
+      wrappers = wrappers.concat(config2.wrap);
+    return new _MarkdownParser(nodeSet, blockParsers, leafBlockParsers, blockNames, endLeafBlock, skipContextMarkup, inlineParsers, inlineNames, wrappers);
+  }
+  /// @internal
+  getNodeType(name2) {
+    let found = this.nodeTypes[name2];
+    if (found == null)
+      throw new RangeError(`Unknown node type '${name2}'`);
+    return found;
+  }
+  /// Parse the given piece of inline text at the given offset,
+  /// returning an array of [`Element`](#Element) objects representing
+  /// the inline content.
+  parseInline(text, offset) {
+    let cx = new InlineContext(this, text, offset);
+    outer: for (let pos = offset; pos < cx.end; ) {
+      let next = cx.char(pos);
+      for (let token of this.inlineParsers)
+        if (token) {
+          let result = token(cx, next, pos);
+          if (result >= 0) {
+            pos = result;
+            continue outer;
+          }
+        }
+      pos++;
+    }
+    return cx.resolveMarkers(0);
+  }
+};
+function nonEmpty(a) {
+  return a != null && a.length > 0;
+}
+function resolveConfig(spec) {
+  if (!Array.isArray(spec))
+    return spec;
+  if (spec.length == 0)
+    return null;
+  let conf = resolveConfig(spec[0]);
+  if (spec.length == 1)
+    return conf;
+  let rest = resolveConfig(spec.slice(1));
+  if (!rest || !conf)
+    return conf || rest;
+  let conc2 = (a, b) => (a || none4).concat(b || none4);
+  let wrapA = conf.wrap, wrapB = rest.wrap;
+  return {
+    props: conc2(conf.props, rest.props),
+    defineNodes: conc2(conf.defineNodes, rest.defineNodes),
+    parseBlock: conc2(conf.parseBlock, rest.parseBlock),
+    parseInline: conc2(conf.parseInline, rest.parseInline),
+    remove: conc2(conf.remove, rest.remove),
+    wrap: !wrapA ? wrapB : !wrapB ? wrapA : (inner, input, fragments, ranges) => wrapA(wrapB(inner, input, fragments, ranges), input, fragments, ranges)
+  };
+}
+function findName(names, name2) {
+  let found = names.indexOf(name2);
+  if (found < 0)
+    throw new RangeError(`Position specified relative to unknown parser ${name2}`);
+  return found;
+}
+var nodeTypes = [NodeType.none];
+for (let i = 1, name2; name2 = Type[i]; i++) {
+  nodeTypes[i] = NodeType.define({
+    id: i,
+    name: name2,
+    props: i >= Type.Escape ? [] : [[NodeProp.group, i in DefaultSkipMarkup ? ["Block", "BlockContext"] : ["Block", "LeafBlock"]]],
+    top: name2 == "Document"
+  });
+}
+var none4 = [];
+var Buffer = class {
+  constructor(nodeSet) {
+    this.nodeSet = nodeSet;
+    this.content = [];
+    this.nodes = [];
+  }
+  write(type, from, to, children = 0) {
+    this.content.push(type, from, to, 4 + children * 4);
+    return this;
+  }
+  writeElements(elts, offset = 0) {
+    for (let e of elts)
+      e.writeTo(this, offset);
+    return this;
+  }
+  finish(type, length) {
+    return Tree.build({
+      buffer: this.content,
+      nodeSet: this.nodeSet,
+      reused: this.nodes,
+      topID: type,
+      length
+    });
+  }
+};
+var Element2 = class {
+  /// @internal
+  constructor(type, from, to, children = none4) {
+    this.type = type;
+    this.from = from;
+    this.to = to;
+    this.children = children;
+  }
+  /// @internal
+  writeTo(buf, offset) {
+    let startOff = buf.content.length;
+    buf.writeElements(this.children, offset);
+    buf.content.push(this.type, this.from + offset, this.to + offset, buf.content.length + 4 - startOff);
+  }
+  /// @internal
+  toTree(nodeSet) {
+    return new Buffer(nodeSet).writeElements(this.children, -this.from).finish(this.type, this.to - this.from);
+  }
+};
+var TreeElement = class {
+  constructor(tree, from) {
+    this.tree = tree;
+    this.from = from;
+  }
+  get to() {
+    return this.from + this.tree.length;
+  }
+  get type() {
+    return this.tree.type.id;
+  }
+  get children() {
+    return none4;
+  }
+  writeTo(buf, offset) {
+    buf.nodes.push(this.tree);
+    buf.content.push(buf.nodes.length - 1, this.from + offset, this.to + offset, -1);
+  }
+  toTree() {
+    return this.tree;
+  }
+};
+function elt(type, from, to, children) {
+  return new Element2(type, from, to, children);
+}
+var EmphasisUnderscore = { resolve: "Emphasis", mark: "EmphasisMark" };
+var EmphasisAsterisk = { resolve: "Emphasis", mark: "EmphasisMark" };
+var LinkStart = {};
+var ImageStart = {};
+var InlineDelimiter = class {
+  constructor(type, from, to, side) {
+    this.type = type;
+    this.from = from;
+    this.to = to;
+    this.side = side;
+  }
+};
+var Escapable = "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~";
+var Punctuation = /[!"#$%&'()*+,\-.\/:;<=>?@\[\\\]^_`{|}~\xA1\u2010-\u2027]/;
+try {
+  Punctuation = new RegExp("[\\p{Pc}|\\p{Pd}|\\p{Pe}|\\p{Pf}|\\p{Pi}|\\p{Po}|\\p{Ps}]", "u");
+} catch (_) {
+}
+var DefaultInline = {
+  Escape(cx, next, start) {
+    if (next != 92 || start == cx.end - 1)
+      return -1;
+    let escaped = cx.char(start + 1);
+    for (let i = 0; i < Escapable.length; i++)
+      if (Escapable.charCodeAt(i) == escaped)
+        return cx.append(elt(Type.Escape, start, start + 2));
+    return -1;
+  },
+  Entity(cx, next, start) {
+    if (next != 38)
+      return -1;
+    let m = /^(?:#\d+|#x[a-f\d]+|\w+);/i.exec(cx.slice(start + 1, start + 31));
+    return m ? cx.append(elt(Type.Entity, start, start + 1 + m[0].length)) : -1;
+  },
+  InlineCode(cx, next, start) {
+    if (next != 96 || start && cx.char(start - 1) == 96)
+      return -1;
+    let pos = start + 1;
+    while (pos < cx.end && cx.char(pos) == 96)
+      pos++;
+    let size = pos - start, curSize = 0;
+    for (; pos < cx.end; pos++) {
+      if (cx.char(pos) == 96) {
+        curSize++;
+        if (curSize == size && cx.char(pos + 1) != 96)
+          return cx.append(elt(Type.InlineCode, start, pos + 1, [
+            elt(Type.CodeMark, start, start + size),
+            elt(Type.CodeMark, pos + 1 - size, pos + 1)
+          ]));
+      } else {
+        curSize = 0;
+      }
+    }
+    return -1;
+  },
+  HTMLTag(cx, next, start) {
+    if (next != 60 || start == cx.end - 1)
+      return -1;
+    let after = cx.slice(start + 1, cx.end);
+    let url = /^(?:[a-z][-\w+.]+:[^\s>]+|[a-z\d.!#$%&'*+/=?^_`{|}~-]+@[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?(?:\.[a-z\d](?:[a-z\d-]{0,61}[a-z\d])?)*)>/i.exec(after);
+    if (url) {
+      return cx.append(elt(Type.Autolink, start, start + 1 + url[0].length, [
+        elt(Type.LinkMark, start, start + 1),
+        // url[0] includes the closing bracket, so exclude it from this slice
+        elt(Type.URL, start + 1, start + url[0].length),
+        elt(Type.LinkMark, start + url[0].length, start + 1 + url[0].length)
+      ]));
+    }
+    let comment2 = /^!--[^>](?:-[^-]|[^-])*?-->/i.exec(after);
+    if (comment2)
+      return cx.append(elt(Type.Comment, start, start + 1 + comment2[0].length));
+    let procInst = /^\?[^]*?\?>/.exec(after);
+    if (procInst)
+      return cx.append(elt(Type.ProcessingInstruction, start, start + 1 + procInst[0].length));
+    let m = /^(?:![A-Z][^]*?>|!\[CDATA\[[^]*?\]\]>|\/\s*[a-zA-Z][\w-]*\s*>|\s*[a-zA-Z][\w-]*(\s+[a-zA-Z:_][\w-.:]*(?:\s*=\s*(?:[^\s"'=<>`]+|'[^']*'|"[^"]*"))?)*\s*(\/\s*)?>)/.exec(after);
+    if (!m)
+      return -1;
+    return cx.append(elt(Type.HTMLTag, start, start + 1 + m[0].length));
+  },
+  Emphasis(cx, next, start) {
+    if (next != 95 && next != 42)
+      return -1;
+    let pos = start + 1;
+    while (cx.char(pos) == next)
+      pos++;
+    let before = cx.slice(start - 1, start), after = cx.slice(pos, pos + 1);
+    let pBefore = Punctuation.test(before), pAfter = Punctuation.test(after);
+    let sBefore = /\s|^$/.test(before), sAfter = /\s|^$/.test(after);
+    let leftFlanking = !sAfter && (!pAfter || sBefore || pBefore);
+    let rightFlanking = !sBefore && (!pBefore || sAfter || pAfter);
+    let canOpen = leftFlanking && (next == 42 || !rightFlanking || pBefore);
+    let canClose = rightFlanking && (next == 42 || !leftFlanking || pAfter);
+    return cx.append(new InlineDelimiter(next == 95 ? EmphasisUnderscore : EmphasisAsterisk, start, pos, (canOpen ? 1 : 0) | (canClose ? 2 : 0)));
+  },
+  HardBreak(cx, next, start) {
+    if (next == 92 && cx.char(start + 1) == 10)
+      return cx.append(elt(Type.HardBreak, start, start + 2));
+    if (next == 32) {
+      let pos = start + 1;
+      while (cx.char(pos) == 32)
+        pos++;
+      if (cx.char(pos) == 10 && pos >= start + 2)
+        return cx.append(elt(Type.HardBreak, start, pos + 1));
+    }
+    return -1;
+  },
+  Link(cx, next, start) {
+    return next == 91 ? cx.append(new InlineDelimiter(
+      LinkStart,
+      start,
+      start + 1,
+      1
+      /* Mark.Open */
+    )) : -1;
+  },
+  Image(cx, next, start) {
+    return next == 33 && cx.char(start + 1) == 91 ? cx.append(new InlineDelimiter(
+      ImageStart,
+      start,
+      start + 2,
+      1
+      /* Mark.Open */
+    )) : -1;
+  },
+  LinkEnd(cx, next, start) {
+    if (next != 93)
+      return -1;
+    for (let i = cx.parts.length - 1; i >= 0; i--) {
+      let part = cx.parts[i];
+      if (part instanceof InlineDelimiter && (part.type == LinkStart || part.type == ImageStart)) {
+        if (!part.side || cx.skipSpace(part.to) == start && !/[(\[]/.test(cx.slice(start + 1, start + 2))) {
+          cx.parts[i] = null;
+          return -1;
+        }
+        let content2 = cx.takeContent(i);
+        let link = cx.parts[i] = finishLink(cx, content2, part.type == LinkStart ? Type.Link : Type.Image, part.from, start + 1);
+        if (part.type == LinkStart)
+          for (let j = 0; j < i; j++) {
+            let p = cx.parts[j];
+            if (p instanceof InlineDelimiter && p.type == LinkStart)
+              p.side = 0;
+          }
+        return link.to;
+      }
+    }
+    return -1;
+  }
+};
+function finishLink(cx, content2, type, start, startPos) {
+  let { text } = cx, next = cx.char(startPos), endPos = startPos;
+  content2.unshift(elt(Type.LinkMark, start, start + (type == Type.Image ? 2 : 1)));
+  content2.push(elt(Type.LinkMark, startPos - 1, startPos));
+  if (next == 40) {
+    let pos = cx.skipSpace(startPos + 1);
+    let dest = parseURL(text, pos - cx.offset, cx.offset), title;
+    if (dest) {
+      pos = cx.skipSpace(dest.to);
+      if (pos != dest.to) {
+        title = parseLinkTitle(text, pos - cx.offset, cx.offset);
+        if (title)
+          pos = cx.skipSpace(title.to);
+      }
+    }
+    if (cx.char(pos) == 41) {
+      content2.push(elt(Type.LinkMark, startPos, startPos + 1));
+      endPos = pos + 1;
+      if (dest)
+        content2.push(dest);
+      if (title)
+        content2.push(title);
+      content2.push(elt(Type.LinkMark, pos, endPos));
+    }
+  } else if (next == 91) {
+    let label = parseLinkLabel(text, startPos - cx.offset, cx.offset, false);
+    if (label) {
+      content2.push(label);
+      endPos = label.to;
+    }
+  }
+  return elt(type, start, endPos, content2);
+}
+function parseURL(text, start, offset) {
+  let next = text.charCodeAt(start);
+  if (next == 60) {
+    for (let pos = start + 1; pos < text.length; pos++) {
+      let ch = text.charCodeAt(pos);
+      if (ch == 62)
+        return elt(Type.URL, start + offset, pos + 1 + offset);
+      if (ch == 60 || ch == 10)
+        return false;
+    }
+    return null;
+  } else {
+    let depth = 0, pos = start;
+    for (let escaped = false; pos < text.length; pos++) {
+      let ch = text.charCodeAt(pos);
+      if (space3(ch)) {
+        break;
+      } else if (escaped) {
+        escaped = false;
+      } else if (ch == 40) {
+        depth++;
+      } else if (ch == 41) {
+        if (!depth)
+          break;
+        depth--;
+      } else if (ch == 92) {
+        escaped = true;
+      }
+    }
+    return pos > start ? elt(Type.URL, start + offset, pos + offset) : pos == text.length ? null : false;
+  }
+}
+function parseLinkTitle(text, start, offset) {
+  let next = text.charCodeAt(start);
+  if (next != 39 && next != 34 && next != 40)
+    return false;
+  let end = next == 40 ? 41 : next;
+  for (let pos = start + 1, escaped = false; pos < text.length; pos++) {
+    let ch = text.charCodeAt(pos);
+    if (escaped)
+      escaped = false;
+    else if (ch == end)
+      return elt(Type.LinkTitle, start + offset, pos + 1 + offset);
+    else if (ch == 92)
+      escaped = true;
+  }
+  return null;
+}
+function parseLinkLabel(text, start, offset, requireNonWS) {
+  for (let escaped = false, pos = start + 1, end = Math.min(text.length, pos + 999); pos < end; pos++) {
+    let ch = text.charCodeAt(pos);
+    if (escaped)
+      escaped = false;
+    else if (ch == 93)
+      return requireNonWS ? false : elt(Type.LinkLabel, start + offset, pos + 1 + offset);
+    else {
+      if (requireNonWS && !space3(ch))
+        requireNonWS = false;
+      if (ch == 91)
+        return false;
+      else if (ch == 92)
+        escaped = true;
+    }
+  }
+  return null;
+}
+var InlineContext = class {
+  /// @internal
+  constructor(parser5, text, offset) {
+    this.parser = parser5;
+    this.text = text;
+    this.offset = offset;
+    this.parts = [];
+  }
+  /// Get the character code at the given (document-relative)
+  /// position.
+  char(pos) {
+    return pos >= this.end ? -1 : this.text.charCodeAt(pos - this.offset);
+  }
+  /// The position of the end of this inline section.
+  get end() {
+    return this.offset + this.text.length;
+  }
+  /// Get a substring of this inline section. Again uses
+  /// document-relative positions.
+  slice(from, to) {
+    return this.text.slice(from - this.offset, to - this.offset);
+  }
+  /// @internal
+  append(elt2) {
+    this.parts.push(elt2);
+    return elt2.to;
+  }
+  /// Add a [delimiter](#DelimiterType) at this given position. `open`
+  /// and `close` indicate whether this delimiter is opening, closing,
+  /// or both. Returns the end of the delimiter, for convenient
+  /// returning from [parse functions](#InlineParser.parse).
+  addDelimiter(type, from, to, open, close) {
+    return this.append(new InlineDelimiter(type, from, to, (open ? 1 : 0) | (close ? 2 : 0)));
+  }
+  /// Returns true when there is an unmatched link or image opening
+  /// token before the current position.
+  get hasOpenLink() {
+    for (let i = this.parts.length - 1; i >= 0; i--) {
+      let part = this.parts[i];
+      if (part instanceof InlineDelimiter && (part.type == LinkStart || part.type == ImageStart))
+        return true;
+    }
+    return false;
+  }
+  /// Add an inline element. Returns the end of the element.
+  addElement(elt2) {
+    return this.append(elt2);
+  }
+  /// Resolve markers between this.parts.length and from, wrapping matched markers in the
+  /// appropriate node and updating the content of this.parts. @internal
+  resolveMarkers(from) {
+    for (let i = from; i < this.parts.length; i++) {
+      let close = this.parts[i];
+      if (!(close instanceof InlineDelimiter && close.type.resolve && close.side & 2))
+        continue;
+      let emp = close.type == EmphasisUnderscore || close.type == EmphasisAsterisk;
+      let closeSize = close.to - close.from;
+      let open, j = i - 1;
+      for (; j >= from; j--) {
+        let part = this.parts[j];
+        if (part instanceof InlineDelimiter && part.side & 1 && part.type == close.type && // Ignore emphasis delimiters where the character count doesn't match
+        !(emp && (close.side & 1 || part.side & 2) && (part.to - part.from + closeSize) % 3 == 0 && ((part.to - part.from) % 3 || closeSize % 3))) {
+          open = part;
+          break;
+        }
+      }
+      if (!open)
+        continue;
+      let type = close.type.resolve, content2 = [];
+      let start = open.from, end = close.to;
+      if (emp) {
+        let size = Math.min(2, open.to - open.from, closeSize);
+        start = open.to - size;
+        end = close.from + size;
+        type = size == 1 ? "Emphasis" : "StrongEmphasis";
+      }
+      if (open.type.mark)
+        content2.push(this.elt(open.type.mark, start, open.to));
+      for (let k = j + 1; k < i; k++) {
+        if (this.parts[k] instanceof Element2)
+          content2.push(this.parts[k]);
+        this.parts[k] = null;
+      }
+      if (close.type.mark)
+        content2.push(this.elt(close.type.mark, close.from, end));
+      let element = this.elt(type, start, end, content2);
+      this.parts[j] = emp && open.from != start ? new InlineDelimiter(open.type, open.from, start, open.side) : null;
+      let keep = this.parts[i] = emp && close.to != end ? new InlineDelimiter(close.type, end, close.to, close.side) : null;
+      if (keep)
+        this.parts.splice(i, 0, element);
+      else
+        this.parts[i] = element;
+    }
+    let result = [];
+    for (let i = from; i < this.parts.length; i++) {
+      let part = this.parts[i];
+      if (part instanceof Element2)
+        result.push(part);
+    }
+    return result;
+  }
+  /// Find an opening delimiter of the given type. Returns `null` if
+  /// no delimiter is found, or an index that can be passed to
+  /// [`takeContent`](#InlineContext.takeContent) otherwise.
+  findOpeningDelimiter(type) {
+    for (let i = this.parts.length - 1; i >= 0; i--) {
+      let part = this.parts[i];
+      if (part instanceof InlineDelimiter && part.type == type)
+        return i;
+    }
+    return null;
+  }
+  /// Remove all inline elements and delimiters starting from the
+  /// given index (which you should get from
+  /// [`findOpeningDelimiter`](#InlineContext.findOpeningDelimiter),
+  /// resolve delimiters inside of them, and return them as an array
+  /// of elements.
+  takeContent(startIndex) {
+    let content2 = this.resolveMarkers(startIndex);
+    this.parts.length = startIndex;
+    return content2;
+  }
+  /// Skip space after the given (document) position, returning either
+  /// the position of the next non-space character or the end of the
+  /// section.
+  skipSpace(from) {
+    return skipSpace(this.text, from - this.offset) + this.offset;
+  }
+  elt(type, from, to, children) {
+    if (typeof type == "string")
+      return elt(this.parser.getNodeType(type), from, to, children);
+    return new TreeElement(type, from);
+  }
+};
+function injectMarks(elements, marks2) {
+  if (!marks2.length)
+    return elements;
+  if (!elements.length)
+    return marks2;
+  let elts = elements.slice(), eI = 0;
+  for (let mark of marks2) {
+    while (eI < elts.length && elts[eI].to < mark.to)
+      eI++;
+    if (eI < elts.length && elts[eI].from < mark.from) {
+      let e = elts[eI];
+      if (e instanceof Element2)
+        elts[eI] = new Element2(e.type, e.from, e.to, injectMarks(e.children, [mark]));
+    } else {
+      elts.splice(eI++, 0, mark);
+    }
+  }
+  return elts;
+}
+var NotLast = [Type.CodeBlock, Type.ListItem, Type.OrderedList, Type.BulletList];
+var FragmentCursor3 = class {
+  constructor(fragments, input) {
+    this.fragments = fragments;
+    this.input = input;
+    this.i = 0;
+    this.fragment = null;
+    this.fragmentEnd = -1;
+    this.cursor = null;
+    if (fragments.length)
+      this.fragment = fragments[this.i++];
+  }
+  nextFragment() {
+    this.fragment = this.i < this.fragments.length ? this.fragments[this.i++] : null;
+    this.cursor = null;
+    this.fragmentEnd = -1;
+  }
+  moveTo(pos, lineStart) {
+    while (this.fragment && this.fragment.to <= pos)
+      this.nextFragment();
+    if (!this.fragment || this.fragment.from > (pos ? pos - 1 : 0))
+      return false;
+    if (this.fragmentEnd < 0) {
+      let end = this.fragment.to;
+      while (end > 0 && this.input.read(end - 1, end) != "\n")
+        end--;
+      this.fragmentEnd = end ? end - 1 : 0;
+    }
+    let c = this.cursor;
+    if (!c) {
+      c = this.cursor = this.fragment.tree.cursor();
+      c.firstChild();
+    }
+    let rPos = pos + this.fragment.offset;
+    while (c.to <= rPos)
+      if (!c.parent())
+        return false;
+    for (; ; ) {
+      if (c.from >= rPos)
+        return this.fragment.from <= lineStart;
+      if (!c.childAfter(rPos))
+        return false;
+    }
+  }
+  matches(hash2) {
+    let tree = this.cursor.tree;
+    return tree && tree.prop(NodeProp.contextHash) == hash2;
+  }
+  takeNodes(cx) {
+    let cur2 = this.cursor, off = this.fragment.offset, fragEnd = this.fragmentEnd - (this.fragment.openEnd ? 1 : 0);
+    let start = cx.absoluteLineStart, end = start, blockI = cx.block.children.length;
+    let prevEnd = end, prevI = blockI;
+    for (; ; ) {
+      if (cur2.to - off > fragEnd) {
+        if (cur2.type.isAnonymous && cur2.firstChild())
+          continue;
+        break;
+      }
+      let pos = toRelative(cur2.from - off, cx.ranges);
+      if (cur2.to - off <= cx.ranges[cx.rangeI].to) {
+        cx.addNode(cur2.tree, pos);
+      } else {
+        let dummy = new Tree(cx.parser.nodeSet.types[Type.Paragraph], [], [], 0, cx.block.hashProp);
+        cx.reusePlaceholders.set(dummy, cur2.tree);
+        cx.addNode(dummy, pos);
+      }
+      if (cur2.type.is("Block")) {
+        if (NotLast.indexOf(cur2.type.id) < 0) {
+          end = cur2.to - off;
+          blockI = cx.block.children.length;
+        } else {
+          end = prevEnd;
+          blockI = prevI;
+          prevEnd = cur2.to - off;
+          prevI = cx.block.children.length;
+        }
+      }
+      if (!cur2.nextSibling())
+        break;
+    }
+    while (cx.block.children.length > blockI) {
+      cx.block.children.pop();
+      cx.block.positions.pop();
+    }
+    return end - start;
+  }
+};
+function toRelative(abs, ranges) {
+  let pos = abs;
+  for (let i = 1; i < ranges.length; i++) {
+    let gapFrom = ranges[i - 1].to, gapTo = ranges[i].from;
+    if (gapFrom < abs)
+      pos -= gapTo - gapFrom;
+  }
+  return pos;
+}
+var markdownHighlighting = styleTags({
+  "Blockquote/...": tags.quote,
+  HorizontalRule: tags.contentSeparator,
+  "ATXHeading1/... SetextHeading1/...": tags.heading1,
+  "ATXHeading2/... SetextHeading2/...": tags.heading2,
+  "ATXHeading3/...": tags.heading3,
+  "ATXHeading4/...": tags.heading4,
+  "ATXHeading5/...": tags.heading5,
+  "ATXHeading6/...": tags.heading6,
+  "Comment CommentBlock": tags.comment,
+  Escape: tags.escape,
+  Entity: tags.character,
+  "Emphasis/...": tags.emphasis,
+  "StrongEmphasis/...": tags.strong,
+  "Link/... Image/...": tags.link,
+  "OrderedList/... BulletList/...": tags.list,
+  "BlockQuote/...": tags.quote,
+  "InlineCode CodeText": tags.monospace,
+  "URL Autolink": tags.url,
+  "HeaderMark HardBreak QuoteMark ListMark LinkMark EmphasisMark CodeMark": tags.processingInstruction,
+  "CodeInfo LinkLabel": tags.labelName,
+  LinkTitle: tags.string,
+  Paragraph: tags.content
+});
+var parser4 = new MarkdownParser(new NodeSet(nodeTypes).extend(markdownHighlighting), Object.keys(DefaultBlockParsers).map((n) => DefaultBlockParsers[n]), Object.keys(DefaultBlockParsers).map((n) => DefaultLeafBlocks[n]), Object.keys(DefaultBlockParsers), DefaultEndLeaf, DefaultSkipMarkup, Object.keys(DefaultInline).map((n) => DefaultInline[n]), Object.keys(DefaultInline), []);
+function leftOverSpace(node, from, to) {
+  let ranges = [];
+  for (let n = node.firstChild, pos = from; ; n = n.nextSibling) {
+    let nextPos = n ? n.from : to;
+    if (nextPos > pos)
+      ranges.push({ from: pos, to: nextPos });
+    if (!n)
+      break;
+    pos = n.to;
+  }
+  return ranges;
+}
+function parseCode(config2) {
+  let { codeParser, htmlParser } = config2;
+  let wrap = parseMixed((node, input) => {
+    let id2 = node.type.id;
+    if (codeParser && (id2 == Type.CodeBlock || id2 == Type.FencedCode)) {
+      let info = "";
+      if (id2 == Type.FencedCode) {
+        let infoNode = node.node.getChild(Type.CodeInfo);
+        if (infoNode)
+          info = input.read(infoNode.from, infoNode.to);
+      }
+      let parser5 = codeParser(info);
+      if (parser5)
+        return { parser: parser5, overlay: (node2) => node2.type.id == Type.CodeText };
+    } else if (htmlParser && (id2 == Type.HTMLBlock || id2 == Type.HTMLTag)) {
+      return { parser: htmlParser, overlay: leftOverSpace(node.node, node.from, node.to) };
+    }
+    return null;
+  });
+  return { wrap };
+}
+var StrikethroughDelim = { resolve: "Strikethrough", mark: "StrikethroughMark" };
+var Strikethrough = {
+  defineNodes: [{
+    name: "Strikethrough",
+    style: { "Strikethrough/...": tags.strikethrough }
+  }, {
+    name: "StrikethroughMark",
+    style: tags.processingInstruction
+  }],
+  parseInline: [{
+    name: "Strikethrough",
+    parse(cx, next, pos) {
+      if (next != 126 || cx.char(pos + 1) != 126 || cx.char(pos + 2) == 126)
+        return -1;
+      let before = cx.slice(pos - 1, pos), after = cx.slice(pos + 2, pos + 3);
+      let sBefore = /\s|^$/.test(before), sAfter = /\s|^$/.test(after);
+      let pBefore = Punctuation.test(before), pAfter = Punctuation.test(after);
+      return cx.addDelimiter(StrikethroughDelim, pos, pos + 2, !sAfter && (!pAfter || sBefore || pBefore), !sBefore && (!pBefore || sAfter || pAfter));
+    },
+    after: "Emphasis"
+  }]
+};
+function parseRow(cx, line, startI = 0, elts, offset = 0) {
+  let count2 = 0, first = true, cellStart = -1, cellEnd = -1, esc = false;
+  let parseCell = () => {
+    elts.push(cx.elt("TableCell", offset + cellStart, offset + cellEnd, cx.parser.parseInline(line.slice(cellStart, cellEnd), offset + cellStart)));
+  };
+  for (let i = startI; i < line.length; i++) {
+    let next = line.charCodeAt(i);
+    if (next == 124 && !esc) {
+      if (!first || cellStart > -1)
+        count2++;
+      first = false;
+      if (elts) {
+        if (cellStart > -1)
+          parseCell();
+        elts.push(cx.elt("TableDelimiter", i + offset, i + offset + 1));
+      }
+      cellStart = cellEnd = -1;
+    } else if (esc || next != 32 && next != 9) {
+      if (cellStart < 0)
+        cellStart = i;
+      cellEnd = i + 1;
+    }
+    esc = !esc && next == 92;
+  }
+  if (cellStart > -1) {
+    count2++;
+    if (elts)
+      parseCell();
+  }
+  return count2;
+}
+function hasPipe(str, start) {
+  for (let i = start; i < str.length; i++) {
+    let next = str.charCodeAt(i);
+    if (next == 124)
+      return true;
+    if (next == 92)
+      i++;
+  }
+  return false;
+}
+var delimiterLine = /^\|?(\s*:?-+:?\s*\|)+(\s*:?-+:?\s*)?$/;
+var TableParser = class {
+  constructor() {
+    this.rows = null;
+  }
+  nextLine(cx, line, leaf) {
+    if (this.rows == null) {
+      this.rows = false;
+      let lineText;
+      if ((line.next == 45 || line.next == 58 || line.next == 124) && delimiterLine.test(lineText = line.text.slice(line.pos))) {
+        let firstRow = [], firstCount = parseRow(cx, leaf.content, 0, firstRow, leaf.start);
+        if (firstCount == parseRow(cx, lineText, line.pos))
+          this.rows = [
+            cx.elt("TableHeader", leaf.start, leaf.start + leaf.content.length, firstRow),
+            cx.elt("TableDelimiter", cx.lineStart + line.pos, cx.lineStart + line.text.length)
+          ];
+      }
+    } else if (this.rows) {
+      let content2 = [];
+      parseRow(cx, line.text, line.pos, content2, cx.lineStart);
+      this.rows.push(cx.elt("TableRow", cx.lineStart + line.pos, cx.lineStart + line.text.length, content2));
+    }
+    return false;
+  }
+  finish(cx, leaf) {
+    if (!this.rows)
+      return false;
+    cx.addLeafElement(leaf, cx.elt("Table", leaf.start, leaf.start + leaf.content.length, this.rows));
+    return true;
+  }
+};
+var Table = {
+  defineNodes: [
+    { name: "Table", block: true },
+    { name: "TableHeader", style: { "TableHeader/...": tags.heading } },
+    "TableRow",
+    { name: "TableCell", style: tags.content },
+    { name: "TableDelimiter", style: tags.processingInstruction }
+  ],
+  parseBlock: [{
+    name: "Table",
+    leaf(_, leaf) {
+      return hasPipe(leaf.content, 0) ? new TableParser() : null;
+    },
+    endLeaf(cx, line, leaf) {
+      if (leaf.parsers.some((p) => p instanceof TableParser) || !hasPipe(line.text, line.basePos))
+        return false;
+      let next = cx.scanLine(cx.absoluteLineEnd + 1).text;
+      return delimiterLine.test(next) && parseRow(cx, line.text, line.basePos) == parseRow(cx, next, line.basePos);
+    },
+    before: "SetextHeading"
+  }]
+};
+var TaskParser = class {
+  nextLine() {
+    return false;
+  }
+  finish(cx, leaf) {
+    cx.addLeafElement(leaf, cx.elt("Task", leaf.start, leaf.start + leaf.content.length, [
+      cx.elt("TaskMarker", leaf.start, leaf.start + 3),
+      ...cx.parser.parseInline(leaf.content.slice(3), leaf.start + 3)
+    ]));
+    return true;
+  }
+};
+var TaskList = {
+  defineNodes: [
+    { name: "Task", block: true, style: tags.list },
+    { name: "TaskMarker", style: tags.atom }
+  ],
+  parseBlock: [{
+    name: "TaskList",
+    leaf(cx, leaf) {
+      return /^\[[ xX]\][ \t]/.test(leaf.content) && cx.parentType().name == "ListItem" ? new TaskParser() : null;
+    },
+    after: "SetextHeading"
+  }]
+};
+var autolinkRE = /(www\.)|(https?:\/\/)|([\w.+-]+@)|(mailto:|xmpp:)/gy;
+var urlRE = /[\w-]+(\.[\w-]+)+(\/[^\s<]*)?/gy;
+var lastTwoDomainWords = /[\w-]+\.[\w-]+($|\/)/;
+var emailRE = /[\w.+-]+@[\w-]+(\.[\w.-]+)+/gy;
+var xmppResourceRE = /\/[a-zA-Z\d@.]+/gy;
+function count(str, from, to, ch) {
+  let result = 0;
+  for (let i = from; i < to; i++)
+    if (str[i] == ch)
+      result++;
+  return result;
+}
+function autolinkURLEnd(text, from) {
+  urlRE.lastIndex = from;
+  let m = urlRE.exec(text);
+  if (!m || lastTwoDomainWords.exec(m[0])[0].indexOf("_") > -1)
+    return -1;
+  let end = from + m[0].length;
+  for (; ; ) {
+    let last = text[end - 1], m2;
+    if (/[?!.,:*_~]/.test(last) || last == ")" && count(text, from, end, ")") > count(text, from, end, "("))
+      end--;
+    else if (last == ";" && (m2 = /&(?:#\d+|#x[a-f\d]+|\w+);$/.exec(text.slice(from, end))))
+      end = from + m2.index;
+    else
+      break;
+  }
+  return end;
+}
+function autolinkEmailEnd(text, from) {
+  emailRE.lastIndex = from;
+  let m = emailRE.exec(text);
+  if (!m)
+    return -1;
+  let last = m[0][m[0].length - 1];
+  return last == "_" || last == "-" ? -1 : from + m[0].length - (last == "." ? 1 : 0);
+}
+var Autolink = {
+  parseInline: [{
+    name: "Autolink",
+    parse(cx, next, absPos) {
+      let pos = absPos - cx.offset;
+      autolinkRE.lastIndex = pos;
+      let m = autolinkRE.exec(cx.text), end = -1;
+      if (!m)
+        return -1;
+      if (m[1] || m[2]) {
+        end = autolinkURLEnd(cx.text, pos + m[0].length);
+        if (end > -1 && cx.hasOpenLink) {
+          let noBracket = /([^\[\]]|\[[^\]]*\])*/.exec(cx.text.slice(pos, end));
+          end = pos + noBracket[0].length;
+        }
+      } else if (m[3]) {
+        end = autolinkEmailEnd(cx.text, pos);
+      } else {
+        end = autolinkEmailEnd(cx.text, pos + m[0].length);
+        if (end > -1 && m[0] == "xmpp:") {
+          xmppResourceRE.lastIndex = end;
+          m = xmppResourceRE.exec(cx.text);
+          if (m)
+            end = m.index + m[0].length;
+        }
+      }
+      if (end < 0)
+        return -1;
+      cx.addElement(cx.elt("URL", absPos, end + cx.offset));
+      return end + cx.offset;
+    }
+  }]
+};
+var GFM = [Table, TaskList, Strikethrough, Autolink];
+function parseSubSuper(ch, node, mark) {
+  return (cx, next, pos) => {
+    if (next != ch || cx.char(pos + 1) == ch)
+      return -1;
+    let elts = [cx.elt(mark, pos, pos + 1)];
+    for (let i = pos + 1; i < cx.end; i++) {
+      let next2 = cx.char(i);
+      if (next2 == ch)
+        return cx.addElement(cx.elt(node, pos, i + 1, elts.concat(cx.elt(mark, i, i + 1))));
+      if (next2 == 92)
+        elts.push(cx.elt("Escape", i, i++ + 2));
+      if (space3(next2))
+        break;
+    }
+    return -1;
+  };
+}
+var Superscript = {
+  defineNodes: [
+    { name: "Superscript", style: tags.special(tags.content) },
+    { name: "SuperscriptMark", style: tags.processingInstruction }
+  ],
+  parseInline: [{
+    name: "Superscript",
+    parse: parseSubSuper(94, "Superscript", "SuperscriptMark")
+  }]
+};
+var Subscript = {
+  defineNodes: [
+    { name: "Subscript", style: tags.special(tags.content) },
+    { name: "SubscriptMark", style: tags.processingInstruction }
+  ],
+  parseInline: [{
+    name: "Subscript",
+    parse: parseSubSuper(126, "Subscript", "SubscriptMark")
+  }]
+};
+var Emoji = {
+  defineNodes: [{ name: "Emoji", style: tags.character }],
+  parseInline: [{
+    name: "Emoji",
+    parse(cx, next, pos) {
+      let match;
+      if (next != 58 || !(match = /^[a-zA-Z_0-9]+:/.exec(cx.slice(pos + 1, cx.end))))
+        return -1;
+      return cx.addElement(cx.elt("Emoji", pos, pos + 1 + match[0].length));
+    }
+  }]
+};
+
+// node_modules/@codemirror/lang-markdown/dist/index.js
+var data = /* @__PURE__ */ defineLanguageFacet({ commentTokens: { block: { open: "<!--", close: "-->" } } });
+var headingProp = /* @__PURE__ */ new NodeProp();
+var commonmark = /* @__PURE__ */ parser4.configure({
+  props: [
+    /* @__PURE__ */ foldNodeProp.add((type) => {
+      return !type.is("Block") || type.is("Document") || isHeading(type) != null || isList(type) ? void 0 : (tree, state) => ({ from: state.doc.lineAt(tree.from).to, to: tree.to });
+    }),
+    /* @__PURE__ */ headingProp.add(isHeading),
+    /* @__PURE__ */ indentNodeProp.add({
+      Document: () => null
+    }),
+    /* @__PURE__ */ languageDataProp.add({
+      Document: data
+    })
+  ]
+});
+function isHeading(type) {
+  let match = /^(?:ATX|Setext)Heading(\d)$/.exec(type.name);
+  return match ? +match[1] : void 0;
+}
+function isList(type) {
+  return type.name == "OrderedList" || type.name == "BulletList";
+}
+function findSectionEnd(headerNode, level) {
+  let last = headerNode;
+  for (; ; ) {
+    let next = last.nextSibling, heading2;
+    if (!next || (heading2 = isHeading(next.type)) != null && heading2 <= level)
+      break;
+    last = next;
+  }
+  return last.to;
+}
+var headerIndent = /* @__PURE__ */ foldService.of((state, start, end) => {
+  for (let node = syntaxTree(state).resolveInner(end, -1); node; node = node.parent) {
+    if (node.from < start)
+      break;
+    let heading2 = node.type.prop(headingProp);
+    if (heading2 == null)
+      continue;
+    let upto = findSectionEnd(node, heading2);
+    if (upto > end)
+      return { from: end, to: upto };
+  }
+  return null;
+});
+function mkLang(parser5) {
+  return new Language(data, parser5, [headerIndent], "markdown");
+}
+var commonmarkLanguage = /* @__PURE__ */ mkLang(commonmark);
+var extended = /* @__PURE__ */ commonmark.configure([GFM, Subscript, Superscript, Emoji, {
+  props: [
+    /* @__PURE__ */ foldNodeProp.add({
+      Table: (tree, state) => ({ from: state.doc.lineAt(tree.from).to, to: tree.to })
+    })
+  ]
+}]);
+var markdownLanguage = /* @__PURE__ */ mkLang(extended);
+function getCodeParser(languages, defaultLanguage) {
+  return (info) => {
+    if (info && languages) {
+      let found = null;
+      info = /\S*/.exec(info)[0];
+      if (typeof languages == "function")
+        found = languages(info);
+      else
+        found = LanguageDescription.matchLanguageName(languages, info, true);
+      if (found instanceof LanguageDescription)
+        return found.support ? found.support.language.parser : ParseContext.getSkippingParser(found.load());
+      else if (found)
+        return found.parser;
+    }
+    return defaultLanguage ? defaultLanguage.parser : null;
+  };
+}
+var Context = class {
+  constructor(node, from, to, spaceBefore, spaceAfter, type, item) {
+    this.node = node;
+    this.from = from;
+    this.to = to;
+    this.spaceBefore = spaceBefore;
+    this.spaceAfter = spaceAfter;
+    this.type = type;
+    this.item = item;
+  }
+  blank(maxWidth, trailing = true) {
+    let result = this.spaceBefore + (this.node.name == "Blockquote" ? ">" : "");
+    if (maxWidth != null) {
+      while (result.length < maxWidth)
+        result += " ";
+      return result;
+    } else {
+      for (let i = this.to - this.from - result.length - this.spaceAfter.length; i > 0; i--)
+        result += " ";
+      return result + (trailing ? this.spaceAfter : "");
+    }
+  }
+  marker(doc2, add3) {
+    let number2 = this.node.name == "OrderedList" ? String(+itemNumber(this.item, doc2)[2] + add3) : "";
+    return this.spaceBefore + number2 + this.type + this.spaceAfter;
+  }
+};
+function getContext(node, doc2) {
+  let nodes = [];
+  for (let cur2 = node; cur2 && cur2.name != "Document"; cur2 = cur2.parent) {
+    if (cur2.name == "ListItem" || cur2.name == "Blockquote" || cur2.name == "FencedCode")
+      nodes.push(cur2);
+  }
+  let context = [];
+  for (let i = nodes.length - 1; i >= 0; i--) {
+    let node2 = nodes[i], match;
+    let line = doc2.lineAt(node2.from), startPos = node2.from - line.from;
+    if (node2.name == "FencedCode") {
+      context.push(new Context(node2, startPos, startPos, "", "", "", null));
+    } else if (node2.name == "Blockquote" && (match = /^ *>( ?)/.exec(line.text.slice(startPos)))) {
+      context.push(new Context(node2, startPos, startPos + match[0].length, "", match[1], ">", null));
+    } else if (node2.name == "ListItem" && node2.parent.name == "OrderedList" && (match = /^( *)\d+([.)])( *)/.exec(line.text.slice(startPos)))) {
+      let after = match[3], len = match[0].length;
+      if (after.length >= 4) {
+        after = after.slice(0, after.length - 4);
+        len -= 4;
+      }
+      context.push(new Context(node2.parent, startPos, startPos + len, match[1], after, match[2], node2));
+    } else if (node2.name == "ListItem" && node2.parent.name == "BulletList" && (match = /^( *)([-+*])( {1,4}\[[ xX]\])?( +)/.exec(line.text.slice(startPos)))) {
+      let after = match[4], len = match[0].length;
+      if (after.length > 4) {
+        after = after.slice(0, after.length - 4);
+        len -= 4;
+      }
+      let type = match[2];
+      if (match[3])
+        type += match[3].replace(/[xX]/, " ");
+      context.push(new Context(node2.parent, startPos, startPos + len, match[1], after, type, node2));
+    }
+  }
+  return context;
+}
+function itemNumber(item, doc2) {
+  return /^(\s*)(\d+)(?=[.)])/.exec(doc2.sliceString(item.from, item.from + 10));
+}
+function renumberList(after, doc2, changes, offset = 0) {
+  for (let prev = -1, node = after; ; ) {
+    if (node.name == "ListItem") {
+      let m = itemNumber(node, doc2);
+      let number2 = +m[2];
+      if (prev >= 0) {
+        if (number2 != prev + 1)
+          return;
+        changes.push({ from: node.from + m[1].length, to: node.from + m[0].length, insert: String(prev + 2 + offset) });
+      }
+      prev = number2;
+    }
+    let next = node.nextSibling;
+    if (!next)
+      break;
+    node = next;
+  }
+}
+function normalizeIndent(content2, state) {
+  let blank = /^[ \t]*/.exec(content2)[0].length;
+  if (!blank || state.facet(indentUnit) != "	")
+    return content2;
+  let col = countColumn(content2, 4, blank);
+  let space4 = "";
+  for (let i = col; i > 0; ) {
+    if (i >= 4) {
+      space4 += "	";
+      i -= 4;
+    } else {
+      space4 += " ";
+      i--;
+    }
+  }
+  return space4 + content2.slice(blank);
+}
+var insertNewlineContinueMarkup = ({ state, dispatch }) => {
+  let tree = syntaxTree(state), { doc: doc2 } = state;
+  let dont = null, changes = state.changeByRange((range) => {
+    if (!range.empty || !markdownLanguage.isActiveAt(state, range.from))
+      return dont = { range };
+    let pos = range.from, line = doc2.lineAt(pos);
+    let context = getContext(tree.resolveInner(pos, -1), doc2);
+    while (context.length && context[context.length - 1].from > pos - line.from)
+      context.pop();
+    if (!context.length)
+      return dont = { range };
+    let inner = context[context.length - 1];
+    if (inner.to - inner.spaceAfter.length > pos - line.from)
+      return dont = { range };
+    let emptyLine = pos >= inner.to - inner.spaceAfter.length && !/\S/.test(line.text.slice(inner.to));
+    if (inner.item && emptyLine) {
+      let first = inner.node.firstChild, second = inner.node.getChild("ListItem", "ListItem");
+      if (first.to >= pos || second && second.to < pos || line.from > 0 && !/[^\s>]/.test(doc2.lineAt(line.from - 1).text)) {
+        let next = context.length > 1 ? context[context.length - 2] : null;
+        let delTo, insert3 = "";
+        if (next && next.item) {
+          delTo = line.from + next.from;
+          insert3 = next.marker(doc2, 1);
+        } else {
+          delTo = line.from + (next ? next.to : 0);
+        }
+        let changes3 = [{ from: delTo, to: pos, insert: insert3 }];
+        if (inner.node.name == "OrderedList")
+          renumberList(inner.item, doc2, changes3, -2);
+        if (next && next.node.name == "OrderedList")
+          renumberList(next.item, doc2, changes3);
+        return { range: EditorSelection.cursor(delTo + insert3.length), changes: changes3 };
+      } else {
+        let insert3 = blankLine(context, state, line);
+        return {
+          range: EditorSelection.cursor(pos + insert3.length + 1),
+          changes: { from: line.from, insert: insert3 + state.lineBreak }
+        };
+      }
+    }
+    if (inner.node.name == "Blockquote" && emptyLine && line.from) {
+      let prevLine = doc2.lineAt(line.from - 1), quoted = />\s*$/.exec(prevLine.text);
+      if (quoted && quoted.index == inner.from) {
+        let changes3 = state.changes([
+          { from: prevLine.from + quoted.index, to: prevLine.to },
+          { from: line.from + inner.from, to: line.to }
+        ]);
+        return { range: range.map(changes3), changes: changes3 };
+      }
+    }
+    let changes2 = [];
+    if (inner.node.name == "OrderedList")
+      renumberList(inner.item, doc2, changes2);
+    let continued = inner.item && inner.item.from < line.from;
+    let insert2 = "";
+    if (!continued || /^[\s\d.)\-+*>]*/.exec(line.text)[0].length >= inner.to) {
+      for (let i = 0, e = context.length - 1; i <= e; i++) {
+        insert2 += i == e && !continued ? context[i].marker(doc2, 1) : context[i].blank(i < e ? countColumn(line.text, 4, context[i + 1].from) - insert2.length : null);
+      }
+    }
+    let from = pos;
+    while (from > line.from && /\s/.test(line.text.charAt(from - line.from - 1)))
+      from--;
+    insert2 = normalizeIndent(insert2, state);
+    if (nonTightList(inner.node, state.doc))
+      insert2 = blankLine(context, state, line) + state.lineBreak + insert2;
+    changes2.push({ from, to: pos, insert: state.lineBreak + insert2 });
+    return { range: EditorSelection.cursor(from + insert2.length + 1), changes: changes2 };
+  });
+  if (dont)
+    return false;
+  dispatch(state.update(changes, { scrollIntoView: true, userEvent: "input" }));
+  return true;
+};
+function isMark(node) {
+  return node.name == "QuoteMark" || node.name == "ListMark";
+}
+function nonTightList(node, doc2) {
+  if (node.name != "OrderedList" && node.name != "BulletList")
+    return false;
+  let first = node.firstChild, second = node.getChild("ListItem", "ListItem");
+  if (!second)
+    return false;
+  let line1 = doc2.lineAt(first.to), line2 = doc2.lineAt(second.from);
+  let empty2 = /^[\s>]*$/.test(line1.text);
+  return line1.number + (empty2 ? 0 : 1) < line2.number;
+}
+function blankLine(context, state, line) {
+  let insert2 = "";
+  for (let i = 0, e = context.length - 2; i <= e; i++) {
+    insert2 += context[i].blank(i < e ? countColumn(line.text, 4, context[i + 1].from) - insert2.length : null, i < e);
+  }
+  return normalizeIndent(insert2, state);
+}
+function contextNodeForDelete(tree, pos) {
+  let node = tree.resolveInner(pos, -1), scan = pos;
+  if (isMark(node)) {
+    scan = node.from;
+    node = node.parent;
+  }
+  for (let prev; prev = node.childBefore(scan); ) {
+    if (isMark(prev)) {
+      scan = prev.from;
+    } else if (prev.name == "OrderedList" || prev.name == "BulletList") {
+      node = prev.lastChild;
+      scan = node.to;
+    } else {
+      break;
+    }
+  }
+  return node;
+}
+var deleteMarkupBackward = ({ state, dispatch }) => {
+  let tree = syntaxTree(state);
+  let dont = null, changes = state.changeByRange((range) => {
+    let pos = range.from, { doc: doc2 } = state;
+    if (range.empty && markdownLanguage.isActiveAt(state, range.from)) {
+      let line = doc2.lineAt(pos);
+      let context = getContext(contextNodeForDelete(tree, pos), doc2);
+      if (context.length) {
+        let inner = context[context.length - 1];
+        let spaceEnd = inner.to - inner.spaceAfter.length + (inner.spaceAfter ? 1 : 0);
+        if (pos - line.from > spaceEnd && !/\S/.test(line.text.slice(spaceEnd, pos - line.from)))
+          return {
+            range: EditorSelection.cursor(line.from + spaceEnd),
+            changes: { from: line.from + spaceEnd, to: pos }
+          };
+        if (pos - line.from == spaceEnd && // Only apply this if we're on the line that has the
+        // construct's syntax, or there's only indentation in the
+        // target range
+        (!inner.item || line.from <= inner.item.from || !/\S/.test(line.text.slice(0, inner.to)))) {
+          let start = line.from + inner.from;
+          if (inner.item && inner.node.from < inner.item.from && /\S/.test(line.text.slice(inner.from, inner.to))) {
+            let insert2 = inner.blank(countColumn(line.text, 4, inner.to) - countColumn(line.text, 4, inner.from));
+            if (start == line.from)
+              insert2 = normalizeIndent(insert2, state);
+            return {
+              range: EditorSelection.cursor(start + insert2.length),
+              changes: { from: start, to: line.from + inner.to, insert: insert2 }
+            };
+          }
+          if (start < pos)
+            return { range: EditorSelection.cursor(start), changes: { from: start, to: pos } };
+        }
+      }
+    }
+    return dont = { range };
+  });
+  if (dont)
+    return false;
+  dispatch(state.update(changes, { scrollIntoView: true, userEvent: "delete" }));
+  return true;
+};
+var markdownKeymap = [
+  { key: "Enter", run: insertNewlineContinueMarkup },
+  { key: "Backspace", run: deleteMarkupBackward }
+];
+var htmlNoMatch = /* @__PURE__ */ html({ matchClosingTags: false });
+function markdown(config2 = {}) {
+  let { codeLanguages, defaultCodeLanguage, addKeymap = true, base: { parser: parser5 } = commonmarkLanguage, completeHTMLTags = true } = config2;
+  if (!(parser5 instanceof MarkdownParser))
+    throw new RangeError("Base parser provided to `markdown` should be a Markdown parser");
+  let extensions = config2.extensions ? [config2.extensions] : [];
+  let support = [htmlNoMatch.support], defaultCode;
+  if (defaultCodeLanguage instanceof LanguageSupport) {
+    support.push(defaultCodeLanguage.support);
+    defaultCode = defaultCodeLanguage.language;
+  } else if (defaultCodeLanguage) {
+    defaultCode = defaultCodeLanguage;
+  }
+  let codeParser = codeLanguages || defaultCode ? getCodeParser(codeLanguages, defaultCode) : void 0;
+  extensions.push(parseCode({ codeParser, htmlParser: htmlNoMatch.language.parser }));
+  if (addKeymap)
+    support.push(Prec.high(keymap.of(markdownKeymap)));
+  let lang = mkLang(parser5.configure(extensions));
+  if (completeHTMLTags)
+    support.push(lang.data.of({ autocomplete: htmlTagCompletion }));
+  return new LanguageSupport(lang, support);
+}
+function htmlTagCompletion(context) {
+  let { state, pos } = context, m = /<[:\-\.\w\u00b7-\uffff]*$/.exec(state.sliceDoc(pos - 25, pos));
+  if (!m)
+    return null;
+  let tree = syntaxTree(state).resolveInner(pos, -1);
+  while (tree && !tree.type.isTop) {
+    if (tree.name == "CodeBlock" || tree.name == "FencedCode" || tree.name == "ProcessingInstructionBlock" || tree.name == "CommentBlock" || tree.name == "Link" || tree.name == "Image")
+      return null;
+    tree = tree.parent;
+  }
+  return {
+    from: pos - m[0].length,
+    to: pos,
+    options: htmlTagCompletions(),
+    validFor: /^<[:\-\.\w\u00b7-\uffff]*$/
+  };
+}
+var _tagCompletions = null;
+function htmlTagCompletions() {
+  if (_tagCompletions)
+    return _tagCompletions;
+  let result = htmlCompletionSource(new CompletionContext(EditorState.create({ extensions: htmlNoMatch }), 0, true));
+  return _tagCompletions = result ? result.options : [];
+}
+
+// public/vendor/diff.js
 function Diff() {
 }
 Diff.prototype = {
@@ -26737,7 +29129,7 @@ function createPatch(fileName, oldStr, newStr, oldHeader, newHeader, options) {
   );
 }
 
-// prebaked/dirtree.js
+// public/dirtree.js
 var create = (tag) => document.createElement(tag);
 var DirTree = class _DirTree {
   tree = {};
@@ -26838,18 +29230,19 @@ The only way to restore is by rewinding!`
   // }
 };
 
-// script.js
+// src/script.js
+var changeUser = document.getElementById(`switch`);
 var all = document.getElementById(`all`);
 var add2 = document.getElementById(`add`);
 var format = document.getElementById(`format`);
-var save = document.getElementById(`save`);
 var left = document.getElementById(`left`);
 var right = document.getElementById(`right`);
 var filetree = document.getElementById(`filetree`);
 var tabs = document.getElementById(`tabs`);
 var editors = document.getElementById(`editors`);
 var preview = document.getElementById(`preview`);
-var CONTENT_DIR = `content`;
+var user = document.querySelector(`.username`)?.textContent;
+var CONTENT_DIR = `content/${user ?? `anonymous`}`;
 var cmInstances = {};
 var dirTree = { tree: {} };
 var dirList = [];
@@ -26859,13 +29252,13 @@ async function setupPage() {
   dirList = dirTree.flat();
   await Promise.all(
     dirList.map(async (filename) => {
-      const data = await fetchFileContents(filename);
+      const data2 = await fetchFileContents(filename);
       cmInstances[filename] ??= {};
-      cmInstances[filename].content = data;
+      cmInstances[filename].content = data2;
     })
   );
-  updatePreview();
   addGlobalEventHandling();
+  updatePreview();
 }
 async function fetchFileContents(filename) {
   return await fetch(`./${CONTENT_DIR}/${filename}`).then((r) => r.text());
@@ -26877,11 +29270,21 @@ async function refreshDirTree() {
   buildDirTreeUI(dirTree);
 }
 function addGlobalEventHandling() {
+  changeUser.addEventListener(`click`, async () => {
+    const name2 = prompt(`Username?`).trim();
+    if (name2) {
+      const response = await fetch(`/login/${name2}`, { method: `post` });
+      if (response.status === 200) {
+        location.reload();
+      } else {
+        alert(await response.text());
+      }
+    }
+  });
   all.addEventListener(`click`, async () => {
     document.querySelectorAll(`li.file`).forEach((e) => e.click());
   });
-  left.addEventListener(`click`, () => tabs.scrollBy(-100, 0));
-  right.addEventListener(`click`, () => tabs.scrollBy(100, 0));
+  addTabScrollHandling();
   add2.addEventListener(`click`, async () => {
     const filename = prompt(
       "Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)"
@@ -26915,23 +29318,32 @@ function addGlobalEventHandling() {
       }
     });
   });
-  save.addEventListener(`click`, async () => {
-    const addRewindPoint = confirm(
-      `Rewind points get built automatically as
-you make changes. If you want to make one,
-you'll have to say why.`
-    );
-    if (addRewindPoint) {
-      const reason = prompt(`Why do you need a manual rewind point?`);
-      if (reason.trim()) {
-        await fetch(`/save?reason=${encodeURIComponent(reason)}`, {
-          method: `post`
-        });
-        alert(`Manual rewind point created`);
-      }
-    }
-  });
   addFileDropFunctionality();
+}
+function addTabScrollHandling() {
+  let scrolling = false;
+  function scrollTabs(step) {
+    if (!scrolling) return;
+    tabs.scrollBy(step, 0);
+    setTimeout(() => scrollTabs(step), 4);
+  }
+  for (const type of [`mouseup`, `touchend`]) {
+    document.addEventListener(type, () => scrolling = false);
+  }
+  for (const type of [`mouseout`, `touchend`]) {
+    left.addEventListener(type, () => scrolling = false);
+    right.addEventListener(type, () => scrolling = false);
+  }
+  for (const type of [`mousedown`, `touchstart`]) {
+    left.addEventListener(type, () => {
+      scrolling = true;
+      scrollTabs(-2);
+    });
+    right.addEventListener(type, () => {
+      scrolling = true;
+      scrollTabs(2);
+    });
+  }
 }
 function addFileDropFunctionality() {
   filetree.addEventListener(`dragover`, function dropHandler(ev) {
@@ -26992,9 +29404,9 @@ function addFileDropFunctionality() {
 function create2(tag) {
   return document.createElement(tag);
 }
-function getFileSum(data) {
+function getFileSum(data2) {
   const enc = new TextEncoder();
-  return enc.encode(data).reduce((t2, e) => t2 + e, 0);
+  return enc.encode(data2).reduce((t2, e) => t2 + e, 0);
 }
 function buildDirTreeUI(tree) {
   filetree.innerHTML = ``;
@@ -27009,8 +29421,8 @@ async function createFileEditTab(filename) {
   editors.appendChild(panel);
   const { tab, close } = setupEditorTab(filename);
   tabs.appendChild(tab);
-  const data = await fetchFileContents(filename);
-  const initialState = getInitialState(filename, data);
+  const data2 = await fetchFileContents(filename);
+  const initialState = getInitialState(filename, data2);
   const view = setupView(panel, initialState);
   addEventHandling(filename, panel, tab, close, view);
   const properties2 = {
@@ -27028,30 +29440,34 @@ async function createFileEditTab(filename) {
   }
   tab.click();
 }
-function getInitialState(filename, data) {
+function getInitialState(filename, data2) {
   const ext = filename.substring(filename.lastIndexOf(`.`) + 1);
   const syntax = {
     html,
     css,
-    js: javascript
+    js: javascript,
+    md: markdown
   }[ext];
-  return EditorState.create({
-    extensions: [
-      basicSetup,
-      syntax(),
-      // Add debounced content change syncing
-      EditorView.updateListener.of((e) => {
-        if (e.docChanged) {
-          const entry = cmInstances[filename];
-          if (entry.debounce) {
-            clearTimeout(entry.debounce);
-          }
-          entry.debounce = setTimeout(entry.sync, 1e3);
+  const extensions = [basicSetup];
+  if (syntax) {
+    extensions.push(syntax());
+  }
+  extensions.push(
+    // Add debounced content change syncing
+    EditorView.updateListener.of((e) => {
+      if (e.docChanged) {
+        const entry = cmInstances[filename];
+        if (entry.debounce) {
+          clearTimeout(entry.debounce);
         }
-      })
-    ],
+        entry.debounce = setTimeout(entry.sync, 1e3);
+      }
+    })
+  );
+  return EditorState.create({
+    extensions,
     // And make sure the editor starts with whatever content is in our file.
-    doc: data.toString()
+    doc: data2.toString()
   });
 }
 function setupEditorPanel(filename) {
@@ -27130,7 +29546,7 @@ async function syncContent(filename) {
   }
   entry.debounce = false;
 }
-function updatePreview() {
+function updatePreview(find2, replace) {
   const iframe = preview.querySelector(`iframe`);
   const newFrame = document.createElement(`iframe`);
   newFrame.onload = () => {
@@ -27142,5 +29558,10 @@ function updatePreview() {
   newFrame.style.opacity = 0;
   newFrame.style.transition = "opacity 0.25s";
   preview.append(newFrame);
-  newFrame.src = iframe.src;
+  const src = iframe.src ? iframe.src : iframe.dataset.src;
+  if (find2 && replace) {
+    newFrame.src = src.replace(find2, replace);
+  } else {
+    newFrame.src = src;
+  }
 }

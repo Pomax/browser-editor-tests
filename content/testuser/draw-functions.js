@@ -37,7 +37,7 @@ function drawAxes(asProjection = false) {
 
 function drawAxis(colour, o, v) {
   setStroke(colour);
-  const {x,y} = make2D(...v);
+  const { x, y } = make2D(...v);
   line(o.x, o.y, x, y);
 }
 
@@ -63,7 +63,6 @@ function drawPlane(asProjection = false) {
 
   if (asProjection) restore();
 }
-
 
 let s, t;
 
