@@ -1,7 +1,12 @@
 export { addGetRoutes };
 
 import { deleteExpiredAnonymousContent } from "../middleware.js";
-import { getFileSum, execPromise, readContentDir } from "../helpers.js";
+import {
+  getFileSum,
+  execPromise,
+  readContentDir,
+  reloadPageInstruction,
+} from "../helpers.js";
 import { posix } from "path";
 import { DirTree } from "../../../public/dirtree.js";
 import { __dirname } from "../../constants.js";
@@ -11,13 +16,14 @@ function addGetRoutes(app) {
   // that lets the receiver reconstitute it as a DirTree object.
   app.get(`/dir`, async (req, res) => {
     const osResponse = await readContentDir(req.session.dir);
+    if (osResponse === false) return reloadPageInstruction(res);
     const dir = osResponse.map((v) => v.replace(__dirname + posix.sep, ``));
     const dirTree = new DirTree(dir, {
       getFileValue: (filename) =>
         getFileSum(req.session.dir, filename.replace(__dirname, ``)),
       ignore: [`.git`],
     });
-    res.send(JSON.stringify(dirTree.tree));
+    res.json(dirTree.tree);
   });
 
   // Add an extra job when loading the editor that destroys old

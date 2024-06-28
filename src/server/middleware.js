@@ -1,7 +1,8 @@
 export {
   addMiddleware,
-  pageNotFound,
   deleteExpiredAnonymousContent,
+  pageNotFound,
+  parseBodyText,
   verifyOwnership,
 };
 
@@ -9,19 +10,14 @@ import session from "express-session";
 import helmet from "helmet";
 import nocache from "nocache";
 import { readdirSync, rmSync } from "fs";
-import { switchUser } from "./helpers.js";
+import { reloadPageInstruction, switchUser } from "./helpers.js";
 import { __dirname } from "../constants.js";
 
 function pageNotFound(req, res) {
   if (req.query.preview) {
-    res.status(404);
-    res.send(
-      `<h1>Nothing to preview</h1>\n<p>Have a look at settings.json!</p>`
-    );
+    res.status(404).send(`Preview not found`);
   } else {
-    res.setHeader(`Content-Type`, `text/plain`);
-    res.status(404);
-    res.send(`${req.url} not found`);
+    res.status(404).send(`${req.url} not found`);
   }
 }
 
@@ -48,9 +44,18 @@ function deleteExpiredAnonymousContent(_req, _res, next) {
 
 function verifyOwnership(req, res, next) {
   if (!req.url.startsWith(`/${req.session.name}`)) {
-    return res.status(403).send("Access denied");
+    return reloadPageInstruction(res, 403);
   }
   next();
+}
+
+function parseBodyText(req, res, next) {
+  let chunks = [];
+  req.on("data", (chunk) => chunks.push(chunk));
+  req.on("end", () => {
+    req.body = Buffer.concat(chunks).toString(`utf-8`);
+    next();
+  });
 }
 
 function addMiddleware(app) {

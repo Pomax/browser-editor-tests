@@ -1,10 +1,13 @@
+// This test script uses Codemirror v6
 import { basicSetup, EditorView } from "codemirror";
 import { EditorState } from "@codemirror/state";
-import { javascript } from "@codemirror/lang-javascript";
-import { html } from "@codemirror/lang-html";
+
+// Language-specific features:
 import { css } from "@codemirror/lang-css";
+import { html } from "@codemirror/lang-html";
+import { javascript } from "@codemirror/lang-javascript";
 import { markdown } from "@codemirror/lang-markdown";
-// and https://github.com/orgs/codemirror/repositories?q=lang for more options
+// See https://github.com/orgs/codemirror/repositories?q=lang for more options
 
 import { createPatch } from "../public/vendor/diff.js";
 import { DirTree } from "../public/dirtree.js";
@@ -27,9 +30,18 @@ const cmInstances = {};
 let dirTree = { tree: {} };
 let dirList = [];
 
-setupPage();
+// Let's try to load our content!
+await setupPage();
 
-// -------------------------------
+// Session expiry handling
+if (window.location.toString().includes(`reload=forced`)) {
+  let url = window.location
+    .toString()
+    .replace(`?reload=forced`, ``)
+    .replace(`&reload=forced`, ``);
+  history.replaceState(undefined, undefined, url);
+  alert(`Your session expired, please log in again.`);
+}
 
 /**
  * Our main entry point
@@ -55,14 +67,36 @@ async function setupPage() {
  * helper function for getting file text content:
  */
 async function fetchFileContents(filename) {
-  return await fetch(`./${CONTENT_DIR}/${filename}`).then((r) => r.text());
+  return fetchSafe(`./${CONTENT_DIR}/${filename}`).then((r) => r.text());
+}
+
+/**
+ * helper function for making sure we automatically reload in case the fetch
+ * comes back with a catastrophic "I restarted and you need to reload the page"
+ */
+async function fetchSafe(url, options) {
+  const response = await fetch(url, options);
+  if (response.status !== 200) {
+    try {
+      const data = await response.json();
+      if (data.reloadPage) {
+        window.location =
+          location.toString() +
+          (url.includes(`?`) ? `&` : `?`) +
+          `reload=forced`;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }
+  return response;
 }
 
 /**
  * Make sure we're in sync with the server...
  */
 async function refreshDirTree() {
-  const dirData = await fetch(`/dir`).then((r) => r.json());
+  const dirData = await fetchSafe(`/dir`).then((r) => r.json());
   dirTree = new DirTree();
   dirTree.tree = dirData;
   buildDirTreeUI(dirTree);
@@ -75,7 +109,7 @@ function addGlobalEventHandling() {
   changeUser.addEventListener(`click`, async () => {
     const name = prompt(`Username?`).trim();
     if (name) {
-      const response = await fetch(`/login/${name}`, { method: `post` });
+      const response = await fetchSafe(`/login/${name}`, { method: `post` });
       if (response.status === 200) {
         location.reload();
       } else {
@@ -95,7 +129,7 @@ function addGlobalEventHandling() {
       "Please specify a filename.\nUse / as directory delimiter (e.g. cake/yum.js)"
     );
     if (filename) {
-      await fetch(`/new/${filename}`, { method: `post` });
+      await fetchSafe(`/new/${filename}`, { method: `post` });
       await refreshDirTree();
       const qs = filename
         .split(`/`)
@@ -116,7 +150,7 @@ function addGlobalEventHandling() {
     const entry = Object.values(cmInstances).find((e) => e.tab === tab);
     const filename = entry.filename;
     format.hidden = true;
-    await fetch(`/format/${filename}`, { method: `post` });
+    await fetchSafe(`/format/${filename}`, { method: `post` });
     entry.content = await fetchFileContents(filename);
     format.hidden = false;
     entry.view.dispatch({
@@ -205,7 +239,7 @@ function addFileDropFunctionality() {
           const form = new FormData();
           form.append(`filename`, destination);
           form.append(`content`, content);
-          await fetch(`/upload/${destination}`, {
+          await fetchSafe(`/upload/${destination}`, {
             method: `post`,
             body: form,
           });
@@ -236,7 +270,7 @@ function addFileDropFunctionality() {
 }
 
 /**
- * nice than always typing document.createElement
+ * nicer than always typing document.createElement
  */
 function create(tag) {
   return document.createElement(tag);
@@ -310,22 +344,21 @@ async function createFileEditTab(filename) {
  * Create an initial CodeMirror6 state object
  */
 function getInitialState(filename, data) {
+  const doc = data.toString();
+  const extensions = [basicSetup];
+
+  // Can we add syntax highlighting?
   const ext = filename.substring(filename.lastIndexOf(`.`) + 1);
   const syntax = {
-    html: html,
     css: css,
+    html: html,
     js: javascript,
     md: markdown,
   }[ext];
+  if (syntax) extensions.push(syntax());
 
-  const extensions = [basicSetup];
-
-  if (syntax) {
-    extensions.push(syntax());
-  }
-
+  // Add debounced content change syncing
   extensions.push(
-    // Add debounced content change syncing
     EditorView.updateListener.of((e) => {
       if (e.docChanged) {
         const entry = cmInstances[filename];
@@ -337,11 +370,9 @@ function getInitialState(filename, data) {
     })
   );
 
-  return EditorState.create({
-    extensions,
-    // And make sure the editor starts with whatever content is in our file.
-    doc: data.toString(),
-  });
+  console.log(extensions);
+
+  return EditorState.create({ doc, extensions });
 }
 
 /**
@@ -433,7 +464,7 @@ async function syncContent(filename) {
   const currentContent = entry.content;
   const newContent = entry.view.state.doc.toString();
   const changes = createPatch(filename, currentContent, newContent);
-  const response = await fetch(`/sync/${filename}`, {
+  const response = await fetchSafe(`/sync/${filename}`, {
     headers: {
       "Content-Type": `text/plain`,
     },

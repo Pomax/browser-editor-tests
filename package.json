@@ -1,5 +1,5 @@
 {
-  "name": "codemirror-test",
+  "name": "do-some-browser-editor-testing",
   "version": "1.0.0",
   "type": "module",
   "description": "",
@@ -10,28 +10,23 @@
   "scripts": {
     "build": "esbuild --log-level=info --bundle --format=esm src/script.js > public/editor.bundle.js",
     "prettier": "npx prettier -w",
-    "start": "node src/server/index.js"
+    "start": "node src/server/index.js",
+    "postinstall": "npm dedupe"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@codemirror/basic-setup": "^0.20.0",
     "@codemirror/lang-css": "^6.2.1",
     "@codemirror/lang-html": "^6.4.9",
     "@codemirror/lang-javascript": "^6.2.2",
     "@codemirror/lang-markdown": "^6.2.5",
     "@codemirror/state": "^6.4.1",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "body-parser": "^1.20.2",
     "codemirror": "^6.0.1",
-    "diff": "^5.2.0",
-    "diff-match-patch": "^1.0.5",
     "esbuild": "^0.21.4",
     "express": "^4.19.2",
     "express-session": "^1.18.0",
     "helmet": "^7.1.0",
     "multer": "^1.4.5-lts.1",
-    "mustache": "^4.2.0",
     "nocache": "^4.0.0",
     "nunjucks": "^3.2.4",
     "prettier": "^3.3.1"

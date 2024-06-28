@@ -8,6 +8,7 @@ export {
   rebuild,
   setupGit,
   switchUser,
+  reloadPageInstruction,
   watchForRebuild,
 };
 
@@ -94,8 +95,16 @@ function execPromise(command, options = {}) {
  */
 async function readContentDir(dir) {
   let listCommand = isWindows ? `dir /b/o/s "${dir}"` : `find ${dir}`;
-  const output = await execPromise(listCommand);
-  const allFileListing = output
+  let dirListing;
+  try {
+    dirListing = await execPromise(listCommand);
+  } catch (e) {
+    // This can happen if the server reboots but the client didn't
+    // reload, leading to a session name mismatch.
+    console.warn(e);
+    return false;
+  }
+  const allFileListing = dirListing
     .split(/\r?\n/)
     .map((v) => {
       let stats = statSync(v);
@@ -180,6 +189,9 @@ function switchUser(req, name = req.params.name) {
   return dir;
 }
 
-function copyDirContent(source, destination) {
-  fs.cpSync(src, dest, { recursive: true });
+/**
+ * Send a response that triggers a page-reload in the browser.
+ */
+function reloadPageInstruction(res, status = 400) {
+  res.status(status).json({ reloadPage: true });
 }

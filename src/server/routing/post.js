@@ -6,10 +6,10 @@ import {
   switchUser,
   createRewindPoint,
 } from "../helpers.js";
+import { parseBodyText } from "../middleware.js";
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from "fs";
 import { spawnSync } from "child_process";
 import multer from "multer";
-import bodyParser from "body-parser";
 import { applyPatch } from "../../../public/vendor/diff.js";
 
 const isWindows = process.platform === `win32`;
@@ -24,13 +24,15 @@ const upload = multer({
 function addPostRoutes(app) {
   // A route to trigger on-disk code formatting, based on file extension.
   app.post(`/format/:slug*`, (req, res) => {
+    let formatted = false;
     const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
     const ext = filename.substring(filename.lastIndexOf(`.`), filename.length);
     if ([`.js`, `.css`, `.html`].includes(ext)) {
       console.log(`running prettier...`);
       spawnSync(npm, [`run`, `prettier`, `--`, filename], { stdio: `inherit` });
+      formatted = true;
     }
-    res.send(`ok`);
+    res.json({ formatted });
     createRewindPoint(req);
   });
 
@@ -41,8 +43,8 @@ function addPostRoutes(app) {
       return res.status(400).send("Reserved name, pick a different one.");
     }
     console.log(`we got a login for ${name}`);
-    const dir = switchUser(req);
-    res.send(dir);
+    switchUser(req);
+    res.send(`ok`);
   });
 
   // Create a new file.
@@ -84,13 +86,14 @@ function addPostRoutes(app) {
   });
 
   // Synchronize file changes from the browser to the on-disk file, by applying a diff patch
-  app.post(`/sync/:slug*`, bodyParser.text(), (req, res) => {
+  app.post(`/sync/:slug*`, parseBodyText, (req, res) => {
     const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
     let data = readFileSync(filename).toString(`utf8`);
     const patch = req.body;
     const patched = applyPatch(data, patch);
     if (patched) writeFileSync(filename, patched);
-    res.send(`${getFileSum(req.session.dir, filename, true)}`);
+    const hash = "" + getFileSum(req.session.dir, filename, true);
+    res.send(hash);
     createRewindPoint(req);
   });
 
@@ -110,9 +113,14 @@ function addPostRoutes(app) {
 
   // (Reversibly, thanks to git) delete a file
   app.delete(`/delete/:slug*`, (req, res) => {
-    const filename = `${req.session.dir}/${req.params.slug + req.params[0]}`;
-    unlinkSync(filename);
-    res.send(`gone`);
-    createRewindPoint(req);
+    const filename = req.params.slug + req.params[0];
+    const filepath = `${req.session.dir}/${filename}`;
+    try {
+      unlinkSync(filepath);
+      res.send(`deleted`);
+      createRewindPoint(req);
+    } catch (e) {
+      res.status(400).send(`could not delete ${filepath}`);
+    }
   });
 }
