@@ -1,5 +1,3 @@
-content/*
-!content/anonymous
-!content/testuser
+content
 node_modules
 .DS_Store
