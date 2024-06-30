@@ -202,6 +202,7 @@ function switchUser(req, name = req.params.name) {
 async function setupGit(req) {
   const { name, dir } = req.session;
   for (let cfg of [
+    `init.defaultBranch main`,
     `user.name "${name}"`,
     `user.email "actions@browsertests.local"`,
   ]) {
