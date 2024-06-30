@@ -23,46 +23,52 @@ import {
   watch,
 } from "fs";
 
+// Are we on Windows, or something unixy?
 import { sep, posix } from "path";
 import { exec, execSync, spawnSync } from "child_process";
-
 const isWindows = process.platform === `win32`;
 const npm = isWindows ? `npm.cmd` : `npm`;
 
+// Set up the vars we need for pointing to the right dirs
 const CONTENT_BASE = process.env.CONTENT_BASE ?? `content`;
 process.env.CONTENT_BASE = CONTENT_BASE;
-
 const CONTENT_DIR = isWindows ? CONTENT_BASE : `./${CONTENT_BASE}`;
 process.env.CONTENT_DIR = CONTENT_DIR;
 
-// schedule a git commit, but as an API call because
-// users should also be able to trigger one, too.
-const SAVE_TIMEOUT_MS = 5_000;
+// Set up the things we need for scheduling git commits when
+// content changes, or the user requests an explicit rewind point:
+const COMMIT_TIMEOUT_MS = 5_000;
 
-let saveDebounce = false;
+// We can't save timeouts to req.session so we need a separate tracker
+const COMMIT_TIMEOUTS = {};
 
 function createRewindPoint(req, reason = `Autosave`) {
-  if (saveDebounce) clearTimeout(saveDebounce);
+  const { name, dir } = req.session;
+
   console.log(`scheduling rewind point`);
-  saveDebounce = setTimeout(async () => {
+  const debounce = COMMIT_TIMEOUTS[name];
+  if (debounce) clearTimeout(debounce);
+
+  COMMIT_TIMEOUTS[name] = setTimeout(async () => {
     console.log(`creating rewind point`);
-    const name = req.session.name;
-    const dir = req.session.dir;
-    const cmd = `cd ${dir} && git add . && git commit -m ${reason} --allow-empty --author=\"${name} <autosave@browsertests.local>\"`;
-    // console.log(cmd);
-    // const output =
-    await execPromise(cmd);
-    // console.log(output);
-    saveDebounce = false;
-  }, SAVE_TIMEOUT_MS);
+    const cmd = `cd ${dir} && git add . && git commit --allow-empty -m "${reason}"`;
+    console.log(`running:`, cmd);
+    try {
+      await execPromise(cmd);
+    } catch (e) {
+      console.error(e);
+    }
+    COMMIT_TIMEOUTS[name] = undefined;
+  }, COMMIT_TIMEOUT_MS);
 }
 
+/**
+ * There's a few files we want to watch in order to rebuild the browser bundle.
+ */
 function watchForRebuild() {
-  [
-    // append to this list as necessary
-    `./src/script.js`,
-    `./public/dirtree.js`,
-  ].forEach((filename) => watch(filename, () => rebuild()));
+  [`./src/script.js`, `./public/dirtree.js`].forEach((filename) =>
+    watch(filename, () => rebuild())
+  );
   rebuild();
 }
 
@@ -79,7 +85,14 @@ function getFileSum(dir, filename, noFill = false) {
 }
 
 /**
- * A little wrapper that turns exec() into an async call
+ * Send a response that triggers a page-reload in the browser.
+ */
+function reloadPageInstruction(res, status = 400) {
+  res.status(status).json({ reloadPage: true });
+}
+
+/**
+ * A little wrapper that turns exec() into an async rather than callback call.
  */
 function execPromise(command, options = {}) {
   return new Promise((resolve, reject) =>
@@ -94,8 +107,9 @@ function execPromise(command, options = {}) {
  * Ask the OS for a flat dir listing.
  */
 async function readContentDir(dir) {
-  let listCommand = isWindows ? `dir /b/o/s "${dir}"` : `find ${dir}`;
   let dirListing;
+  let listCommand = isWindows ? `dir /b/o/s "${dir}"` : `find ${dir}`;
+
   try {
     dirListing = await execPromise(listCommand);
   } catch (e) {
@@ -104,6 +118,7 @@ async function readContentDir(dir) {
     console.warn(e);
     return false;
   }
+
   const allFileListing = dirListing
     .split(/\r?\n/)
     .map((v) => {
@@ -113,18 +128,6 @@ async function readContentDir(dir) {
     })
     .filter((v) => !!v);
   return allFileListing;
-}
-
-/**
- * Make git not guess at the name and email for the commits we'll be making
- */
-async function setupGit() {
-  for (let cfg of [
-    `user.name "browser tests"`,
-    `user.email "actions@browsertests.local"`,
-  ]) {
-    await execPromise(`git config --local ${cfg}`, { cwd: CONTENT_DIR });
-  }
 }
 
 /**
@@ -186,12 +189,22 @@ function switchUser(req, name = req.params.name) {
     // TODO: Copy the anonymous user's files to their new, real
     //       dir, and then delete the anonymous-12345 directory.
   }
+
+  // ensure git knows who we are.
+  setupGit(req);
+
   return dir;
 }
 
 /**
- * Send a response that triggers a page-reload in the browser.
+ * Make git not guess at the name and email for commits.
  */
-function reloadPageInstruction(res, status = 400) {
-  res.status(status).json({ reloadPage: true });
+async function setupGit(req) {
+  const { name, dir } = req.session;
+  for (let cfg of [
+    `user.name "${name}"`,
+    `user.email "actions@browsertests.local"`,
+  ]) {
+    await execPromise(`git config --local ${cfg}`, { cwd: dir });
+  }
 }

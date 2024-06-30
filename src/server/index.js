@@ -2,7 +2,7 @@ import express from "express";
 import nunjucks from "nunjucks";
 import { addMiddleware, pageNotFound, verifyOwnership } from "./middleware.js";
 import { addGetRoutes, addPostRoutes } from "./routing/index.js";
-import { setupGit, watchForRebuild } from "./helpers.js";
+import { watchForRebuild } from "./helpers.js";
 
 const PORT = process.env.PORT ?? 8000;
 process.env.PORT = PORT;
@@ -26,6 +26,5 @@ app.use(pageNotFound);
 // Run the server, and trigger a client bundle rebuild every time script.js changes.
 app.listen(PORT, () => {
   console.log(`http://${HOSTNAME}:${PORT}`);
-  setupGit();
   watchForRebuild();
 });
