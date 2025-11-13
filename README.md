@@ -1,4 +1,4 @@
-# This repo move!
+# This repo moved!
 
 Head on over to https://github.com/Pomax/make-webbly-things
 
